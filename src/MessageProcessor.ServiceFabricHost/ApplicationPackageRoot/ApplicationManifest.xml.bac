@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?><ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+   <Parameters>
+      <Parameter Name="QueueListenerActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="ManagementApiService_InstanceCount" DefaultValue="-1"/>
+      <Parameter Name="ManagementApiService_PlacementConstraints" DefaultValue="NodeTypeName == nt1vm"/>
+      <Parameter Name="VmssManagerActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="VmssManagerActorService_MinReplicaSetSize" DefaultValue="2"/>
+      <Parameter Name="VmssManagerActorService_TargetReplicaSetSize" DefaultValue="3"/>
+      <Parameter Name="MessageClusterActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="MessageClusterActorService_MinReplicaSetSize" DefaultValue="2"/>
+      <Parameter Name="MessageClusterActorService_TargetReplicaSetSize" DefaultValue="3"/>
+   </Parameters>
+   <ServiceManifestImport>
+      <ServiceManifestRef ServiceManifestName="FabricActorServicePkg" ServiceManifestVersion="1.0.3"/>
+      <ConfigOverrides>
+         <ConfigOverride Name="Config">
+            <Settings>
+               <Section Name="AppSettings">
+                  <Parameter Name="SubscriptionId" Value="8393a037-5d39-462d-a583-09915b4493df"/>
+                  <Parameter Name="ResourceGroupName" Value="ServiceFabricTest3"/>
+                  <Parameter Name="ClusterName" Value="pksservicefabric"/>
+                  <Parameter Name="TenantId" Value="802626c6-0f5c-4293-a8f5-198ecd481fe3"/>
+               </Section>
+            </Settings>
+         </ConfigOverride>
+      </ConfigOverrides>
+   </ServiceManifestImport>
+   <DefaultServices>
+      <Service Name="VmssManagerActorService" GeneratedIdRef="e9adfba6-f141-4c6e-934e-23242ce67e13">
+         <StatefulService ServiceTypeName="VmssManagerActorServiceType" TargetReplicaSetSize="[VmssManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[VmssManagerActorService_MinReplicaSetSize]">
+            <UniformInt64Partition PartitionCount="[VmssManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
+         </StatefulService>
+      </Service>      
+      <Service Name="MessageClusterActorService" GeneratedIdRef="d596e25e-c917-4e6d-8418-3cbad534b279">
+         <StatefulService ServiceTypeName="MessageClusterActorServiceType" TargetReplicaSetSize="[MessageClusterActorService_TargetReplicaSetSize]" MinReplicaSetSize="[MessageClusterActorService_MinReplicaSetSize]">
+            <UniformInt64Partition PartitionCount="[MessageClusterActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
+         </StatefulService>
+      </Service>
+      <Service Name="ManagementApiService">
+         <StatelessService ServiceTypeName="ManagementApiServiceType" InstanceCount="[ManagementApiService_InstanceCount]">
+            <SingletonPartition/>
+         </StatelessService>
+      </Service>
+   </DefaultServices>
+</ApplicationManifest>

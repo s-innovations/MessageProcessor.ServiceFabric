@@ -1,0 +1,141 @@
+﻿{
+  "apiVersion": "2016-01-01",
+  "type": "SInnovations.MessageProcessor/MessageCluster",
+  "name": "MyCoolMessageCluster",
+  "location": "West Europe",
+  "properties": {
+
+  },
+  "variables": {
+    "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/ServiceFabricTest3/providers/Microsoft.ServiceBus/namespaces/pksbus002",
+    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/ServiceFabricTest3/providers/Microsoft.ServiceBus/namespaces/pksbus002/authorizationRules/RootManageSharedAccessKey"
+  },
+  "resources": [
+    {
+      "type": "SInnovations.MessageProcessor/queue",
+      "name": "algorithm-a0",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "vmss": {
+          "name": "Standard_A0",
+          "tire": "Standard",
+          "vmImagePublisher": "MicrosoftWindowsServer",
+          "vmImageOffer": "WindowsServer",
+          "vmImageSku": "2012-R2-Datacenter",
+          "vmImageVersion": "latest"
+        }
+      }
+    },
+    {
+      "type": "SInnovations.MessageProcessor/queue",
+      "name": "algorithm-a1",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "vmss": {
+          "name": "Standard_A1",
+          "tire": "Standard",
+          "vmImagePublisher": "MicrosoftWindowsServer",
+          "vmImageOffer": "WindowsServer",
+          "vmImageSku": "2012-R2-Datacenter",
+          "vmImageVersion": "latest"
+        }
+      }
+    },
+    {
+      "type": "SInnovations.MessageProcessor/queue",
+      "name": "algorithm-a2",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "vmss": {
+          "name": "Standard_A2",
+          "tire": "Standard",
+          "vmImagePublisher": "MicrosoftWindowsServer",
+          "vmImageOffer": "WindowsServer",
+          "vmImageSku": "2012-R2-Datacenter",
+          "vmImageVersion": "latest"
+        }
+      }
+    },
+    {
+      "type": "SInnovations.MessageProcessor/queue",
+      "name": "algorithm-a3",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "vmss": {
+          "name": "Standard_A3",
+          "tire": "Standard",
+          "vmImagePublisher": "MicrosoftWindowsServer",
+          "vmImageOffer": "WindowsServer",
+          "vmImageSku": "2012-R2-Datacenter",
+          "vmImageVersion": "latest"
+        }
+      }
+    },
+    {
+      "type": "SInnovations.MessageProcessor/queue",
+      "name": "algorithm-a4",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "vmss": {
+          "name": "Standard_A4",
+          "tire": "Standard",
+          "vmImagePublisher": "MicrosoftWindowsServer",
+          "vmImageOffer": "WindowsServer",
+          "vmImageSku": "2012-R2-Datacenter",
+          "vmImageVersion": "latest"
+        }
+      }
+    },
+    {
+      "type": "SInnovations.MessageProcessor/queue",
+      "name": "algorithm-a5",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "vmss": {
+          "name": "Standard_A5",
+          "tire": "Standard",
+          "vmImagePublisher": "MicrosoftWindowsServer",
+          "vmImageOffer": "WindowsServer",
+          "vmImageSku": "2012-R2-Datacenter",
+          "vmImageVersion": "latest"
+        }
+      }
+    },
+    {
+      "type": "SInnovations.MessageProcessor/queue",
+      "name": "algorithm-a6",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "vmss": {
+          "name": "Standard_A6",
+          "tire": "Standard",
+          "vmImagePublisher": "MicrosoftWindowsServer",
+          "vmImageOffer": "WindowsServer",
+          "vmImageSku": "2012-R2-Datacenter",
+          "vmImageVersion": "latest"
+        }
+      }
+    }
+  ]
+}

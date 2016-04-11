@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+   <Section Name="AppSettings">
+      <Parameter Name="SubscriptionId" Value="" MustOverride="true" />
+      <Parameter Name="ResourceGroupName" Value="" MustOverride="true" />
+      <Parameter Name="ClusterName" Value="" MustOverride="true" />
+      <Parameter Name="TenantId" Value="" MustOverride="true" />
+      <Parameter Name="AzureADServicePrincipal"  MustOverride="true" Value="MIICBAYJKoZIhvcNAQcDoIIB9TCCAfECAQAxggFtMIIBaQIBADBRMD0xOzA5BgNVBAMMMnd3dy5wa3NzZXJ2aWNlZmFicmljLndlc3RldXJvcGUuY2xvdWRhcHAuYXp1cmUuY29tAhBIvelmWm87gUiwODNpzHPIMA0GCSqGSIb3DQEBAQUABIIBAGiEGiUebFZehNc7pwJv13Jvs2Rz0aWklbkKJlHux0o1AdD9raDjMG8hC2SEMUqQRwVpCrkZbUaMPe2jewoyShG4QNfpR10oBltm5UG39Bg8YRgeG4p++WSRKJlXa9syWl9d4o+0Osg7I45Vwyp0WQ5Tbgf3QRo7nH8/d4SrbJJpxwXpzplTkXmlSUwu4DFbd0tMwxoR0xJ60boTV6XNuYAkxWg5y7jhAe8ra1h2O7c2OFGwvJfFcBn/j0KYSIeb73nOqd7guLFe93Q5mL/w0CWifI6V4HLLfz66DWRXcNBoBANc10iFMf0KEI7iPJ3+Wa6TeCKPCJcF8ySqbmGu+oQwewYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAimI+hRFb8M/oBYOPqLdNzLKjvOvESMD50FHsSsMjq48FC4UupicTqZiPTHx7OOUbpL204dweQ2dHNcjtycAWaNOvs5gFLkovpCMfbPkJiD5/IX/anxvVRsqsa9IDtc/auzJQ==" />
+   </Section>
+   <Section Name="MessageClusterActorServiceReplicatorConfig">
+      <Parameter Name="ReplicatorEndpoint" Value="MessageClusterActorServiceReplicatorEndpoint" />
+      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+   </Section>
+   <Section Name="MessageClusterActorServiceReplicatorSecurityConfig">
+      <Parameter Name="CredentialType" Value="None" />
+   </Section>
+   <Section Name="MessageClusterActorServiceLocalStoreConfig">
+      <Parameter Name="MaxAsyncCommitDelayInMilliseconds" Value="100" />
+      <Parameter Name="MaxVerPages" Value="32768" />
+   </Section>
+   <Section Name="VmssManagerActorServiceReplicatorConfig">
+      <Parameter Name="ReplicatorEndpoint" Value="VmssManagerActorServiceReplicatorEndpoint" />
+      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+   </Section>
+   <Section Name="VmssManagerActorServiceReplicatorSecurityConfig">
+      <Parameter Name="CredentialType" Value="None" />
+   </Section>
+   <Section Name="VmssManagerActorServiceLocalStoreConfig">
+      <Parameter Name="MaxAsyncCommitDelayInMilliseconds" Value="100" />
+      <Parameter Name="MaxVerPages" Value="32768" />
+   </Section>
+   <Section Name="QueueManagerActorServiceReplicatorConfig">
+      <Parameter Name="ReplicatorEndpoint" Value="QueueManagerActorServiceReplicatorEndpoint" />
+      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+   </Section>
+   <Section Name="QueueManagerActorServiceReplicatorSecurityConfig">
+      <Parameter Name="CredentialType" Value="None" />
+   </Section>
+   <Section Name="QueueManagerActorServiceLocalStoreConfig">
+      <Parameter Name="MaxAsyncCommitDelayInMilliseconds" Value="100" />
+      <Parameter Name="MaxVerPages" Value="32768" />
+   </Section>
+</Settings>
