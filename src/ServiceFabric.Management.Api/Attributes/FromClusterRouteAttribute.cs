@@ -37,7 +37,7 @@ namespace SInnovations.WebApi.Bindings
          
                 actionContext.Bind(bindingContext);
                 var ctx = actionContext.Request.GetOwinContext();
-                var serviceInitializationParameters =ctx.ResolveDependency<ServiceInitializationParameters>();
+            //    var serviceContext = ctx.ResolveDependency<ServiceContext>();
                 var subscriptionid = bindingContext.ValueProvider.GetValue("subscriptionId").RawValue;
                 var clusterName = bindingContext.ValueProvider.GetValue("clusterName").RawValue;
                 var resourceGroupName = bindingContext.ValueProvider.GetValue("resourceGroupName").RawValue;

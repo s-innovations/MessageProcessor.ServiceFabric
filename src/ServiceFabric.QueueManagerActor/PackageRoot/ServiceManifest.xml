@@ -2,19 +2,23 @@
 <ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="FabricActorServicePkg" Version="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <ServiceTypes>
       <StatelessServiceType ServiceTypeName="ManagementApiServiceType" />
-      <StatelessServiceType ServiceTypeName="QueueListenerActorServiceType">
+      <StatefulServiceType ServiceTypeName="QueueListenerActorServiceType">
          <Extensions>
-            <Extension Name="__GeneratedServiceType__" GeneratedId="06c6a81c-fbb7-4938-97b5-15e76888363c">
+            <Extension Name="__GeneratedServiceType__" GeneratedId="e4590d6b-a5b8-45a8-b048-c7d51abf8425|None">
                <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
                   <DefaultService Name="QueueListenerActorService" />
                   <ServiceEndpoint Name="QueueListenerActorServiceEndpoint" />
+                  <ReplicatorEndpoint Name="QueueListenerActorServiceReplicatorEndpoint" />
+                  <ReplicatorConfigSection Name="QueueListenerActorServiceReplicatorConfig" />
+                  <ReplicatorSecurityConfigSection Name="QueueListenerActorServiceReplicatorSecurityConfig" />
+                  <StoreConfigSection Name="QueueListenerActorServiceLocalStoreConfig" />
                </GeneratedNames>
             </Extension>
          </Extensions>
-      </StatelessServiceType>
+      </StatefulServiceType>
       <StatefulServiceType ServiceTypeName="MessageClusterActorServiceType" HasPersistedState="true">
          <Extensions>
-            <Extension Name="__GeneratedServiceType__" GeneratedId="d596e25e-c917-4e6d-8418-3cbad534b279">
+            <Extension Name="__GeneratedServiceType__" GeneratedId="7c682881-c41e-4f85-a74a-c3a505c413da|Persisted">
                <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
                   <DefaultService Name="MessageClusterActorService" />
                   <ServiceEndpoint Name="MessageClusterActorServiceEndpoint" />
@@ -26,9 +30,9 @@
             </Extension>
          </Extensions>
       </StatefulServiceType>
-      <StatefulServiceType ServiceTypeName="VmssManagerActorServiceType" HasPersistedState="true">
+      <StatefulServiceType ServiceTypeName="VmssManagerActorServiceType">
          <Extensions>
-            <Extension Name="__GeneratedServiceType__" GeneratedId="e9adfba6-f141-4c6e-934e-23242ce67e13">
+            <Extension Name="__GeneratedServiceType__" GeneratedId="b6e4a0a7-6781-4547-a895-188ab31319a7|None">
                <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
                   <DefaultService Name="VmssManagerActorService" />
                   <ServiceEndpoint Name="VmssManagerActorServiceEndpoint" />
@@ -40,9 +44,9 @@
             </Extension>
          </Extensions>
       </StatefulServiceType>
-      <StatefulServiceType ServiceTypeName="QueueManagerActorServiceType" HasPersistedState="true">
+      <StatefulServiceType ServiceTypeName="QueueManagerActorServiceType">
          <Extensions>
-            <Extension Name="__GeneratedServiceType__" GeneratedId="96950b1f-5929-4f75-b6f8-d9b789faa8eb">
+            <Extension Name="__GeneratedServiceType__" GeneratedId="1e2fb51f-2780-48ee-a254-d1e5d78e780e|None">
                <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
                   <DefaultService Name="QueueManagerActorService" />
                   <ServiceEndpoint Name="QueueManagerActorServiceEndpoint" />
@@ -73,6 +77,7 @@
          <Endpoint Name="VmssManagerActorServiceReplicatorEndpoint" />
          <Endpoint Name="QueueManagerActorServiceEndpoint" />
          <Endpoint Name="QueueManagerActorServiceReplicatorEndpoint" />
+         <Endpoint Name="QueueListenerActorServiceReplicatorEndpoint" />
       </Endpoints>
    </Resources>
 </ServiceManifest>

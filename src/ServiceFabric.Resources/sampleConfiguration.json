@@ -7,8 +7,8 @@
 
   },
   "variables": {
-    "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/ServiceFabricTest3/providers/Microsoft.ServiceBus/namespaces/pksbus002",
-    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/ServiceFabricTest3/providers/Microsoft.ServiceBus/namespaces/pksbus002/authorizationRules/RootManageSharedAccessKey"
+    "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.ServiceBus/namespaces/sb-qczknbuyve",
+    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.ServiceBus/namespaces/sb-qczknbuyve/authorizationRules/RootManageSharedAccessKey"
   },
   "resources": [
     {

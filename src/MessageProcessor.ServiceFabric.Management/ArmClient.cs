@@ -59,5 +59,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Management
             return Client.PostAsync(resourceUrl, new StringContent(string.Empty))
                 .As<T>();
         }
+
+
+         
     }
 }

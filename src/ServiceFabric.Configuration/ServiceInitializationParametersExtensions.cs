@@ -7,12 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
 {
    
     public static class ServiceInitializationParametersExtensions
     {
+        private static ILog Logger = LogProvider.GetCurrentClassLogger();
+         
         public static ServiceFabricClusterConfiguration GetConfigurationInfo(this Actor actor)
         {
             return actor.ActorService.Context.GetClusterInfo();
@@ -20,13 +23,31 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
        
         public static ServiceFabricClusterConfiguration GetClusterInfo(this StatefulServiceContext parameters)
         {
+            Logger.Debug("Getting Cluster Information");
+
             var configurationPackage = parameters.CodePackageActivationContext.GetConfigurationPackageObject("Config");
             var section = configurationPackage.Settings.Sections["AppSettings"].Parameters;
-
             var azureADServicePrincipal = section["AzureADServicePrincipal"].Value;
+
+            if(string.IsNullOrEmpty(azureADServicePrincipal))
+            {
+
+                Logger.Error("The Azure AD Service Principal Credentials was not set");
+                throw new KeyNotFoundException("AzureADServicePrincipal");
+            }
+
             var envelope = new EnvelopedCms();
             envelope.Decode(Convert.FromBase64String(azureADServicePrincipal));
-            envelope.Decrypt();
+            try
+            {
+                envelope.Decrypt();
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorException("Failed to decrypt service principal key", ex);
+                throw new Exception("Failed to decrypt service principal key");
+            }
+
             var AADCredentials = Encoding.UTF8.GetString(envelope.ContentInfo.Content).Split(':');
 
             return new ServiceFabricClusterConfiguration

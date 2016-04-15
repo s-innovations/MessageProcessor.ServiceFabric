@@ -11,9 +11,11 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
         public ClusterQueueInfoProperties()
         {
             PlacementProperties = new Dictionary<string, string>();
+            Capacities = new Dictionary<string, int>();
         }
         public ClusterVmssInfo Vmss { get; set; }
         public ServiceBusInfo ServiceBus { get; set; }
         public Dictionary<string, string> PlacementProperties { get; set; }
+        public Dictionary<string, int> Capacities { get; set; }
     }
 }

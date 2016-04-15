@@ -9,6 +9,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
 {
     public interface IVmssManagerActor : IActor
     {
-        Task CreateIfNotExistsAsync();
+        Task<bool> CreateIfNotExistsAsync();
+        Task<bool> RemoveIfNotRemovedAsync();
     }
 }

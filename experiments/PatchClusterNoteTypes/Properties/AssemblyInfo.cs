@@ -1,19 +1,15 @@
-﻿#define LIBLOG_PUBLIC
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
-
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("S-Innovations.Azure.MessageProcessor.ServiceFabric.Common")]
+[assembly: AssemblyTitle("PatchClusterNoteTypes")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("S-Innovations.Azure.MessageProcessor.ServiceFabric.Common")]
+[assembly: AssemblyProduct("PatchClusterNoteTypes")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -24,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("031150e4-0d92-440e-b295-c9e076ea5aa4")]
+[assembly: Guid("6bac9426-4aea-489d-a4c9-a305cea1d113")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -38,5 +34,3 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: InternalsVisibleTo("S-Innovations.Azure.MessageProcessor.ServiceFabric.Management")]
-[assembly:InternalsVisibleTo("S-Innovations.Azure.MessageProcessor.ServiceFabric.Configuration")]

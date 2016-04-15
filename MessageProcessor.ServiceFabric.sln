@@ -30,6 +30,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceFabric.Configuration
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceFabric.Common", "src\ServiceFabric.Common\ServiceFabric.Common.csproj", "{031150E4-0D92-440E-B295-C9E076EA5AA4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "experiments", "experiments", "{D9EF9322-D664-4D43-82E3-B084F2E10E31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchClusterNoteTypes", "experiments\PatchClusterNoteTypes\PatchClusterNoteTypes.csproj", "{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,11 +118,20 @@ Global
 		{031150E4-0D92-440E-B295-C9E076EA5AA4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{031150E4-0D92-440E-B295-C9E076EA5AA4}.Release|x64.ActiveCfg = Release|Any CPU
 		{031150E4-0D92-440E-B295-C9E076EA5AA4}.Release|x64.Build.0 = Release|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Debug|x64.Build.0 = Debug|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Release|x64.ActiveCfg = Release|Any CPU
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FC804757-A0D6-4A2C-A803-95EC614F60DC} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
+		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113} = {D9EF9322-D664-4D43-82E3-B084F2E10E31}
 	EndGlobalSection
 EndGlobal

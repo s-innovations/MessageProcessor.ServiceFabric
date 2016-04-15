@@ -95,11 +95,16 @@
     "dnsName": "[variables('clusterName')]",
     "lbIPConfig": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerIPConfig')]",
     "lbProbeID": "[concat(variables('lbID'),'/probes/FabricGatewayProbe')]",
-    "lbHttpProbeID": "[concat(variables('lbID'),'/probes/FabricHttpGatewayProbe')]"
+    "lbHttpProbeID": "[concat(variables('lbID'),'/probes/FabricHttpGatewayProbe')]",
+    "vmssApiVersion": "2016-03-30",
+    "lbApiVersion": "2015-06-15",
+    "vNetApiVersion": "2015-06-15",
+    "storageApiVersion": "2015-06-15",
+    "publicIPApiVersion": "2015-06-15"
   },
   "resources": [
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "[variables('publicIPApiVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[concat(variables('lbIPName'),'-',variables('nodePostFix'))]",
       "location": "[variables('clusterLocation')]",
@@ -110,8 +115,8 @@
         "publicIPAllocationMethod": "Dynamic"
       },
       "tags": {
-        "resourceType": "Service Fabric",
-        "clusterName": "[variables('clusterName')]"
+        "hidden-resourceType": "Service Fabric",
+        "hidden-clusterName": "[variables('clusterName')]"
       }
     },
     {
@@ -243,12 +248,12 @@
         ]
       },
       "tags": {
-        "resourceType": "Service Fabric",
-        "clusterName": "[variables('clusterName')]"
+        "hidden-resourceType": "Service Fabric",
+        "hidden-clusterName": "[variables('clusterName')]"
       }
     },
     {
-      "apiVersion": "2015-06-15",
+      "apiVersion": "[variables('vmssApiVersion')]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[variables('vmNodeTypeName')]",
       "location": "West Europe",
@@ -390,7 +395,7 @@
           "osProfile": {
             "adminPassword": "[parameters('adminPassword')]",
             "adminUsername": "[parameters('adminUsername')]",
-            "computernamePrefix": "[variables('vmNodeTypeName')]",
+            "computernamePrefix": "[substring(concat(variables('vmNodeTypeName'),'-',uniqueString(variables('vmNodeTypeName'))),0,9)]",
             "secrets": [
               {
                 "sourceVault": {
@@ -429,14 +434,14 @@
         "tier": "[variables('vmNodeTypeTire')]"
       },
       "tags": {
-        "resourceType": "Service Fabric",
-        "clusterName": "[variables('clusterName')]"
+        "hidden-resourceType": "Service Fabric",
+        "hidden-clusterName": "[variables('clusterName')]"
       }
     }
   ],
   "outputs": {
     "clusterProperties": {
-      "value": "[reference(resourceId(variables('clusterResourceGroupName'), 'Microsoft.ServiceFabric/clusters', variables('clusterName')), '2016-01-01-beta')]",
+      "value": "[reference(resourceId(variables('clusterResourceGroupName'), 'Microsoft.ServiceFabric/clusters', variables('clusterName')), '2016-03-01')]",
       "type": "object"
     }
   }

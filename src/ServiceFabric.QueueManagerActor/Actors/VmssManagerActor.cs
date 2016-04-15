@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Azure.Management.Resources;
+using Microsoft.Rest;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Newtonsoft.Json.Linq;
@@ -91,10 +93,40 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                       TimeSpan.FromMinutes(1));
             return reg2;
         }
-
-        public async Task CreateIfNotExistsAsync()
+        public async Task<bool> RemoveIfNotRemovedAsync()
         {
             await StartProvisionReminder();
+            return false;
+        }
+        public async Task<bool> CreateIfNotExistsAsync()
+        {
+            var clusterKey = this.Id.GetStringId();
+            var config = this.GetConfigurationInfo();
+            var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
+            var nodeName = queue.Name;
+
+            using (var armClient = new ResourceManagementClient(new TokenCredentials(await config.GetAccessToken())))
+            {
+                armClient.SubscriptionId = config.SubscriptionId;
+
+                var deployments = await armClient.Deployments.ListAsync(config.ResourceGroupName);
+                var last = deployments.FirstOrDefault(f => f.Name.StartsWith($"vmss-{nodeName}-"));
+                while(last==null && !string.IsNullOrEmpty( deployments.NextPageLink))
+                {
+                   deployments = await armClient.Deployments.ListNextAsync(deployments.NextPageLink);
+                   last = deployments.FirstOrDefault(f => f.Name.StartsWith($"vmss-{nodeName}-"));
+                }
+                if(last.Properties.ProvisioningState == "Succeeded")
+                {
+                    return true;
+                }
+
+            }
+
+            await StartProvisionReminder();
+
+
+            return false;
         }
 
         public async Task ReceiveReminderAsync(string reminderName, byte[] context, TimeSpan dueTime, TimeSpan period)
@@ -104,40 +136,51 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                 var clusterKey = this.Id.GetStringId();//Subscription/ResourceGroup/clustername/nodename;
 
                 var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
+                try
+                {
+                    if (queue != null)
+                    {
+
+                        var nodeName = queue.Name;
 
 
-                var nodeName = queue.Name;
+                        var config = this.GetConfigurationInfo();
 
+                        var parameters = new JObject(
+                            ResourceManagerHelper.CreateValue("clusterName",
+                                                                config.ClusterName),
+                            ResourceManagerHelper.CreateValue("clusterLocation",
+                                                                "West Europe"),
+                            ResourceManagerHelper.CreateValue("nodeTypeName", nodeName),
+                            ResourceManagerHelper.CreateValue("certificateThumbprint",
+                                                                "10A9BF925F41370FE55A4BDED2EF803505100C35"),
+                            ResourceManagerHelper.CreateValue("adminPassword", "JgT5FFJK"),
+                            ResourceManagerHelper.CreateValue("sourceVaultValue",
+                                                "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.KeyVault/vaults/kv-qczknbuyveqr6qczknbu"),
+                            ResourceManagerHelper.CreateValue("certificateUrlValue", "https://kv-qczknbuyveqr6qczknbu.vault.azure.net/secrets/ServiceFabricCert/2d05b9c715fa4b26bc0874cf550b5993")
+                            );
+                        await ResourceManagerHelper.CreateTemplateDeploymentAsync(
+                                                 new ApplicationCredentials
+                                                 {
+                                                     AccessToken = await config.GetAccessToken(),
+                                                     SubscriptionId = config.SubscriptionId,
+                                                 },
+                                                   config.ResourceGroupName,
+                                                 $"vmss-{nodeName}-{DateTimeOffset.UtcNow.ToString("s").Replace(":", "-")}",
+                                                 new VmssArmTemplate(queue.Properties.Vmss),
+                                                 parameters,
+                                                 false
+                                                 );
+                    }
+                    else
+                    {
 
-                var config = this.GetConfigurationInfo();
-
-                var parameters = new JObject(
-                    ResourceManagerHelper.CreateValue("clusterName", 
-                                                        config.ClusterName),
-                    ResourceManagerHelper.CreateValue("clusterLocation", 
-                                                        "West Europe"),
-                    ResourceManagerHelper.CreateValue("nodeTypeName", nodeName),
-                    ResourceManagerHelper.CreateValue("certificateThumbprint", 
-                                                        "4B729ADE19BF2742BB09BB257C6BD8538DBDB1A4"),
-                    ResourceManagerHelper.CreateValue("adminPassword", "JgT5FFJK"),
-                    ResourceManagerHelper.CreateValue("sourceVaultValue", 
-                                        "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/ServiceFabricTest/providers/Microsoft.KeyVault/vaults/PksTestSFVault"),
-                    ResourceManagerHelper.CreateValue("certificateUrlValue", "https://pkstestsfvault.vault.azure.net:443/secrets/ServiceFabricCert/5a4356ee60064c7fa7e2581e6e3527dc")
-                    );
-                await ResourceManagerHelper.CreateTemplateDeploymentAsync(
-                                         new ApplicationCredentials
-                                         {
-                                             AccessToken = await config.GetAccessToken(),
-                                             SubscriptionId = config.SubscriptionId,
-                                         },
-                                           config.ResourceGroupName,
-                                         $"vmss-{nodeName}-{DateTimeOffset.UtcNow.ToString("s").Replace(":", "-")}",
-                                         new VmssArmTemplate(queue.Properties.Vmss),
-                                         parameters,
-                                         false
-                                         );
-
-                await UnregisterReminderAsync(GetReminder(reminderName));
+                    }
+                }
+                finally
+                {
+                    await UnregisterReminderAsync(GetReminder(reminderName));
+                }
             }
         }
     }

@@ -1,0 +1,64 @@
+﻿{
+  "type": "Microsoft.ServiceFabric/clusters",
+  "location": "West Europe",
+  "id": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourcegroups/TestServiceFabric11/providers/Microsoft.ServiceFabric/clusters/pksservicefabric11",
+  "name": "pksservicefabric11",
+  "tags": {
+    "hidden-resourceType": "Service Fabric",
+    "hidden-clusterName": "pksservicefabric11"
+  },
+  "properties": {
+
+    "clusterId": "bfb52d19-238b-4046-8e35-ad95697c79b6",
+    "managementEndpoint": "https://pksservicefabric11.westeurope.cloudapp.azure.com:19080",
+    "certificate": {
+      "thumbprint": "10A9BF925F41370FE55A4BDED2EF803505100C35",
+      "x509StoreName": "My"
+    },
+    "fabricSettings": [
+      {
+        "name": "Security",
+        "parameters": [
+          {
+            "name": "ClusterProtectionLevel",
+            "value": "EncryptAndSign"
+          }
+        ]
+      }
+    ],
+    "diagnosticsStorageAccountConfig": {
+      "storageAccountName": "qczknbuyveqr62",
+      "protectedAccountKeyName": "StorageAccountKey1",
+      "blobEndpoint": "https://qczknbuyveqr62.blob.core.windows.net/",
+      "queueEndpoint": "https://qczknbuyveqr62.queue.core.windows.net/",
+      "tableEndpoint": "https://qczknbuyveqr62.table.core.windows.net/"
+    },
+    "vmImage": "Windows",
+    "reliabilityLevel": "Silver",
+    "nodeTypes": [
+      {
+        "name": "nt1vm",
+        "placementProperties": {
+          "isPrimary": "true",
+          "vmNodeTypeSize": "Standard_A0"
+        },
+        "capacities": {
+          "memory": "100"
+        },
+        "clientConnectionEndpointPort": 19000,
+        "httpGatewayEndpointPort": 19080,
+        "applicationPorts": {
+          "startPort": 20000,
+          "endPort": 30000
+        },
+        "ephemeralPorts": {
+          "startPort": 49152,
+          "endPort": 65534
+        },
+        "isPrimary": true,
+        "vmInstanceCount": 5,
+        "durabilityLevel": "Bronze"
+      }
+    ]
+  }
+}

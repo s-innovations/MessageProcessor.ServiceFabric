@@ -38,7 +38,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
     [StatePersistence(StatePersistence.Persisted)]
     public class MessageClusterActor : Actor, IMessageClusterActor, IRemindable
     {
-        public const string CheckQueueSizesReminderName = "CheckQueueSizes";
+    //    public const string CheckQueueSizesReminderName = "CheckQueueSizes";
         public const string CheckProvisionReminderName = "CheckProvision";
         private const string StateKey = "mystate";
 
@@ -85,14 +85,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         {
             var clusterKey = this.Id.GetStringId();
 
-            if (reminderName.Equals(CheckQueueSizesReminderName))
-            {
-                var messageClusterConfiguration = await ClusterConfigStore.GetMessageClusterAsync(clusterKey);
-                var queueNodes = messageClusterConfiguration.Resources.OfType<ClusterQueueInfo>();
-                var startTasks = queueNodes.Select(node => ActorProxy.Create<IQueueManagerActor>(new ActorId(clusterKey + "/" + node.Name)).StartQueueLengthMonitorAsync()).ToArray();
-                await Task.WhenAll(startTasks);
-            }
-            else if (reminderName.Equals(CheckProvisionReminderName))
+            if (reminderName.Equals(CheckProvisionReminderName))
             {
 
                 ServiceFabricEventSource.Current.ActorMessage(this, $"Checking ProvisionState of Service Fabric Cluster");
@@ -107,28 +100,27 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                 {
                     var messageClusterConfiguration = await ClusterConfigStore.GetMessageClusterAsync(clusterKey);
                     var queueNodes = messageClusterConfiguration.Resources.OfType<ClusterQueueInfo>();
-                    ServiceFabricCluster update = GetUpdateInformation(fabricInfo, queueNodes);
-                    var nodesNotFound = queueNodes.Where(n => !fabricInfo.Properties.NodeTypes.Any(nn => nn.Name == n.Name));
 
-                    //Ensure All VMSS Nodes have been created
-                    var vmssNodes = queueNodes.Select(node => ActorProxy.Create<IVmssManagerActor>(new ActorId(clusterKey + "/" + node.Name)).CreateIfNotExistsAsync()).ToArray();
-                    
+                    var updateInfo = GetUpdateInformation(fabricInfo, queueNodes);
+
+                    var removeVMSSs = updateInfo.ShouldBeRemoved.Select(node => ActorProxy.Create<IVmssManagerActor>(new ActorId(clusterKey + "/" + node)).RemoveIfNotRemovedAsync()).ToArray();
+
                     //if no new nodes are to be added start queue monitoring.
-                    if (nodesNotFound.Any())
+                    if (updateInfo.ShouldBeRemoved.Any() || updateInfo.ShouldBeAdded.Any())
                     {
-                        fabricInfo = await azureClient.PutClusterInfoAsync(update);
+                        fabricInfo = await azureClient.PutClusterInfoAsync(updateInfo.Cluster);
 
                         if (fabricInfo.Properties.ProvisioningState == "Succeeded")
                         {
-                            await StartQueueMonitorReminderAsync(clusterKey);
+                            await StartVMSSQueueMonitoring(clusterKey, queueNodes);
                         }
 
                     }
-                    else {                       
-                        await StartQueueMonitorReminderAsync(clusterKey);
+                    else {
+                        await StartVMSSQueueMonitoring(clusterKey, queueNodes);
                     }
 
-                    await Task.WhenAll(vmssNodes);
+                   
                 }
 
 
@@ -136,7 +128,27 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
         }
 
-      
+        private async Task StartVMSSQueueMonitoring(string clusterKey, IEnumerable<ClusterQueueInfo> queueNodes)
+        {
+            var allCreated = true;
+            foreach (var queue in queueNodes)
+            {
+                var isVMSSCreated = await ActorProxy.Create<IVmssManagerActor>(new ActorId(clusterKey + "/" + queue.Name)).CreateIfNotExistsAsync();
+                if (isVMSSCreated)
+                {
+                    await ActorProxy.Create<IQueueManagerActor>(new ActorId(this.Id.GetStringId() + "/" + queue.Name)).StartQueueLengthMonitorAsync();
+                }
+                else
+                {
+                    allCreated = false;
+                }
+            }
+            if (allCreated)
+            {
+                await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));
+            }
+        }
+
 
         public async Task<string> StartMonitoringAsync()
         {
@@ -173,7 +185,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                 State.RunningActors.Remove(clusterKey);
 
                 await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));
-                await UnregisterReminderAsync(GetReminder(CheckQueueSizesReminderName));
+           //     await UnregisterReminderAsync(GetReminder(CheckQueueSizesReminderName));
 
                 await StateManager.SetStateAsync(StateKey, State);
 
@@ -183,16 +195,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         }
 
 
-        private async Task StartQueueMonitorReminderAsync(string clusterKey)
-        {
-            await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));
-
-            await RegisterReminderAsync(
-                                CheckQueueSizesReminderName,
-                                Encoding.UTF8.GetBytes(clusterKey),
-                                TimeSpan.FromMinutes(0),
-                                TimeSpan.FromMinutes(10));
-        }
+      
 
         private Task StartProvisionReminderAsync(string clusterKey)
         {
@@ -203,20 +206,37 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                 TimeSpan.FromMinutes(1));
         }
 
-        private static ServiceFabricCluster GetUpdateInformation(ServiceFabricCluster cluster, IEnumerable<ClusterQueueInfo> newNodes)
+        private static ServiceFabricClusterUpdateInformation GetUpdateInformation(ServiceFabricCluster cluster, IEnumerable<ClusterQueueInfo> allQueues)
         {
+            var shouldBeAdded = allQueues.Where(f => !cluster.Properties.NodeTypes.Any(n => n.Name == f.Name)).Select(k=>k.Name).ToArray();
+            var shouldBeRemoved = cluster.Properties.NodeTypes.Where(n => !n.IsPrimary && !allQueues.Any(f => f.Name == n.Name)).Select(k => k.Name).ToArray();
+
+
             var update = cluster.ToDTO();
             var prim = update.Properties.NodeTypes.Single(n => n.IsPrimary);
-            update.Properties.NodeTypes.AddRange(newNodes.Select(n => new ServiceFabricNode
+            update.Properties.NodeTypes.AddRange(allQueues.Select(n => new ServiceFabricNode
             {
                 Name = n.Name,
-                PlacementProperties = n.Properties.PlacementProperties
+                PlacementProperties = n.Properties.PlacementProperties,
+                Capacities = n.Properties.Capacities,                
+                VMInstanceCount = 1,
             }.CopyPortsFrom(prim)
             ).Where(f => !update.Properties.NodeTypes.Any(n => n.Name == f.Name)));
-            return update;
+
+            update.Properties.NodeTypes.RemoveAll(n => shouldBeRemoved.Contains(n.Name));
+
+            return new ServiceFabricClusterUpdateInformation{ Cluster = update, ShouldBeAdded = shouldBeAdded, ShouldBeRemoved = shouldBeRemoved};
         }
 
       
+    }
+
+    public class ServiceFabricClusterUpdateInformation
+    {
+        public ServiceFabricCluster Cluster { get; set; }
+        public string[] ShouldBeAdded { get; set; }
+        public string[] ShouldBeRemoved { get; set; }
+
     }
 }
 
