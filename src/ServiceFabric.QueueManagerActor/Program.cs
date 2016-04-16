@@ -109,6 +109,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
                     {
                         ActorGarbageCollectionSettings = new ActorGarbageCollectionSettings(120, 60)
                     });
+                    container.WithActor<DispatcherManagerActor>(new ActorServiceSettings()
+                    {
+                        ActorGarbageCollectionSettings = new ActorGarbageCollectionSettings(120, 60)
+                    });
 
                     ServiceFabricEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(ManagementApiService).Name);
 

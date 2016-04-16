@@ -1,6 +1,6 @@
 ﻿{
   "apiVersion": "2016-01-01",
-  "type": "SInnovations.MessageProcessor/MessageCluster",
+  "type": "S-Innovations.MessageProcessor/MessageCluster",
   "name": "MyCoolMessageCluster",
   "location": "West Europe",
   "properties": {
@@ -8,17 +8,44 @@
   },
   "variables": {
     "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.ServiceBus/namespaces/sb-qczknbuyve",
-    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.ServiceBus/namespaces/sb-qczknbuyve/authorizationRules/RootManageSharedAccessKey"
+    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.ServiceBus/namespaces/sb-qczknbuyve/authorizationRules/RootManageSharedAccessKey",
+    "queueDescription": {
+      "enableBatchedOperations": true,
+      "enableDeadLetteringOnMessageExpiration": true,
+      "enableExpress": true,
+      "enablePartitioning": true
+    }
   },
   "resources": [
     {
-      "type": "SInnovations.MessageProcessor/queue",
+      "type": "S-Innovations.MessageProcessor/dispatcher",
+      "name": "algs",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "topicScaleCount": 2,
+        "correlationFilters": {
+          "algorithm-a0": "algorithm-a0",
+          "algorithm-a1": "algorithm-a1",
+          "algorithm-a2": "algorithm-a2",
+          "algorithm-a3": "algorithm-a3",
+          "algorithm-a4": "algorithm-a4",
+          "algorithm-a5": "algorithm-a5",
+          "algorithm-a6": "algorithm-a6"
+        }
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a0",
       "properties": {
         "servicebus": {
           "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
+        "queueDescription": "[variables('queueDescription')]",
         "vmss": {
           "name": "Standard_A0",
           "tire": "Standard",
@@ -30,13 +57,14 @@
       }
     },
     {
-      "type": "SInnovations.MessageProcessor/queue",
+      "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a1",
       "properties": {
         "servicebus": {
           "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
+        "queueDescription": "[variables('queueDescription')]",
         "vmss": {
           "name": "Standard_A1",
           "tire": "Standard",
@@ -48,13 +76,14 @@
       }
     },
     {
-      "type": "SInnovations.MessageProcessor/queue",
+      "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a2",
       "properties": {
         "servicebus": {
           "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
+        "queueDescription": "[variables('queueDescription')]",
         "vmss": {
           "name": "Standard_A2",
           "tire": "Standard",
@@ -66,13 +95,14 @@
       }
     },
     {
-      "type": "SInnovations.MessageProcessor/queue",
+      "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a3",
       "properties": {
         "servicebus": {
           "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
+        "queueDescription": "[variables('queueDescription')]",
         "vmss": {
           "name": "Standard_A3",
           "tire": "Standard",
@@ -84,13 +114,14 @@
       }
     },
     {
-      "type": "SInnovations.MessageProcessor/queue",
+      "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a4",
       "properties": {
         "servicebus": {
           "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
+        "queueDescription": "[variables('queueDescription')]",
         "vmss": {
           "name": "Standard_A4",
           "tire": "Standard",
@@ -102,13 +133,14 @@
       }
     },
     {
-      "type": "SInnovations.MessageProcessor/queue",
+      "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a5",
       "properties": {
         "servicebus": {
           "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
+        "queueDescription": "[variables('queueDescription')]",
         "vmss": {
           "name": "Standard_A5",
           "tire": "Standard",
@@ -120,13 +152,14 @@
       }
     },
     {
-      "type": "SInnovations.MessageProcessor/queue",
+      "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a6",
       "properties": {
         "servicebus": {
           "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
+        "queueDescription": "[variables('queueDescription')]",
         "vmss": {
           "name": "Standard_A6",
           "tire": "Standard",

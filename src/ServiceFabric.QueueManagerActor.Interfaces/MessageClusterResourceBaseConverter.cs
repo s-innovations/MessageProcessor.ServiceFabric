@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -10,34 +11,57 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions
 {
+    public class VariableReplacableAttribute : Attribute
+    {
+
+    }
     public class VariableReplacerConverter : JsonConverter
     {
-        private Dictionary<string, string> dictionary;
+        private JToken variables;
 
-        public VariableReplacerConverter(Dictionary<string, string> dictionary)
+        public VariableReplacerConverter(JToken variables)
         {
-            this.dictionary = dictionary;
+            this.variables = variables;
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(string) == objectType;
+            return typeof(string) == objectType || Attribute.IsDefined(objectType,typeof(VariableReplacableAttribute));
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-           var token= JToken.Load(reader).ToString();
-            if (token.StartsWith("["))
+            var token = JToken.Load(reader);
+            if (token.Type == JTokenType.String)
             {
-                token= Regex.Replace(token, "\\[variables\\('(.*)'\\)\\]", m =>
-                  {
-                      if (m.Success)
-                          return dictionary[m.Groups[1].Value];
-                      return m.Value;
-                  });
+                var strToken = token.ToString();
+                if (strToken.StartsWith("["))
+                {
+                    token = JToken.Parse(Regex.Replace(strToken, "\\[variables\\('(.*)'\\)\\]", m =>
+                       {
+                           if (m.Success)
+                           {
+                               var newValue = variables.SelectToken(m.Groups[1].Value);
+                               if(newValue.Type == JTokenType.String)
+                                   return $"'{newValue.ToString()}'";
+                               return newValue.ToString();
+                           }
+                           return $"'{m.Value}'";
+                       }));
+                }
+                if (objectType == typeof(string))
+                    return token.ToString();
+
+              //  serializer.Deserialize(JObject.Parse( token.ToString() ).CreateReader(), objectType);
             }
-            return token;
+
+            var obj = Activator.CreateInstance(objectType);
+            serializer.Populate(token.CreateReader(), obj);
+            return obj;
+            
         }
+        public override bool CanWrite
+        { get { return false; } }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -68,11 +92,15 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions
                     obj = new ClusterQueueInfo();
                     serializer.Populate(item.CreateReader(), obj);
                     break;
-                 
+
+                case MessageClusterResourceBase.DispatcherType:
+                    obj = new ClusterDispatcherInfo();
+                    serializer.Populate(item.CreateReader(), obj);
+                    break;
 
                 case MessageClusterResourceBase.MessageClusterType:
                     obj = new MessageClusterResource();
-                    var vars = new VariableReplacerConverter(item["variables"].ToObject<Dictionary<string, string>>());
+                    var vars = new VariableReplacerConverter(item.SelectToken("variables"));
                     serializer.Converters.Add(vars);
                     serializer.Populate(item.CreateReader(), obj);
                     serializer.Converters.Remove(vars);

@@ -60,12 +60,12 @@
       <HintPath>..\..\packages\Microsoft.Azure.ResourceManager.1.0.0-preview\lib\net45\Microsoft.Azure.ResourceManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.23.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.23.302261847\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.24.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.24.304111323\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.23.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.23.302261847\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.24.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.24.304111323\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Rest.ClientRuntime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -89,16 +89,16 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.Azure.ResourceManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\S-Innovations.Azure.ResourceManager\src\Core\bin\Debug\S-Innovations.Azure.ResourceManager.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.Azure.ResourceManager.1.0.0-pre-2016041001\lib\net46\S-Innovations.Azure.ResourceManager.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.VSTeamServices.TasksBuilder, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\S-Innovations.VSTeamServices\src\TasksBuilder.Core\bin\Debug\S-Innovations.VSTeamServices.TasksBuilder.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.1.0.0-pre-2016041501\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\S-Innovations.VSTeamServices\src\TasksBuilder.KeyVault\bin\Debug\S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager.1.0.0-pre-2016041501\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

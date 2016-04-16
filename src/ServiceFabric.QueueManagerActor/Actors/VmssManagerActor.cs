@@ -62,6 +62,21 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
     public class VmssManagerActor : Actor, IVmssManagerActor, IRemindable
     {
         public const string CheckProvision = "CheckProvision";
+        private const string StateKey = "mystate";
+
+
+        [DataContract]
+        public class ActorState
+        {
+           
+            [DataMember]
+            public bool IsInitialized { get; set; }
+
+            [DataMember]
+            public bool IsStarted { get; set; }
+
+        }
+
         /// <summary>
         /// Cluster Configuration Store
         /// </summary>       
@@ -73,57 +88,76 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         }
 
 
-      
+
 
         protected override Task OnActivateAsync()
         {
-            return base.OnActivateAsync();
+            return StateManager.TryAddStateAsync(StateKey, new ActorState { });
         }
         protected override Task OnDeactivateAsync()
         {
             return base.OnDeactivateAsync();
         }
 
-        private Task StartProvisionReminder()
+        private async Task StartProvisionReminderAsync()
         {
-            Task<IActorReminder> reg2 = RegisterReminderAsync(
+            ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
+            await RegisterReminderAsync(
                                       CheckProvision,
                                       new Byte[0],
                                       TimeSpan.FromMinutes(0),
                                       TimeSpan.FromMinutes(1));
-            return reg2;
+            State.IsStarted = true;
+            await StateManager.SetStateAsync(StateKey, State);
+
         }
         public async Task<bool> RemoveIfNotRemovedAsync()
         {
-            await StartProvisionReminder();
+      //      await StartProvisionReminderAsync();
             return false;
         }
+        public async Task<bool> IsInitializedAsync()
+        {
+
+            ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
+            return State.IsInitialized;
+        }
+
         public async Task<bool> CreateIfNotExistsAsync()
         {
-            var clusterKey = this.Id.GetStringId();
-            var config = this.GetConfigurationInfo();
-            var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
-            var nodeName = queue.Name;
+            ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
 
-            using (var armClient = new ResourceManagementClient(new TokenCredentials(await config.GetAccessToken())))
-            {
-                armClient.SubscriptionId = config.SubscriptionId;
+            if (State.IsInitialized)
+                return true;
+            if (State.IsStarted)
+                return false;
+            //var clusterKey = this.Id.GetStringId();
+            //var config = this.GetConfigurationInfo();
+            //var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
+            //var nodeName = queue.Name;
 
-                var deployments = await armClient.Deployments.ListAsync(config.ResourceGroupName);
-                var last = deployments.FirstOrDefault(f => f.Name.StartsWith($"vmss-{nodeName}-"));
-                while(last==null && !string.IsNullOrEmpty( deployments.NextPageLink))
-                {
-                   deployments = await armClient.Deployments.ListNextAsync(deployments.NextPageLink);
-                   last = deployments.FirstOrDefault(f => f.Name.StartsWith($"vmss-{nodeName}-"));
-                }
-                if(last.Properties.ProvisioningState == "Succeeded")
-                {
-                    return true;
-                }
+            //using (var armClient = new ResourceManagementClient(new TokenCredentials(await config.GetAccessToken())))
+            //{
+            //    armClient.SubscriptionId = config.SubscriptionId;
 
-            }
+            //    var deployments = await armClient.Deployments.ListAsync(config.ResourceGroupName);
+            //    var last = deployments.FirstOrDefault(f => f.Name.StartsWith($"vmss-{nodeName}-"));
+            //    while(last==null && !string.IsNullOrEmpty( deployments.NextPageLink))
+            //    {
+            //       deployments = await armClient.Deployments.ListNextAsync(deployments.NextPageLink);
+            //       last = deployments.FirstOrDefault(f => f.Name.StartsWith($"vmss-{nodeName}-"));
+            //    }
+            //    if(last.Properties.ProvisioningState == "Succeeded")
+            //    {
+            //        ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
+            //        State.IsInitialized = true;
+            //        await StateManager.SetStateAsync(StateKey, State);
+            //        return true;
+            //    }
 
-            await StartProvisionReminder();
+            //}
+
+            await StartProvisionReminderAsync();
 
 
             return false;
@@ -159,7 +193,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                                 "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.KeyVault/vaults/kv-qczknbuyveqr6qczknbu"),
                             ResourceManagerHelper.CreateValue("certificateUrlValue", "https://kv-qczknbuyveqr6qczknbu.vault.azure.net/secrets/ServiceFabricCert/2d05b9c715fa4b26bc0874cf550b5993")
                             );
-                        await ResourceManagerHelper.CreateTemplateDeploymentAsync(
+                        var deployment = await ResourceManagerHelper.CreateTemplateDeploymentAsync(
                                                  new ApplicationCredentials
                                                  {
                                                      AccessToken = await config.GetAccessToken(),
@@ -171,6 +205,12 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                                  parameters,
                                                  false
                                                  );
+                        if (deployment.Properties.ProvisioningState == "Succeeded")
+                        {
+                            ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
+                            State.IsInitialized = true;
+                            await StateManager.SetStateAsync(StateKey, State);
+                        }
                     }
                     else
                     {

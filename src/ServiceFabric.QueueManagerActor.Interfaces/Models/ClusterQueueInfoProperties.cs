@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
 {
+
+    [VariableReplacable]
     public class ClusterQueueInfoProperties
     {
         public ClusterQueueInfoProperties()
@@ -15,6 +17,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
         }
         public ClusterVmssInfo Vmss { get; set; }
         public ServiceBusInfo ServiceBus { get; set; }
+        public QueueInfo QueueDescription { get; set; }
         public Dictionary<string, string> PlacementProperties { get; set; }
         public Dictionary<string, int> Capacities { get; set; }
     }

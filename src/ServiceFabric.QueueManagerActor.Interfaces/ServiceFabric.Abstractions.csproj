@@ -99,10 +99,12 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\IDispatcherManagerActor.cs" />
     <Compile Include="Actors\IQueueListenerActor.cs" />
     <Compile Include="Actors\IQueueManagerActor.cs" />
     <Compile Include="Actors\IVmssManagerActor.cs" />
     <Compile Include="MessageClusterResourceBaseConverter.cs" />
+    <Compile Include="Models\ClusterDispatcherInfo.cs" />
     <Compile Include="Models\ClusterInfo.cs" />
     <Compile Include="Models\ClusterQueue.cs" />
     <Compile Include="Models\ClusterQueueInfoProperties.cs" />
@@ -110,6 +112,7 @@
     <Compile Include="Models\MessageClusterResource.cs" />
     <Compile Include="Models\MessageClusterResourceBase.cs" />
     <Compile Include="Models\MessageClusterResourceProperties.cs" />
+    <Compile Include="Models\QueueInfo.cs" />
     <Compile Include="Models\ServiceBusInfo.cs" />
     <Compile Include="Owin\IOwinAppBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

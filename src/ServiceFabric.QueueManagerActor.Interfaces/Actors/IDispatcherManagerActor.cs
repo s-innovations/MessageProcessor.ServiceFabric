@@ -7,10 +7,8 @@ using Microsoft.ServiceFabric.Actors;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
 {
-    public interface IQueueManagerActor : IActor
+    public interface IDispatcherManagerActor : IActor
     {
-        Task StartQueueLengthMonitorAsync();
-        Task<string> GetPathAsync();
-        Task<bool> IsInitializedAsync();
+        Task InitializeAsync();
     }
 }

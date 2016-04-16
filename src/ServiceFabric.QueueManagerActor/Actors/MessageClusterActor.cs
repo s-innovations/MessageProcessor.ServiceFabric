@@ -100,7 +100,6 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                 {
                     var messageClusterConfiguration = await ClusterConfigStore.GetMessageClusterAsync(clusterKey);
                     var queueNodes = messageClusterConfiguration.Resources.OfType<ClusterQueueInfo>();
-
                     var updateInfo = GetUpdateInformation(fabricInfo, queueNodes);
 
                     var removeVMSSs = updateInfo.ShouldBeRemoved.Select(node => ActorProxy.Create<IVmssManagerActor>(new ActorId(clusterKey + "/" + node)).RemoveIfNotRemovedAsync()).ToArray();
@@ -112,15 +111,15 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                         if (fabricInfo.Properties.ProvisioningState == "Succeeded")
                         {
-                            await StartVMSSQueueMonitoring(clusterKey, queueNodes);
+                            await ServiceFabricClusterProvisioned(messageClusterConfiguration.Resources);
                         }
 
                     }
                     else {
-                        await StartVMSSQueueMonitoring(clusterKey, queueNodes);
+                        await ServiceFabricClusterProvisioned(messageClusterConfiguration.Resources);
                     }
 
-                   
+                    
                 }
 
 
@@ -128,12 +127,13 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
         }
 
-        private async Task StartVMSSQueueMonitoring(string clusterKey, IEnumerable<ClusterQueueInfo> queueNodes)
+        private async Task ServiceFabricClusterProvisioned(IEnumerable<MessageClusterResourceBase> resources)
         {
+            var queueNodes = resources.OfType<ClusterQueueInfo>();
             var allCreated = true;
             foreach (var queue in queueNodes)
             {
-                var isVMSSCreated = await ActorProxy.Create<IVmssManagerActor>(new ActorId(clusterKey + "/" + queue.Name)).CreateIfNotExistsAsync();
+                var isVMSSCreated = await ActorProxy.Create<IVmssManagerActor>(new ActorId(this.Id.GetStringId() + "/" + queue.Name)).CreateIfNotExistsAsync();
                 if (isVMSSCreated)
                 {
                     await ActorProxy.Create<IQueueManagerActor>(new ActorId(this.Id.GetStringId() + "/" + queue.Name)).StartQueueLengthMonitorAsync();
@@ -143,10 +143,25 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                     allCreated = false;
                 }
             }
+
+            foreach (var dispatcheer in resources.OfType<ClusterDispatcherInfo>())
+            {
+                var all = await Task.WhenAll(dispatcheer.Properties.CorrelationFilters.Values.Select(d=> ActorProxy.Create<IQueueManagerActor>(new ActorId(this.Id.GetStringId() + "/" + d)).IsInitializedAsync()));
+                if (all.All(d => d))
+                {
+                    await ActorProxy.Create<IDispatcherManagerActor>(new ActorId(this.Id.GetStringId() + "/" + dispatcheer.Name)).InitializeAsync();
+                }else
+                {
+                    allCreated = false;
+                }
+
+            }
+
             if (allCreated)
             {
                 await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));
             }
+
         }
 
 

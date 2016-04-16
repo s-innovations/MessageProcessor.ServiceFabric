@@ -35,4 +35,11 @@
    <Section Name="QueueListenerActorServiceReplicatorSecurityConfig">
       <Parameter Name="CredentialType" Value="None" />
    </Section>
+   <Section Name="DispatcherManagerActorServiceReplicatorConfig">
+      <Parameter Name="ReplicatorEndpoint" Value="DispatcherManagerActorServiceReplicatorEndpoint" />
+      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+   </Section>
+   <Section Name="DispatcherManagerActorServiceReplicatorSecurityConfig">
+      <Parameter Name="CredentialType" Value="None" />
+   </Section>
 </Settings>

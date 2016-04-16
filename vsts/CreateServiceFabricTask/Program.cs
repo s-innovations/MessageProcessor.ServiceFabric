@@ -34,6 +34,7 @@ namespace CreateServiceFabricTask
             this.Source.Add(new JsonPathSetter("variables.capacity", Capacity));
         }
 
+
         [Option("DefaultCapacity", HelpText = "The Default Vmss Capacity", DefaultValue = 5)]
         public int Capacity { get; set; }
     }

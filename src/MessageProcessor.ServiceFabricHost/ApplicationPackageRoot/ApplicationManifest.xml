@@ -14,6 +14,9 @@
       <Parameter Name="QueueManagerActorService_TargetReplicaSetSize" DefaultValue="3"/>
       <Parameter Name="QueueListenerActorService_MinReplicaSetSize" DefaultValue="1"/>
       <Parameter Name="QueueListenerActorService_TargetReplicaSetSize" DefaultValue="1"/>
+      <Parameter Name="DispatcherManagerActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="DispatcherManagerActorService_MinReplicaSetSize" DefaultValue="1"/>
+      <Parameter Name="DispatcherManagerActorService_TargetReplicaSetSize" DefaultValue="1"/>
    </Parameters>
    <ServiceManifestImport>
       <ServiceManifestRef ServiceManifestName="FabricActorServicePkg" ServiceManifestVersion="1.0.3"/>
@@ -50,6 +53,11 @@
       <Service Name="QueueManagerActorService" GeneratedIdRef="1e2fb51f-2780-48ee-a254-d1e5d78e780e|None">
          <StatefulService ServiceTypeName="QueueManagerActorServiceType" TargetReplicaSetSize="[QueueManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[QueueManagerActorService_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[QueueManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
+         </StatefulService>
+      </Service>
+      <Service Name="DispatcherManagerActorService" GeneratedIdRef="e71102f2-0023-4765-8a3d-bcfa1a564ec3|None">
+         <StatefulService ServiceTypeName="DispatcherManagerActorServiceType" TargetReplicaSetSize="[DispatcherManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[DispatcherManagerActorService_MinReplicaSetSize]">
+            <UniformInt64Partition PartitionCount="[DispatcherManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
          </StatefulService>
       </Service>
       
