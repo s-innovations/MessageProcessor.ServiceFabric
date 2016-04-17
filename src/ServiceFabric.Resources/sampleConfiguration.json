@@ -1,7 +1,7 @@
 ﻿{
   "apiVersion": "2016-01-01",
   "type": "S-Innovations.MessageProcessor/MessageCluster",
-  "name": "MyCoolMessageCluster",
+  "name": "myname",
   "location": "West Europe",
   "properties": {
 
@@ -46,13 +46,26 @@
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
         "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType"
+        },
         "vmss": {
           "name": "Standard_A0",
-          "tire": "Standard",
+          "tier": "Standard",
           "vmImagePublisher": "MicrosoftWindowsServer",
           "vmImageOffer": "WindowsServer",
           "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest"
+          "vmImageVersion": "latest",
+          "location": "West Europe",
+          "minCapacity": 1,
+          "maxCapacity": 10,
+          "messagesPerInstance": 10,
+          "scaleDownCooldown": "PT10M",
+          "scaleUpCooldown" :  "PT1M"
         }
       }
     },
@@ -65,9 +78,16 @@
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
         "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType"
+        },
         "vmss": {
           "name": "Standard_A1",
-          "tire": "Standard",
+          "tier": "Standard",
           "vmImagePublisher": "MicrosoftWindowsServer",
           "vmImageOffer": "WindowsServer",
           "vmImageSku": "2012-R2-Datacenter",
@@ -84,9 +104,16 @@
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
         "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType"
+        },
         "vmss": {
           "name": "Standard_A2",
-          "tire": "Standard",
+          "tier": "Standard",
           "vmImagePublisher": "MicrosoftWindowsServer",
           "vmImageOffer": "WindowsServer",
           "vmImageSku": "2012-R2-Datacenter",
@@ -103,13 +130,21 @@
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
         "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType"
+        },
         "vmss": {
           "name": "Standard_A3",
-          "tire": "Standard",
+          "tier": "Standard",
           "vmImagePublisher": "MicrosoftWindowsServer",
           "vmImageOffer": "WindowsServer",
           "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest"
+          "vmImageVersion": "latest",
+          "serviceTypeName": "TestProcessorType"
         }
       }
     },
@@ -122,9 +157,16 @@
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
         "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType"
+        },
         "vmss": {
           "name": "Standard_A4",
-          "tire": "Standard",
+          "tier": "Standard",
           "vmImagePublisher": "MicrosoftWindowsServer",
           "vmImageOffer": "WindowsServer",
           "vmImageSku": "2012-R2-Datacenter",
@@ -141,13 +183,21 @@
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
         "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType"
+        },
         "vmss": {
           "name": "Standard_A5",
-          "tire": "Standard",
+          "tier": "Standard",
           "vmImagePublisher": "MicrosoftWindowsServer",
           "vmImageOffer": "WindowsServer",
           "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest"
+          "vmImageVersion": "latest",
+          "serviceTypeName": "TestProcessorType"
         }
       }
     },
@@ -160,9 +210,16 @@
           "authRuleResourceId": "[variables('authRuleResourceId')]"
         },
         "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType"
+        },
         "vmss": {
           "name": "Standard_A6",
-          "tire": "Standard",
+          "tier": "Standard",
           "vmImagePublisher": "MicrosoftWindowsServer",
           "vmImageOffer": "WindowsServer",
           "vmImageSku": "2012-R2-Datacenter",

@@ -9,6 +9,6 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
 {
     public interface IDispatcherManagerActor : IActor
     {
-        Task InitializeAsync();
+        Task StartMonitoringAsync();
     }
 }

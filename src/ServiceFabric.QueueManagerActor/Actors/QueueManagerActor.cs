@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Fabric;
+using System.Fabric.Description;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
+using Microsoft.ServiceFabric.Actors;
+using Microsoft.ServiceFabric.Actors.Client;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
@@ -11,6 +16,7 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 {
@@ -35,6 +41,12 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             public bool IsInitialized { get; set; }
             [DataMember]
             public string Path { get; set; }
+            //     [DataMember]
+            //     public DateTimeOffset LastActive { get; set; }
+            [DataMember]
+            public DateTimeOffset LastScaleAction { get; set; }
+            // [DataMember]
+            // public DateTimeOffset LastScaleDownAction { get; set; }
         }
 
         /// <summary>
@@ -58,80 +70,208 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
             return State.IsInitialized;
         }
+
+        private FabricClient GetFabricClient()
+        {
+            return new FabricClient();
+        }
+
         public async Task ReceiveReminderAsync(string reminderName, byte[] context, TimeSpan dueTime, TimeSpan period)
         {
 
             if (reminderName.Equals(CheckProvision))
             {
                 ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
-
-                var clusterKey = this.Id.GetStringId();//Subscription/ResourceGroup/clustername/nodename; 
-                var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
-
-                if (State.Keys == null || !State.Keys.IsAccessible)
+                try
                 {
+                    var clusterKey = this.Id.GetStringId();//Subscription/ResourceGroup/clustername/nodename; 
+                    var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
 
-                    var authRuleResourceId = queue.Properties.ServiceBus.AuthRuleResourceId;
-                    var client = new ArmClient(await this.GetConfigurationInfo().GetAccessToken());
-                    State.Keys = await client.ListKeysAsync<ServicebusAuthorizationKeys>(authRuleResourceId, "2015-08-01");
-                    State.Path = queue.Name;
+                    if (!State.IsInitialized)
+                    {
+
+                        var client = new ArmClient(await this.GetConfigurationInfo().GetAccessToken());
+
+                        if (State.Keys == null || !State.Keys.IsAccessible)
+                        {
+
+                            var authRuleResourceId = queue.Properties.ServiceBus.AuthRuleResourceId;
+
+                            State.Keys = await client.ListKeysAsync<ServicebusAuthorizationKeys>(authRuleResourceId, "2015-08-01");
+                            State.Path = queue.Name;
 
 
+                        }
+
+                        if (!State.Keys.IsAccessible)
+                        {
+                            Logger.Warn("Servicebus keys  are not accessible");
+                            return;
+                        }
+
+
+                        //  queue.Properties.ServiceBus.ServicebusNamespaceId
+                        var ns = NamespaceManager.CreateFromConnectionString(State.Keys.PrimaryConnectionString);
+                        if (!await ns.QueueExistsAsync(queue.Name))
+                        {
+                            var qd = queue.Properties.QueueDescription;
+                            if (qd == null)
+                            {
+                                Logger.Warn("Servicebus queue do not exist");
+                                return;
+                            }
+
+                            var q = new QueueDescription(queue.Name);
+                            if (qd.AutoDeleteOnIdle.IsPresent())
+                                q.AutoDeleteOnIdle = XmlConvert.ToTimeSpan(qd.AutoDeleteOnIdle);
+                            if (qd.DefaultMessageTimeToLive.IsPresent())
+                                q.DefaultMessageTimeToLive = XmlConvert.ToTimeSpan(qd.DefaultMessageTimeToLive);
+                            if (qd.DuplicateDetectionHistoryTimeWindow.IsPresent())
+                            {
+                                q.RequiresDuplicateDetection = true;
+                                q.DuplicateDetectionHistoryTimeWindow = XmlConvert.ToTimeSpan(qd.DuplicateDetectionHistoryTimeWindow);
+                            }
+                            q.EnableBatchedOperations = qd.EnableBatchedOperations;
+                            q.EnableDeadLetteringOnMessageExpiration = qd.EnableDeadLetteringOnMessageExpiration;
+                            q.EnableExpress = qd.EnableExpress;
+                            q.EnablePartitioning = qd.EnablePartitioning;
+                            if (qd.ForwardDeadLetteredMessagesTo.IsPresent())
+                            {
+                                q.ForwardDeadLetteredMessagesTo = qd.ForwardDeadLetteredMessagesTo;
+                            }
+                            if (qd.ForwardTo.IsPresent())
+                            {
+                                q.ForwardTo = qd.ForwardTo;
+                            }
+
+                            await ns.CreateQueueAsync(q);
+                        }
+
+                        State.IsInitialized = true;
+
+                    }
+
+                    if (State.IsInitialized)
+                    {
+                        var ns = NamespaceManager.CreateFromConnectionString(State.Keys.PrimaryConnectionString);
+
+                        var sbQueue = await ns.GetQueueAsync(queue.Name);
+                        Logger.Info($"Checking Queue information for {sbQueue.Path}, {sbQueue.MessageCount}, {sbQueue.MessageCountDetails.ActiveMessageCount}, {sbQueue.MessageCountDetails.DeadLetterMessageCount}, {sbQueue.MessageCountDetails.ScheduledMessageCount}, {sbQueue.MessageCountDetails.TransferDeadLetterMessageCount}, {sbQueue.MessageCountDetails.TransferMessageCount}");
+                        var parts = clusterKey.Split('/');
+                        var applicationName = new Uri($"fabric:/{parts[parts.Length - 2]}");
+                        var serviceName = new Uri($"fabric:/{parts[parts.Length - 2]}/{parts[parts.Length-1]}");
+
+                        var vmssManager = ActorProxy.Create<IVmssManagerActor>(this.Id);
+
+                        if (sbQueue.MessageCountDetails.ActiveMessageCount > 0 || queue.Properties.Vmss.MinCapacity > 0)
+                        {
+                            //Handle Capacity Scaling of VMSS
+                            var wantedCapacity = Math.Max(queue.Properties.Vmss.MinCapacity,
+                                    Math.Min(queue.Properties.Vmss.MaxCapacity, queue.Properties.Vmss.MessagesPerInstance > 0 ?
+                                (sbQueue.MessageCountDetails.ActiveMessageCount / queue.Properties.Vmss.MessagesPerInstance) + 1 :
+                                1));
+                            var currentCapacity = await vmssManager.GetCapacityAsync();
+
+                            if ((wantedCapacity > currentCapacity && DateTimeOffset.UtcNow - XmlConvert.ToTimeSpan(queue.Properties.Vmss.ScaleUpCooldown) > State.LastScaleAction) ||
+                                (wantedCapacity < currentCapacity && DateTimeOffset.UtcNow - XmlConvert.ToTimeSpan(queue.Properties.Vmss.ScaleDownCooldown) > State.LastScaleAction))
+                            {
+                                await vmssManager.SetCapacityAsync((int)wantedCapacity);
+                                State.LastScaleAction = DateTimeOffset.UtcNow;
+                            }
+
+                            //Handle Listener Application Deployment
+
+                            var fabricClient = GetFabricClient();
+                            var listenerDescription = queue.Properties.ListenerDescription;
+
+                            var apps = await fabricClient.QueryManager.GetApplicationListAsync(applicationName);
+                            if (!apps.Any())
+                            {
+
+                                var appTypes = await fabricClient.QueryManager.GetApplicationTypeListAsync(listenerDescription.ApplicationTypeName);
+                                if (!appTypes.Any(a => a.ApplicationTypeName == listenerDescription.ApplicationTypeName && a.ApplicationTypeVersion == listenerDescription.ApplicationTypeVersion))
+                                {
+                                    Logger.Error("The listener application was not registed with service fabric");
+                                    return;
+                                }
+
+                                await fabricClient.ApplicationManager.CreateApplicationAsync(new ApplicationDescription
+                                {
+                                    ApplicationName = applicationName,
+                                    ApplicationTypeName = listenerDescription.ApplicationTypeName,
+                                    ApplicationTypeVersion = listenerDescription.ApplicationTypeVersion,
+                                });
+
+                            }
+
+
+
+                            var registered = await fabricClient.QueryManager.GetServiceListAsync(applicationName, serviceName);
+
+
+                            if (!registered.Any())
+                            {
+
+                                var serviceType =await fabricClient.QueryManager.GetServiceTypeListAsync(listenerDescription.ApplicationTypeName, listenerDescription.ApplicationTypeVersion,listenerDescription.ServiceTypeName);
+                                if (!serviceType.Any())
+                                {
+                                    Logger.Error("The listener application service type was not registed with service fabric");
+                                    return;
+                                }
+
+
+                                try
+                                {
+
+                                    await fabricClient.ServiceManager.CreateServiceAsync(new StatelessServiceDescription
+                                    {
+                                        ServiceTypeName = listenerDescription.ServiceTypeName, //QueueListenerService.ServiceType, // ServiceFabricConstants.ActorServiceTypes.QueueListenerActorService,
+                                        ServiceName = serviceName,
+                                        PartitionSchemeDescription = new UniformInt64RangePartitionSchemeDescription
+                                        {
+                                            PartitionCount = queue.Properties.ListenerDescription.PartitionCount,
+                                            LowKey = Int64.MinValue,
+                                            HighKey = Int64.MaxValue
+                                        },
+                                        InstanceCount = -1, //One for each node,
+                                        PlacementConstraints = $"NodeTypeName == {queue.Name}",
+                                        ApplicationName = applicationName,
+                                        //  InitializationData = 
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                            }
+
+                        }
+                        else
+                        {
+
+                            if ((DateTimeOffset.UtcNow - (XmlConvert.ToTimeSpan(queue.Properties.ListenerDescription.IdleTimeout))) > State.LastScaleAction)
+                            {
+                                await vmssManager.SetCapacityAsync(0);
+                                var fabricClient = GetFabricClient();
+                                var registered = await fabricClient.QueryManager.GetServiceListAsync(applicationName, serviceName);
+                                if (registered.Any())
+                                {
+                                    await fabricClient.ServiceManager.DeleteServiceAsync(serviceName);
+                                }
+
+                            }
+                        }
+                    }
                 }
-
-                if (!State.Keys.IsAccessible)
+                catch(Exception ex)
                 {
-                    Logger.Warn("Servicebus keys  are not accessible");
-                    return;
+                    Logger.ErrorException("Reminder Error:", ex);
+                    throw;
                 }
-
-
-                //  queue.Properties.ServiceBus.ServicebusNamespaceId
-                var ns = NamespaceManager.CreateFromConnectionString(State.Keys.PrimaryConnectionString);
-                if (!await ns.QueueExistsAsync(queue.Name))
+                finally
                 {
-                    var qd = queue.Properties.QueueDescription;
-                    if (qd == null)
-                    {
-                        Logger.Warn("Servicebus queue do not exist");
-                        return;
-                    }
-
-                    var q = new QueueDescription(queue.Name);
-                    if (qd.AutoDeleteOnIdle.IsPresent())
-                        q.AutoDeleteOnIdle = XmlConvert.ToTimeSpan(qd.AutoDeleteOnIdle);
-                    if (qd.DefaultMessageTimeToLive.IsPresent())
-                        q.DefaultMessageTimeToLive = XmlConvert.ToTimeSpan(qd.DefaultMessageTimeToLive);
-                    if (qd.DuplicateDetectionHistoryTimeWindow.IsPresent())
-                    {
-                        q.RequiresDuplicateDetection = true;
-                        q.DuplicateDetectionHistoryTimeWindow = XmlConvert.ToTimeSpan(qd.DuplicateDetectionHistoryTimeWindow);
-                    }
-                    q.EnableBatchedOperations = qd.EnableBatchedOperations;
-                    q.EnableDeadLetteringOnMessageExpiration = qd.EnableDeadLetteringOnMessageExpiration;
-                    q.EnableExpress = qd.EnableExpress;
-                    q.EnablePartitioning = qd.EnablePartitioning;
-                    if (qd.ForwardDeadLetteredMessagesTo.IsPresent())
-                    {
-                        q.ForwardDeadLetteredMessagesTo = qd.ForwardDeadLetteredMessagesTo;
-                    }
-                    if (qd.ForwardTo.IsPresent())
-                    {
-                        q.ForwardTo = qd.ForwardTo;
-                    }
-
-                    await ns.CreateQueueAsync(q);
+                    await StateManager.SetStateAsync(StateKey, State);
                 }
-
-                State.IsInitialized = true;
-                await StateManager.SetStateAsync(StateKey, State);
-
-                var sbQueue = await ns.GetQueueAsync(queue.Name);
-                Logger.Info($"Checking Queue information for {sbQueue.Path}, {sbQueue.MessageCount}, {sbQueue.MessageCountDetails.ActiveMessageCount}, {sbQueue.MessageCountDetails.DeadLetterMessageCount}, {sbQueue.MessageCountDetails.ScheduledMessageCount}, {sbQueue.MessageCountDetails.TransferDeadLetterMessageCount}, {sbQueue.MessageCountDetails.TransferMessageCount}");
-
-
-
-
             }
 
         }
@@ -141,10 +281,16 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
         protected override Task OnActivateAsync()
         {
-            return StateManager.TryAddStateAsync(StateKey, new ActorState { Keys = null });
+            return StateManager.TryAddStateAsync(StateKey, new ActorState
+            {
+                Keys = null,
+                //    LastActive = DateTimeOffset.MinValue,
+                LastScaleAction = DateTimeOffset.MinValue,
+                //  LastScaleUpAction = DateTimeOffset.MinValue,
+            });
         }
 
-        public async Task StartQueueLengthMonitorAsync()
+        public async Task StartMonitoringAsync()
         {
             ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
 
@@ -166,6 +312,18 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
         }
 
+        public async Task StopMonitoringAsync()
+        {
+            ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
 
+            if (State.IsStarted)
+            {
+                await UnregisterReminderAsync(GetReminder(CheckProvision));
+                State.IsStarted = false;
+                State.IsInitialized = false;
+
+                await StateManager.SetStateAsync(StateKey, State);
+            }
+        }
     }
 }

@@ -55,6 +55,10 @@
         "description": "Http Client Connection end point to perform management operations on this cluster"
       }
     },
+    "overProvision": {
+      "type": "string",
+      "defaultValue": "false"
+    },
     "loadBalancedAppPort1": {
       "type": "int",
       "defaultValue": 80
@@ -90,7 +94,7 @@
     "vmImageVersion": "latest",
     "vmStorageAccountContainerName": "vhds",
     "vmNodeTypeSize": "Standard_A1",
-    "vmNodeTypeTire": "Standard",
+    "vmNodeTypeTier": "Standard",
     "lbIPName": "PublicIP-LB-FE",
     "dnsName": "[variables('clusterName')]",
     "lbIPConfig": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerIPConfig')]",
@@ -261,6 +265,7 @@
         "[concat(variables('lbName'),'-',variables('nodePostFix'))]"
       ],
       "properties": {
+        "overprovision": "[parameters('overProvision')]",
         "upgradePolicy": {
           "mode": "Automatic"
         },
@@ -431,7 +436,7 @@
       "sku": {
         "name": "[variables('vmNodeTypeSize')]",
         "capacity": "[variables('capacity')]",
-        "tier": "[variables('vmNodeTypeTire')]"
+        "tier": "[variables('vmNodeTypeTier')]"
       },
       "tags": {
         "hidden-resourceType": "Service Fabric",
@@ -443,6 +448,10 @@
     "clusterProperties": {
       "value": "[reference(resourceId(variables('clusterResourceGroupName'), 'Microsoft.ServiceFabric/clusters', variables('clusterName')), '2016-03-01')]",
       "type": "object"
+    },
+    "vmssResourceId": {
+      "value": "[resourceId(variables('clusterResourceGroupName'), 'Microsoft.Compute/virtualMachineScaleSets', variables('vmNodeTypeName'))]",
+      "type": "string"
     }
   }
 }

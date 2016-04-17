@@ -9,8 +9,9 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
 {
     public interface IQueueManagerActor : IActor
     {
-        Task StartQueueLengthMonitorAsync();
+        Task StartMonitoringAsync();
         Task<string> GetPathAsync();
         Task<bool> IsInitializedAsync();
+        Task StopMonitoringAsync();
     }
 }

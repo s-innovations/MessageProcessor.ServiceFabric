@@ -50,6 +50,7 @@ namespace ServiceFabric.Management.Api.Controllers
         
         //POST {subscriptionId}/{resourceGroup}/providers/SInnovations.MessageProcessor/MessageCluster/{clusterName}/stop"
         [ClusterRoute("stop")]
+        [HttpGet]
         [HttpPost]
         public async Task<IHttpActionResult> StopCluster([FromClusterRoute]IMessageClusterActor cluster)
         {

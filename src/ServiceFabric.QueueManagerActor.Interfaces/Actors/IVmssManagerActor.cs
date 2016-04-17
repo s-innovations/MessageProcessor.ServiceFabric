@@ -11,5 +11,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
     {
         Task<bool> CreateIfNotExistsAsync();
         Task<bool> RemoveIfNotRemovedAsync();
+        Task<bool> SetCapacityAsync(int capacity);
+        Task<int> GetCapacityAsync();
     }
 }

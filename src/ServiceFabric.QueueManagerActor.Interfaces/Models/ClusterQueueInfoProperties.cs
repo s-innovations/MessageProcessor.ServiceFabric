@@ -14,11 +14,14 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
         {
             PlacementProperties = new Dictionary<string, string>();
             Capacities = new Dictionary<string, int>();
+            ListenerDescription = new ListenerDescription();
         }
         public ClusterVmssInfo Vmss { get; set; }
         public ServiceBusInfo ServiceBus { get; set; }
         public QueueInfo QueueDescription { get; set; }
+        public ListenerDescription ListenerDescription { get; set; }
         public Dictionary<string, string> PlacementProperties { get; set; }
         public Dictionary<string, int> Capacities { get; set; }
+
     }
 }

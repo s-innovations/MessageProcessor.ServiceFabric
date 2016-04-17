@@ -2,6 +2,7 @@
 <ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="FabricActorServicePkg" Version="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <ServiceTypes>
       <StatelessServiceType ServiceTypeName="ManagementApiServiceType" />
+      <StatelessServiceType ServiceTypeName="QueueListenerServiceType" />
       <StatefulServiceType ServiceTypeName="QueueListenerActorServiceType">
          <Extensions>
             <Extension Name="__GeneratedServiceType__" GeneratedId="e4590d6b-a5b8-45a8-b048-c7d51abf8425|None">

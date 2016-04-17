@@ -55,23 +55,23 @@ namespace PatchClusterNoteTypes
 
             //  var patch = new HttpRequestMessage(new HttpMethod("PATCH"), "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourcegroups/TestServiceFabric11/providers/Microsoft.ServiceFabric/clusters/pksservicefabric11?api-version=2016-03-01");
 
-            var client = new ServiceFabricClient(new AuthenticationHeaderValue("bearer", AuthenticationInfo.AccessToken));
-            var cluster = await client.GetServiceFabricClusterInfoAsync(Guid.Parse("8393a037-5d39-462d-a583-09915b4493df"), "TestServiceFabric11", "pksservicefabric11");
-            var update = cluster.ToDTO();
-            var prim = update.Properties.NodeTypes.Single(n => n.IsPrimary);
-            var noteType = new ServiceFabricNode()
-            {
-                Name = "myTstNt2",
-                VMInstanceCount = 1,
-                DurabilityLevel = "Bronze",
-            }.CopyPortsFrom(prim);
+            //var client = new ServiceFabricClient(new AuthenticationHeaderValue("bearer", AuthenticationInfo.AccessToken));
+            //var cluster = await client.GetServiceFabricClusterInfoAsync(Guid.Parse("8393a037-5d39-462d-a583-09915b4493df"), "TestServiceFabric11", "pksservicefabric11");
+            //var update = cluster.ToDTO();
+            //var prim = update.Properties.NodeTypes.Single(n => n.IsPrimary);
+            //var noteType = new ServiceFabricNode()
+            //{
+            //    Name = "myTstNt2",
+            //    VMInstanceCount = 1,
+            //    DurabilityLevel = "Bronze",
+            //}.CopyPortsFrom(prim);
+
+        
 
 
 
-
-
-            await client.AddNodeAsync(Guid.Parse("8393a037-5d39-462d-a583-09915b4493df"), "TestServiceFabric11", "pksservicefabric11",
-              noteType);
+            //await client.AddNodeAsync(Guid.Parse("8393a037-5d39-462d-a583-09915b4493df"), "TestServiceFabric11", "pksservicefabric11",
+            //  noteType);
 
 
         }

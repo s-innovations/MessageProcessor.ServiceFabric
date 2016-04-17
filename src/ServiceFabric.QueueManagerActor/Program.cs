@@ -65,7 +65,12 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 
             var stream = typeof(ServiceFabricConstants).Assembly.GetManifestResourceStream("SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.sampleConfiguration.json");
             var cluster = JsonConvert.DeserializeObject<MessageClusterResource>(await new StreamReader(stream).ReadToEndAsync(), new JsonSerializerSettings {});
-            
+           
+            if(cluster.Name != parts.Last())
+            {
+                return null;
+            }
+
             return cluster;
         }
 
@@ -101,6 +106,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
                     container.WithActor<MessageClusterActor>();
                     container.WithActor<QueueListenerActor>();
                     container.WithStatelessService<ManagementApiService>(ManagementApiService.ServiceType);
+                    container.WithStatelessService<QueueListenerService>(QueueListenerService.ServiceType);
+
                     container.WithActor<VmssManagerActor>(new ActorServiceSettings()
                     {
                         ActorGarbageCollectionSettings = new ActorGarbageCollectionSettings(120, 60)

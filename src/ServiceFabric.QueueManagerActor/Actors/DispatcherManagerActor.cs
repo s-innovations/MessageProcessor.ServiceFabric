@@ -51,7 +51,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             return StateManager.TryAddStateAsync(StateKey, new ActorState { Keys = null });
         }
 
-        public async Task InitializeAsync()
+        public async Task StartMonitoringAsync()
         {
             ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
 

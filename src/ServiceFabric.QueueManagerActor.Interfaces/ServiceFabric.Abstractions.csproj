@@ -109,6 +109,7 @@
     <Compile Include="Models\ClusterQueue.cs" />
     <Compile Include="Models\ClusterQueueInfoProperties.cs" />
     <Compile Include="Models\ClusterVmssInfo.cs" />
+    <Compile Include="Models\ListenerDescription.cs" />
     <Compile Include="Models\MessageClusterResource.cs" />
     <Compile Include="Models\MessageClusterResourceBase.cs" />
     <Compile Include="Models\MessageClusterResourceProperties.cs" />

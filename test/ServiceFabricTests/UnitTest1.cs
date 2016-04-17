@@ -14,6 +14,7 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
 
 namespace ServiceFabricTests
@@ -81,9 +82,12 @@ namespace ServiceFabricTests
         [TestMethod]
         public async Task TestMethod4()
         {
+            var a = "{\"id\":\"a\",\r\n  \"error\": {\r\n    \"code\": \"NotFound\",\r\n    \"message\": \"The entity was not found.\"\r\n  }\r\n}";
+            
+            var b = JsonConvert.DeserializeObject<ArmErrorBase>(a.Replace("\r\n",""));
 
-            var a = new test();
-        var tes=await   a.GetMessageClusterAsync("");
+         // /  var a = new test();
+       // var tes=await   a.GetMessageClusterAsync("");
         }
 
         [TestMethod]
@@ -94,6 +98,8 @@ namespace ServiceFabricTests
             var cluster = JsonConvert.DeserializeObject<MessageClusterResource>(await new StreamReader(stream).ReadToEndAsync(), new JsonSerializerSettings { });
 
 
+            
+          
         }
     }
 }
