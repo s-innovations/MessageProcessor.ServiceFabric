@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
+namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Models
 {
     public class MessageClusterResource : MessageClusterResourceBase
     {

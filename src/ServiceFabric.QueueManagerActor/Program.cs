@@ -14,7 +14,7 @@ using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Newtonsoft.Json;
 using SInnovations.Azure.MessageProcessor.Core;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.ServiceFabric.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management.Api.Attributes;
 using SInnovations.WebApi.Bindings;

@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
 
-namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions
+namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Models
 {
     public class VariableReplacableAttribute : Attribute
     {

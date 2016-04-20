@@ -22,7 +22,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Microsoft.ServiceFabric.Actors.Client;

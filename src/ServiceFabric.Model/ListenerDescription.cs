@@ -1,4 +1,4 @@
-﻿namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
+﻿namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Models
 {
     public class ListenerDescription
     {

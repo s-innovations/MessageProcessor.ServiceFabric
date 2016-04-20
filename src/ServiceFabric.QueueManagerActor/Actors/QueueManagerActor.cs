@@ -12,7 +12,7 @@ using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Client;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services
 {

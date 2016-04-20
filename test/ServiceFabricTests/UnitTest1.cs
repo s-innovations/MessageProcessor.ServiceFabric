@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SInnovations.Azure.MessageProcessor.ServiceFabric;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
