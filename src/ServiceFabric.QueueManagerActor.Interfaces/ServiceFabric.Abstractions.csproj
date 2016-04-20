@@ -125,6 +125,7 @@
   <ItemGroup>
     <None Include="Actors\note.md" />
     <None Include="packages.config" />
+    <None Include="ServiceFabric.Abstractions.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\" />
