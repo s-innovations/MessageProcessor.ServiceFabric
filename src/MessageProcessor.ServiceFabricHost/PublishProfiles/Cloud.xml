@@ -15,7 +15,7 @@
                                     StoreLocation="CurrentUser"
                                     StoreName="My" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="pksservicefabric11.westeurope.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="10A9BF925F41370FE55A4BDED2EF803505100C35" FindType="FindByThumbprint" FindValue="10A9BF925F41370FE55A4BDED2EF803505100C35" StoreLocation="CurrentUser" StoreName="My" />
+  <ClusterConnectionParameters ConnectionEndpoint="pksservicefabric12.westeurope.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="584C645A30253DDA98EF8B7ED09B87F61468F3EE" FindType="FindByThumbprint" FindValue="584C645A30253DDA98EF8B7ED09B87F61468F3EE" StoreLocation="CurrentUser" StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <UpgradeDeployment Mode="Monitored" Enabled="false">
     <Parameters FailureAction="Rollback" Force="True" />

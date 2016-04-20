@@ -82,7 +82,7 @@
     "nicName": "[concat('NIC-',variables('nodePostFix'))]",
     "subnetName": "Subnet-1",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-    "lbName": "LoadBalancer",
+    "lbName": "LB",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',concat(variables('lbName'),'-',variables('nodePostFix')))]",
     "lbNatPoolID": "[concat(variables('lbID'),'/inboundNatPools/LoadBalancerBEAddressNatPool')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/LoadBalancerBEAddressPool')]",
@@ -321,6 +321,51 @@
                     "WadCfg": {
                       "DiagnosticMonitorConfiguration": {
                         "overallQuotaInMB": "50000",
+                        "PerformanceCounters": {
+                          "PerformanceCounterConfiguration": [
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\Memory\\Available MBytes",
+                              "sampleRate": "PT3M"
+                            },
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\Web Service(_Total)\\ISAPI Extension Requests/sec",
+                              "sampleRate": "PT3M"
+                            },
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\Web Service(_Total)\\Bytes Total/Sec",
+                              "sampleRate": "PT3M"
+                            },
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\ASP.NET Applications(__Total__)\\Requests/Sec",
+                              "sampleRate": "PT3M"
+                            },
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\ASP.NET Applications(__Total__)\\Errors Total/Sec",
+                              "sampleRate": "PT3M"
+                            },
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\ASP.NET\\Requests Queued",
+                              "sampleRate": "PT3M"
+                            },
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\ASP.NET\\Requests Rejected",
+                              "sampleRate": "PT3M"
+                            },
+                            {
+                              "annotation": [ ],
+                              "counterSpecifier": "\\Processor(_Total)\\% Processor Time",
+                              "sampleRate": "PT3M"
+                            }
+                          ],
+                          "scheduledTransferPeriod": "PT1M"
+                        },
                         "EtwProviders": {
                           "EtwEventSourceProviderConfiguration": [
                             {
@@ -357,6 +402,34 @@
                               }
                             }
                           ]
+                        },
+                        "WindowsEventLog": {
+                          "DataSource": [
+                            {
+                              "name": "Application!*[System[(Level=1 or Level=2 or Level=3)]]"
+                            },
+                            {
+                              "name": "Windows Azure!*[System[(Level=1 or Level=2 or Level=3 or Level=4)]]"
+                            }
+                          ],
+                          "scheduledTransferPeriod": "PT1M"
+                        },
+                        "CrashDumps": {
+                          "CrashDumpConfiguration": [
+                            {
+                              "processName": "WaIISHost.exe"
+                            },
+                            {
+                              "processName": "WaWorkerHost.exe"
+                            },
+                            {
+                              "processName": "w3wp.exe"
+                            }
+                          ]
+                        },
+                        "Logs": {
+                          "scheduledTransferLogLevelFilter": "Information",
+                          "scheduledTransferPeriod": "PT1M"
                         }
                       }
                     },

@@ -22,6 +22,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
         public string ScaleUpCooldown { get; set; } = "PT10M";
         public int MessagesPerInstance { get; set; } = 0;
 
+        public Dictionary<string, string> PlacementProperties { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, int> Capacities { get; set; } = new Dictionary<string, int>();
     }
 
 

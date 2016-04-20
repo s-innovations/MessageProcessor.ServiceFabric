@@ -10,6 +10,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
 {
@@ -214,6 +215,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
    
     public static class UnityFabricExtensions
     {
+        private static ILog Logger = LogProvider.GetCurrentClassLogger();
         public static IUnityContainer WithFabricContainer(this IUnityContainer container)
         {
             return container.WithFabricContainer(c => FabricRuntime.Create());
@@ -227,6 +229,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
 
         public static IUnityContainer WithActor<TActor>(this IUnityContainer container, ActorServiceSettings settings=null) where TActor : ActorBase
         {
+            Logger.Info($"Registering Actor {typeof(TActor).Name}");
+
             if (!container.IsRegistered<IActorDeactivationInterception>())
             {
                 container.RegisterType<IActorDeactivationInterception, OnActorDeactivateInterceptor>(new HierarchicalLifetimeManager());

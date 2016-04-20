@@ -6,12 +6,13 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Tracing
     using System.Diagnostics.Tracing;
     using System.Fabric;
     using System.Threading.Tasks;
+    using Common.Logging;
     using Microsoft.ServiceFabric.Actors;
     using Microsoft.ServiceFabric.Actors.Runtime;
     using Microsoft.ServiceFabric.Services.Runtime;
 
     [EventSource(Name = "S-Innovations-Azure-MessageProcessor-ServiceFabric")]
-    internal sealed class ServiceFabricEventSource : EventSource
+    internal sealed class ServiceFabricEventSource : EventSource, ILogProvider
     {
         public static readonly ServiceFabricEventSource Current = new ServiceFabricEventSource();
 
@@ -265,6 +266,109 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Tracing
         public void ActorHostInitializationFailed(string exception)
         {
             WriteEvent(ActorHostInitializationFailedEventId, exception);
+        }
+
+        private const int TraceMessageEventId = 10;
+
+        [Event(TraceMessageEventId, Level = EventLevel.Verbose, Message = "{0}")]
+        public void TraceMessage(string message)
+        {
+            if (this.IsEnabled())
+            {
+                WriteEvent(TraceMessageEventId, message);
+            }
+        }
+
+        private const int InfoMessageEventId = 11;
+        [Event(InfoMessageEventId, Level = EventLevel.Informational, Message = "{0}")]
+        public void InfoMessage(string message)
+        {
+            if (this.IsEnabled())
+            {
+                WriteEvent(InfoMessageEventId, message);
+            }
+        }
+
+        private const int WarnMessageEventId = 12;
+        [Event(WarnMessageEventId, Level = EventLevel.Warning, Message = "{0}")]
+        public void WarnMessage(string message)
+        {
+            if (this.IsEnabled())
+            {
+                WriteEvent(WarnMessageEventId, message);
+            }
+        }
+
+
+        private const int ErrorMessageEventId = 13;
+        [Event(ErrorMessageEventId, Level = EventLevel.Error, Message = "{0}")]
+        public void ErrorMessage(string message)
+        {
+            if (this.IsEnabled())
+            {
+                WriteEvent(ErrorMessageEventId, message);
+            }
+        }
+
+        private const int CriticalMessageEventId = 14;
+        [Event(CriticalMessageEventId, Level = EventLevel.Critical, Message = "{0}")]
+        public void CriticalMessage(string message)
+        {
+            if (this.IsEnabled())
+            {
+                WriteEvent(CriticalMessageEventId, message);
+            }
+        }
+
+        [NonEvent]
+        public bool Log(LogLevel logLevel, Func<string> messageFunc, Exception exception = null, params object[] formatParameters)
+        {
+            if(messageFunc == null)
+            {
+                return true;
+            }
+
+            var msg = string.Format(messageFunc(), formatParameters);
+            switch (logLevel)
+            {
+                case LogLevel.Trace:                  
+                case LogLevel.Debug:
+                    TraceMessage(msg);
+                    break;
+                case LogLevel.Info:
+                    InfoMessage(msg);
+                    break;
+                case LogLevel.Warn:
+                    WarnMessage(msg);
+                    break;
+                case LogLevel.Error:
+                    ErrorMessage(msg);
+                    break;
+                case LogLevel.Fatal:
+                    CriticalMessage(msg);
+                    break;
+                default:
+                    return false;
+                    break;
+            }
+
+            return true;
+        }
+
+
+        public Logger GetLogger(string name)
+        {
+            return Log;
+        }
+
+        public IDisposable OpenNestedContext(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDisposable OpenMappedContext(string key, string value)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

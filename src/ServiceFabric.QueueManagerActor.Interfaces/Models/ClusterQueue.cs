@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models
 {
+    public class ClusterProcessorNode : MessageClusterResourceBase
+    {
+        public override string Type { get; } = ProcessorNodeType;
+        public ClusterVmssInfo Properties { get; set; }
+    }
     public class ClusterQueueInfo : MessageClusterResourceBase
     {
         public override string Type { get; } = ClusterQueueType;

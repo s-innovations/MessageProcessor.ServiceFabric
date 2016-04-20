@@ -41,6 +41,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.2.0.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Azure.ResourceManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Azure.ResourceManager.1.0.0-preview\lib\net45\Microsoft.Azure.ResourceManager.dll</HintPath>
       <Private>True</Private>
@@ -118,6 +122,10 @@
       <HintPath>..\..\packages\Microsoft.ServiceFabric.Services.2.0.135\lib\net45\Microsoft.ServiceFabric.Services.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Telemetry.ApplicationInsights, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.ServiceFabric.Telemetry.ApplicationInsights.0.3.193-preview2\lib\net45\Microsoft.ServiceFabric.Telemetry.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -131,7 +139,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.Azure.ResourceManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\S-Innovations.Azure.ResourceManager.1.0.0-pre-2016041701\lib\net46\S-Innovations.Azure.ResourceManager.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.Azure.ResourceManager.1.0.0-pre-2016041901\lib\net46\S-Innovations.Azure.ResourceManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.WebApi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -182,6 +190,9 @@
     <Compile Include="Tracing\ServiceFabricEventSource.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="package.json" />
     <None Include="PackageRoot\ServiceManifest.xml" />
     <None Include="PackageRoot\Config\Settings.xml">
@@ -189,6 +200,7 @@
     </None>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Service References\Application Insights\ConnectedService.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MessageProcessor.ServiceFabric.Management\ServiceFabric.Management.csproj">
@@ -218,6 +230,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="gruntfile.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.ServiceFabric.Actors.2.0.135\build\Microsoft.ServiceFabric.Actors.targets" Condition="Exists('..\..\packages\Microsoft.ServiceFabric.Actors.2.0.135\build\Microsoft.ServiceFabric.Actors.targets')" />

@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Practices.Unity;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
@@ -14,6 +17,7 @@ using SInnovations.Azure.MessageProcessor.Core;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Actors;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Services;
@@ -90,15 +94,44 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 
     internal static class Program
     {
+        private static TelemetryClient CreateTelemetryClientFromInstrumentationkey(string instrumentationKey = "")
+        {
+            var telemetryClient = new TelemetryClient();
+
+            if (string.IsNullOrWhiteSpace(instrumentationKey) == false)
+            {
+                telemetryClient.InstrumentationKey = instrumentationKey;
+            }
+
+            telemetryClient.TrackTrace("Initializing from Service Fabric", SeverityLevel.Information);
+            telemetryClient.Flush();
+            return telemetryClient;
+        }
         /// <summary>
         /// This is the entry point of the service host process.
         /// </summary>
         private static void Main()
         {
+            var settings = FabricRuntime.GetActivationContext().GetConfigurationPackageObject("config").Settings;
+            var appInsight = settings.Sections["AppSettings"]?.Parameters.FirstOrDefault(p => p.Name == "AppInsights")?.Value;              //  Log.Logger = new LoggerConfiguration()
+            //Log.Logger = new LoggerConfiguration()
+            //.MinimumLevel.Verbose()
+            //.WriteTo.ApplicationInsights(appInsight)
+            //.CreateLogger();
+            Microsoft.ServiceFabric.Telemetry.ApplicationInsights.Listener.Enable(System.Diagnostics.Tracing.EventLevel.Verbose);
+
+            LogProvider.SetCurrentLogProvider(ServiceFabricEventSource.Current);
+
             try
             {
                 using (var container = new UnityContainer())
                 {
+
+                    if (!string.IsNullOrEmpty(appInsight))
+                    {
+                        container.RegisterInstance(CreateTelemetryClientFromInstrumentationkey(appInsight));
+                    }
+
                     container.RegisterType<IMessageProcessorClientFactory, DummyFactory>(new HierarchicalLifetimeManager());
                     container.RegisterType<IMessageClusterConfigurationStore, test>(new HierarchicalLifetimeManager());
 

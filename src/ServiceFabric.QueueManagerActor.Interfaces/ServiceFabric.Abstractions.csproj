@@ -113,6 +113,7 @@
     <Compile Include="Models\MessageClusterResource.cs" />
     <Compile Include="Models\MessageClusterResourceBase.cs" />
     <Compile Include="Models\MessageClusterResourceProperties.cs" />
+    <Compile Include="Models\MessageProcessorOptions.cs" />
     <Compile Include="Models\QueueInfo.cs" />
     <Compile Include="Models\ServiceBusInfo.cs" />
     <Compile Include="Owin\IOwinAppBuilder.cs" />

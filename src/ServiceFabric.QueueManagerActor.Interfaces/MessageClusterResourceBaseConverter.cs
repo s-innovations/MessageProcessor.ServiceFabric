@@ -87,7 +87,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions
 
             switch (type)
             {
-
+                case MessageClusterResourceBase.ProcessorNodeType:
+                    obj = new ClusterProcessorNode();
+                    serializer.Populate(item.CreateReader(), obj);
+                    break;
                 case MessageClusterResourceBase.ClusterQueueType:
                     obj = new ClusterQueueInfo();
                     serializer.Populate(item.CreateReader(), obj);

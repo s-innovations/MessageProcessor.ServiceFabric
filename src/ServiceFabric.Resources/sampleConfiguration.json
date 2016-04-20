@@ -7,8 +7,8 @@
 
   },
   "variables": {
-    "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.ServiceBus/namespaces/sb-qczknbuyve",
-    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.ServiceBus/namespaces/sb-qczknbuyve/authorizationRules/RootManageSharedAccessKey",
+    "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece",
+    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece/authorizationRules/RootManageSharedAccessKey",
     "queueDescription": {
       "enableBatchedOperations": true,
       "enableDeadLetteringOnMessageExpiration": true,
@@ -38,6 +38,133 @@
       }
     },
     {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a0",
+      "properties": {
+        "name": "Standard_A0",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 1,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a1",
+      "properties": {
+        "name": "Standard_A1",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a2",
+      "properties": {
+        "name": "Standard_A2",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a3",
+      "properties": {
+        "name": "Standard_A3",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a4",
+      "properties": {
+        "name": "Standard_A4",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a5",
+      "properties": {
+        "name": "Standard_A5",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a6",
+      "properties": {
+        "name": "Standard_A6",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+
+    {
       "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a0",
       "properties": {
@@ -51,24 +178,13 @@
           "idleTimeout": "PT5M45S",
           "applicationTypeName": "MyDemoAppType1",
           "applicationTypeVersion": "1.0.0",
-          "serviceTypeName": "TestProcessorType"
-        },
-        "vmss": {
-          "name": "Standard_A0",
-          "tier": "Standard",
-          "vmImagePublisher": "MicrosoftWindowsServer",
-          "vmImageOffer": "WindowsServer",
-          "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest",
-          "location": "West Europe",
-          "minCapacity": 1,
-          "maxCapacity": 10,
-          "messagesPerInstance": 10,
-          "scaleDownCooldown": "PT10M",
-          "scaleUpCooldown" :  "PT1M"
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a0",
+          "usePrimaryNode": true
         }
       }
     },
+
     {
       "type": "S-Innovations.MessageProcessor/queue",
       "name": "algorithm-a1",
@@ -83,15 +199,8 @@
           "idleTimeout": "PT5M45S",
           "applicationTypeName": "MyDemoAppType1",
           "applicationTypeVersion": "1.0.0",
-          "serviceTypeName": "TestProcessorType"
-        },
-        "vmss": {
-          "name": "Standard_A1",
-          "tier": "Standard",
-          "vmImagePublisher": "MicrosoftWindowsServer",
-          "vmImageOffer": "WindowsServer",
-          "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest"
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a1"
         }
       }
     },
@@ -109,15 +218,8 @@
           "idleTimeout": "PT5M45S",
           "applicationTypeName": "MyDemoAppType1",
           "applicationTypeVersion": "1.0.0",
-          "serviceTypeName": "TestProcessorType"
-        },
-        "vmss": {
-          "name": "Standard_A2",
-          "tier": "Standard",
-          "vmImagePublisher": "MicrosoftWindowsServer",
-          "vmImageOffer": "WindowsServer",
-          "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest"
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a2"
         }
       }
     },
@@ -135,16 +237,8 @@
           "idleTimeout": "PT5M45S",
           "applicationTypeName": "MyDemoAppType1",
           "applicationTypeVersion": "1.0.0",
-          "serviceTypeName": "TestProcessorType"
-        },
-        "vmss": {
-          "name": "Standard_A3",
-          "tier": "Standard",
-          "vmImagePublisher": "MicrosoftWindowsServer",
-          "vmImageOffer": "WindowsServer",
-          "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest",
-          "serviceTypeName": "TestProcessorType"
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a0"
         }
       }
     },
@@ -162,15 +256,8 @@
           "idleTimeout": "PT5M45S",
           "applicationTypeName": "MyDemoAppType1",
           "applicationTypeVersion": "1.0.0",
-          "serviceTypeName": "TestProcessorType"
-        },
-        "vmss": {
-          "name": "Standard_A4",
-          "tier": "Standard",
-          "vmImagePublisher": "MicrosoftWindowsServer",
-          "vmImageOffer": "WindowsServer",
-          "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest"
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a4"
         }
       }
     },
@@ -188,16 +275,8 @@
           "idleTimeout": "PT5M45S",
           "applicationTypeName": "MyDemoAppType1",
           "applicationTypeVersion": "1.0.0",
-          "serviceTypeName": "TestProcessorType"
-        },
-        "vmss": {
-          "name": "Standard_A5",
-          "tier": "Standard",
-          "vmImagePublisher": "MicrosoftWindowsServer",
-          "vmImageOffer": "WindowsServer",
-          "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest",
-          "serviceTypeName": "TestProcessorType"
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a5"
         }
       }
     },
@@ -215,15 +294,8 @@
           "idleTimeout": "PT5M45S",
           "applicationTypeName": "MyDemoAppType1",
           "applicationTypeVersion": "1.0.0",
-          "serviceTypeName": "TestProcessorType"
-        },
-        "vmss": {
-          "name": "Standard_A6",
-          "tier": "Standard",
-          "vmImagePublisher": "MicrosoftWindowsServer",
-          "vmImageOffer": "WindowsServer",
-          "vmImageSku": "2012-R2-Datacenter",
-          "vmImageVersion": "latest"
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a6"
         }
       }
     }

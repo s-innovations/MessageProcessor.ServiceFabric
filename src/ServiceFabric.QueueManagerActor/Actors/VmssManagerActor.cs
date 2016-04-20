@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Fabric;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.Azure.Management.Resources;
 using Microsoft.Rest;
 using Microsoft.ServiceFabric.Actors;
@@ -15,9 +17,11 @@ using Newtonsoft.Json.Linq;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Tracing;
 using SInnovations.Azure.ResourceManager;
 using SInnovations.Azure.ResourceManager.TemplateActions;
 
@@ -64,6 +68,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
     public class VmssManagerActor : Actor, IVmssManagerActor, IRemindable
     {
+        private static ILog Logger = LogProvider.GetCurrentClassLogger();
+
         public const string CheckProvision = "CheckProvision";
         private const string StateKey = "mystate";
 
@@ -79,7 +85,13 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             [DataMember]
             public bool IsProvisioning { get; set; }
             [DataMember]
-            public string VMSSResourceId { get; internal set; }
+            public string VMSSResourceId { get; set; }
+
+            [DataMember]
+            public Dictionary<string, long> QueeuActors { get; set; } = new Dictionary<string, long>();
+
+            [DataMember]
+            public DateTimeOffset LastScaleAction { get; set; } = DateTimeOffset.MinValue;
         }
 
         /// <summary>
@@ -131,10 +143,37 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
             return State.IsInitialized;
         }
-        public async Task<int> GetCapacityAsync()
+
+        public async Task ReportQueueMessageCountAsync(string queueActorId, long messageCount, int additinalNodesAvaible)
         {
             ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
-            return State.Capacity;
+
+            if (!State.QueeuActors.ContainsKey(queueActorId) || State.QueeuActors[queueActorId] != messageCount)
+            {
+                State.QueeuActors[queueActorId] = messageCount;
+                await StateManager.SetStateAsync(StateKey, State);
+            }
+
+            var processorNode = await ClusterConfigStore.GetMessageClusterResourceAsync(this.Id.GetStringId()) as ClusterProcessorNode;
+
+            //Handle Capacity Scaling of VMSS
+            var messageSize = State.QueeuActors.Aggregate(0L, (p, c) => p + c.Value);
+            var wantedCapacity = Math.Max(processorNode.Properties.MinCapacity,
+                    Math.Min(processorNode.Properties.MaxCapacity, processorNode.Properties.MessagesPerInstance > 0 ?
+                (messageSize / processorNode.Properties.MessagesPerInstance) + (messageSize > 0 ? 1 : 0) :
+                1));
+
+            wantedCapacity -= Math.Min(wantedCapacity, additinalNodesAvaible);
+
+            var currentCapacity = State.Capacity;
+
+            if ((wantedCapacity > currentCapacity && DateTimeOffset.UtcNow - XmlConvert.ToTimeSpan(processorNode.Properties.ScaleUpCooldown) > State.LastScaleAction) ||
+                (wantedCapacity < currentCapacity && DateTimeOffset.UtcNow - XmlConvert.ToTimeSpan(processorNode.Properties.ScaleDownCooldown) > State.LastScaleAction))
+            {
+                await SetCapacityAsync((int)wantedCapacity);
+                //   State.LastScaleAction = DateTimeOffset.UtcNow;
+            }
+
         }
         public async Task<bool> SetCapacityAsync(int capacity)
         {
@@ -149,22 +188,22 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
             if (State.Capacity != capacity)
             {
-                var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(Id.GetStringId()) as ClusterQueueInfo;
+                var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(Id.GetStringId()) as ClusterProcessorNode;
 
                 var obj = await client.PatchAsync(State.VMSSResourceId, new JObject(
-                    new JProperty("location", queue.Properties.Vmss.Location),
+                    new JProperty("location", queue.Properties.Location),
                     new JProperty("sku", new JObject(
                         new JProperty("capacity", capacity),
-                        new JProperty("name", queue.Properties.Vmss.Name),
-                        new JProperty("tier", queue.Properties.Vmss.Tier)
+                        new JProperty("name", queue.Properties.Name),
+                        new JProperty("tier", queue.Properties.Tier)
                         ))
                     ), "2016-03-30");
 
                 State.Capacity = obj.SelectToken("sku.capacity").ToObject<int>();
-
+                State.LastScaleAction = DateTimeOffset.UtcNow;
                 await StateManager.SetStateAsync(StateKey, State);
 
-                await StartProvisionReminderAsync(false);
+                await StartProvisionReminderAsync();
                 return true;
             }
 
@@ -213,28 +252,34 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
         public async Task ReceiveReminderAsync(string reminderName, byte[] context, TimeSpan dueTime, TimeSpan period)
         {
+           
             if (reminderName.Equals(CheckProvision))
             {
+                ServiceFabricEventSource.Current.ActorMessage(this, "Checking Provision");
                 var clusterKey = this.Id.GetStringId();//Subscription/ResourceGroup/clustername/nodename;
                 ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
+
+                var processorNode = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterProcessorNode;
 
 
                 if (!State.IsInitialized)
                 {
 
-                    var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
 
-                    if (queue != null)
+                    if (processorNode != null)
                     {
 
-                        var nodeName = queue.Name;
+                        var nodeName = processorNode.Name;
 
 
 
                         var config = this.GetConfigurationInfo();
 
                         var armClinet = new ArmClient(await config.GetAccessToken());
+
                         var vmss = await armClinet.GetAsync<VMSS>($"/subscriptions/{config.SubscriptionId}/resourceGroups/{config.ResourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/vm{nodeName.ToLower()}", "2016-03-30");
+                        var fabric = await armClinet.GetAsync<JObject>($"/subscriptions/{config.SubscriptionId}/resourceGroups/{config.ResourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{config.ClusterName}", "2016-03-01");
+                        var primvmss = await armClinet.GetAsync<JObject>($"/subscriptions/{config.SubscriptionId}/resourceGroups/{config.ResourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/nt1vm", "2016-03-30");
 
                         var parameters = new JObject(
                             ResourceManagerHelper.CreateValue("clusterName",
@@ -242,12 +287,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                             ResourceManagerHelper.CreateValue("clusterLocation",
                                                                 "West Europe"),
                             ResourceManagerHelper.CreateValue("nodeTypeName", nodeName),
-                            ResourceManagerHelper.CreateValue("certificateThumbprint",
-                                                                "10A9BF925F41370FE55A4BDED2EF803505100C35"),
+                            ResourceManagerHelper.CreateValue("certificateThumbprint", fabric.SelectToken("properties.certificate.thumbprint").ToString()),
                             ResourceManagerHelper.CreateValue("adminPassword", "JgT5FFJK"),
-                            ResourceManagerHelper.CreateValue("sourceVaultValue",
-                                                "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.KeyVault/vaults/kv-qczknbuyveqr6qczknbu"),
-                            ResourceManagerHelper.CreateValue("certificateUrlValue", "https://kv-qczknbuyveqr6qczknbu.vault.azure.net/secrets/ServiceFabricCert/2d05b9c715fa4b26bc0874cf550b5993")
+                            ResourceManagerHelper.CreateValue("sourceVaultValue", primvmss.SelectToken("properties.virtualMachineProfile.osProfile.secrets[0].sourceVault.id").ToString()),
+                            ResourceManagerHelper.CreateValue("certificateUrlValue", primvmss.SelectToken("properties.virtualMachineProfile.osProfile.secrets[0].vaultCertificates[0].certificateUrl").ToString())
                             );
 
                         var deployment = await ResourceManagerHelper.CreateTemplateDeploymentAsync(
@@ -258,7 +301,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                                  },
                                                    config.ResourceGroupName,
                                                  $"vmss-{nodeName}-{DateTimeOffset.UtcNow.ToString("s").Replace(":", "-")}",
-                                                 new VmssArmTemplate(queue.Properties.Vmss, vmss?.Sku?.capacity ?? 0),
+                                                 new VmssArmTemplate(processorNode.Properties, vmss?.Sku?.capacity ?? 0),
                                                  parameters,
                                                  false
                                                  );
@@ -267,7 +310,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                             State.IsInitialized = true;
                             State.VMSSResourceId = (deployment.Properties.Outputs as JObject).SelectToken("vmssResourceId.value").ToString();
-
+                            ServiceFabricEventSource.Current.ActorMessage(this, "Initialization Complated");
                         }
                     }
 
@@ -276,6 +319,9 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                 if (State.IsInitialized)
                 {
+
+                    ServiceFabricEventSource.Current.ActorMessage(this, "Validating node configuration with vmss");
+
                     var client = new ArmClient(await this.GetConfigurationInfo().GetAccessToken());
                     var vmms = await client.GetAsync<JObject>(State.VMSSResourceId, "2016-03-30");
                     State.Capacity = vmms.SelectToken("sku.capacity").ToObject<int>();
@@ -293,6 +339,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                         var node = await fabric.QueryManager.GetNodeListAsync("_" + name);
                         if (node.Any())
                         {
+                            ServiceFabricEventSource.Current.ActorMessage(this, $"Removing {node.First().NodeName} state due to vm being deleted");
                             await fabric.ClusterManager.RemoveNodeStateAsync(node.First().NodeName);
                         }
 
@@ -308,6 +355,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                         if (!virtualMachines.SelectTokens($"$value[?(@.instanceId == '{node.NodeName.Split('_').Last()}')]").Any())
                         {
+                            ServiceFabricEventSource.Current.ActorMessage(this, $"Removing {node.NodeName} state due to vm not existing");
                             await fabric.ClusterManager.RemoveNodeStateAsync(node.NodeName);
                         }
                     }
@@ -320,6 +368,9 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                 }
 
                 await StateManager.SetStateAsync(StateKey, State);
+
+
+
 
             }
         }

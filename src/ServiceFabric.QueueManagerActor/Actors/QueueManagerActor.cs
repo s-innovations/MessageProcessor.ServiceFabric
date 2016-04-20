@@ -3,6 +3,7 @@ using System.Fabric;
 using System.Fabric.Description;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.ServiceBus;
@@ -43,8 +44,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             public string Path { get; set; }
             //     [DataMember]
             //     public DateTimeOffset LastActive { get; set; }
-            [DataMember]
-            public DateTimeOffset LastScaleAction { get; set; }
+           // [DataMember]
+           // public DateTimeOffset LastScaleAction { get; set; }
             // [DataMember]
             // public DateTimeOffset LastScaleDownAction { get; set; }
         }
@@ -84,8 +85,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                 ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
                 try
                 {
-                    var clusterKey = this.Id.GetStringId();//Subscription/ResourceGroup/clustername/nodename; 
-                    var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(clusterKey) as ClusterQueueInfo;
+                    var nodeKey = this.Id.GetStringId();//Subscription/ResourceGroup/clustername/nodename; 
+                    var queue = await ClusterConfigStore.GetMessageClusterResourceAsync(nodeKey) as ClusterQueueInfo;
 
                     if (!State.IsInitialized)
                     {
@@ -105,7 +106,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                         if (!State.Keys.IsAccessible)
                         {
-                            Logger.Warn("Servicebus keys  are not accessible");
+                            Logger.Error("Servicebus keys  are not accessible");
                             return;
                         }
 
@@ -120,7 +121,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                 Logger.Warn("Servicebus queue do not exist");
                                 return;
                             }
-
+                            
                             var q = new QueueDescription(queue.Name);
                             if (qd.AutoDeleteOnIdle.IsPresent())
                                 q.AutoDeleteOnIdle = XmlConvert.ToTimeSpan(qd.AutoDeleteOnIdle);
@@ -157,31 +158,28 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                         var sbQueue = await ns.GetQueueAsync(queue.Name);
                         Logger.Info($"Checking Queue information for {sbQueue.Path}, {sbQueue.MessageCount}, {sbQueue.MessageCountDetails.ActiveMessageCount}, {sbQueue.MessageCountDetails.DeadLetterMessageCount}, {sbQueue.MessageCountDetails.ScheduledMessageCount}, {sbQueue.MessageCountDetails.TransferDeadLetterMessageCount}, {sbQueue.MessageCountDetails.TransferMessageCount}");
-                        var parts = clusterKey.Split('/');
+                        var parts = nodeKey.Split('/');
                         var applicationName = new Uri($"fabric:/{parts[parts.Length - 2]}");
                         var serviceName = new Uri($"fabric:/{parts[parts.Length - 2]}/{parts[parts.Length-1]}");
 
-                        var vmssManager = ActorProxy.Create<IVmssManagerActor>(this.Id);
-
-                        if (sbQueue.MessageCountDetails.ActiveMessageCount > 0 || queue.Properties.Vmss.MinCapacity > 0)
+                        var vmssManager = ActorProxy.Create<IVmssManagerActor>(new ActorId(string.Join("/", parts.Take(parts.Length - 1)) + "/" + queue.Properties.ListenerDescription.ProcessorNode));
+                        var fabricClient = GetFabricClient();
+                        var primNodes = 0;
+                        if (queue.Properties.ListenerDescription.UsePrimaryNode)
                         {
-                            //Handle Capacity Scaling of VMSS
-                            var wantedCapacity = Math.Max(queue.Properties.Vmss.MinCapacity,
-                                    Math.Min(queue.Properties.Vmss.MaxCapacity, queue.Properties.Vmss.MessagesPerInstance > 0 ?
-                                (sbQueue.MessageCountDetails.ActiveMessageCount / queue.Properties.Vmss.MessagesPerInstance) + 1 :
-                                1));
-                            var currentCapacity = await vmssManager.GetCapacityAsync();
+                          var nodes=  await fabricClient.QueryManager.GetNodeListAsync();
+                            primNodes = nodes.Aggregate(0, (c, p) => c + (p.NodeType == "nt1vm" ? 1 : 0));
+                        }
 
-                            if ((wantedCapacity > currentCapacity && DateTimeOffset.UtcNow - XmlConvert.ToTimeSpan(queue.Properties.Vmss.ScaleUpCooldown) > State.LastScaleAction) ||
-                                (wantedCapacity < currentCapacity && DateTimeOffset.UtcNow - XmlConvert.ToTimeSpan(queue.Properties.Vmss.ScaleDownCooldown) > State.LastScaleAction))
-                            {
-                                await vmssManager.SetCapacityAsync((int)wantedCapacity);
-                                State.LastScaleAction = DateTimeOffset.UtcNow;
-                            }
+                        await vmssManager.ReportQueueMessageCountAsync(Id.GetStringId(), sbQueue.MessageCountDetails.ActiveMessageCount, primNodes);
 
+                        if (sbQueue.MessageCountDetails.ActiveMessageCount > 0)
+                        {
+                           
                             //Handle Listener Application Deployment
 
-                            var fabricClient = GetFabricClient();
+                           
+                      
                             var listenerDescription = queue.Properties.ListenerDescription;
 
                             var apps = await fabricClient.QueryManager.GetApplicationListAsync(applicationName);
@@ -222,7 +220,12 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                                 try
                                 {
-
+                                    var placementConttraints = $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}";
+                                    if (queue.Properties.ListenerDescription.UsePrimaryNode)
+                                    {
+                                        placementConttraints += " || isPrimary == true";
+                                    }
+                                    
                                     await fabricClient.ServiceManager.CreateServiceAsync(new StatelessServiceDescription
                                     {
                                         ServiceTypeName = listenerDescription.ServiceTypeName, //QueueListenerService.ServiceType, // ServiceFabricConstants.ActorServiceTypes.QueueListenerActorService,
@@ -234,14 +237,15 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                             HighKey = Int64.MaxValue
                                         },
                                         InstanceCount = -1, //One for each node,
-                                        PlacementConstraints = $"NodeTypeName == {queue.Name}",
+                                        PlacementConstraints = $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}",
                                         ApplicationName = applicationName,
-                                        //  InitializationData = 
+                                        InitializationData = Encoding.UTF8.GetBytes(State.Keys.PrimaryConnectionString),
                                     });
                                 }
                                 catch (Exception ex)
                                 {
-
+                                    Logger.ErrorException("Could not register service for queue", ex);
+                                    throw;
                                 }
                             }
 
@@ -249,10 +253,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                         else
                         {
 
-                            if ((DateTimeOffset.UtcNow - (XmlConvert.ToTimeSpan(queue.Properties.ListenerDescription.IdleTimeout))) > State.LastScaleAction)
+                           if ((DateTimeOffset.UtcNow - (XmlConvert.ToTimeSpan(queue.Properties.ListenerDescription.IdleTimeout))) > sbQueue.AccessedAt)
                             {
-                                await vmssManager.SetCapacityAsync(0);
-                                var fabricClient = GetFabricClient();
+                              //  await vmssManager.SetCapacityAsync(0);
+                               
                                 var registered = await fabricClient.QueryManager.GetServiceListAsync(applicationName, serviceName);
                                 if (registered.Any())
                                 {
@@ -285,7 +289,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             {
                 Keys = null,
                 //    LastActive = DateTimeOffset.MinValue,
-                LastScaleAction = DateTimeOffset.MinValue,
+              //  LastScaleAction = DateTimeOffset.MinValue,
                 //  LastScaleUpAction = DateTimeOffset.MinValue,
             });
         }

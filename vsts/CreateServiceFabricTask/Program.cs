@@ -49,17 +49,17 @@ namespace CreateServiceFabricTask
            
             args = args.LoadFrom<ServiceFabricOptions>(@"c:\dev\credsSinno.txt")
                 .LoadFrom<ResourceGroupOptions>(null,
-                    o => o.ResourceGroup ?? "TestServiceFabric11",
+                    o => o.ResourceGroup ?? "TestServiceFabric12",
                     o => o.CreateResourceGroup || true,
                     o => o.DeploymentName ?? "fabric",
                     o => o.ResourceGroupLocation ?? "West Europe")
                 .Concat(new[] {
                   "--clusterLocation","West Europe",
-                  "--clusterName", "pksservicefabric11",
+                  "--clusterName", "pksservicefabric12",
                   "--adminPassword","JgT5FFJK",
-                  "--certificateThumbprint","10A9BF925F41370FE55A4BDED2EF803505100C35",
-                  "--sourceVaultValue", "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric11/providers/Microsoft.KeyVault/vaults/kv-qczknbuyveqr6qczknbu",
-                  "--certificateUrlValue","https://kv-qczknbuyveqr6qczknbu.vault.azure.net/secrets/ServiceFabricCert/2d05b9c715fa4b26bc0874cf550b5993",
+                  "--certificateThumbprint","584C645A30253DDA98EF8B7ED09B87F61468F3EE",
+                  "--sourceVaultValue", "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.KeyVault/vaults/kv-3wodhzoece5io3wodhzo",
+                  "--certificateUrlValue","https://kv-3wodhzoece5io3wodhzo.vault.azure.net/secrets/ServiceFabricCert/8b95f09984424a4097c0010a1e096b86",
                   "--vmNodeTypeSize","Standard_A0"
             }).ToArray();
           //   args = new[] { "--build" };
