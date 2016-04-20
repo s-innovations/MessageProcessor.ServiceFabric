@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Fabric;
 using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using CommandLine;
 using Microsoft.Rest.Azure;
-using Newtonsoft.Json.Linq;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
-using SInnovations.Azure.ResourceManager;
 using SInnovations.Azure.ResourceManager.TemplateActions;
 using SInnovations.VSTeamServices.TasksBuilder.Attributes;
 using SInnovations.VSTeamServices.TasksBuilder.AzureResourceManager;
 using SInnovations.VSTeamServices.TasksBuilder.AzureResourceManager.ResourceTypes;
 using SInnovations.VSTeamServices.TasksBuilder.ConsoleUtils;
-using SInnovations.VSTeamServices.TasksBuilder.ResourceTypes;
 
 namespace CreateServiceFabricTask
 {
