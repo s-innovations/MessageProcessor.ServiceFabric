@@ -24,7 +24,6 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
 
         private Lazy<string> _rawJson;
         private Lazy<T> _model;
-        private MessageClusterResource model;
 
         public JsonModel(T model)
         {

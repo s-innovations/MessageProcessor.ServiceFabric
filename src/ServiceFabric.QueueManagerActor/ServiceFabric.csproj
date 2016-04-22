@@ -17,7 +17,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
-    <UpdateServiceFabricManifestEnabled>false</UpdateServiceFabricManifestEnabled>
+    <UpdateServiceFabricManifestEnabled>true</UpdateServiceFabricManifestEnabled>
     <ServicePackagePath>PackageRoot</ServicePackagePath>
     <ServicePackagePrefix>$(MSBuildProjectName)</ServicePackagePrefix>
   </PropertyGroup>
