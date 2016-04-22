@@ -99,6 +99,7 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActorExtensions.cs" />
     <Compile Include="Actors\IDispatcherManagerActor.cs" />
     <Compile Include="Actors\IQueueListenerActor.cs" />
     <Compile Include="Actors\IQueueManagerActor.cs" />

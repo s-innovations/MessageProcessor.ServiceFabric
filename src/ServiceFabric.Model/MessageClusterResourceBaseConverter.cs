@@ -36,7 +36,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Models
                            if (m.Success)
                            {
                                var newValue = variables.SelectToken(m.Groups[1].Value);
-                               if(newValue.Type == JTokenType.String)
+                               if (newValue.Type == JTokenType.String)
                                    return $"'{newValue.ToString()}'";
                                return newValue.ToString();
                            }
@@ -46,8 +46,12 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Models
                 if (objectType == typeof(string))
                     return token.ToString();
 
-              //  serializer.Deserialize(JObject.Parse( token.ToString() ).CreateReader(), objectType);
+                //  serializer.Deserialize(JObject.Parse( token.ToString() ).CreateReader(), objectType);
             }
+            else if (token.Type == JTokenType.Null)
+                return null;
+
+        
 
             var obj = Activator.CreateInstance(objectType);
             serializer.Populate(token.CreateReader(), obj);

@@ -28,121 +28,125 @@ using Microsoft.ServiceFabric.Actors.Runtime;
 using Microsoft.ServiceFabric.Actors.Client;
 using System.Security.Cryptography.X509Certificates;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 {
-    /// <remarks>
-    /// Each ActorID maps to an instance of this class.
-    /// The IProjName  interface (in a separate DLL that client code can
-    /// reference) defines the operations exposed by ProjName objects.
-    /// </remarks>
+    public class DebugTimer : IDisposable
+    {
+        Actor actor;
+        string message;
+        public DebugTimer(Actor actor,string message)
+        {
+            this.actor = actor;
+            this.message = message;
 
+        }
+        public Stopwatch sw = Stopwatch.StartNew();
+        public void Dispose()
+        {
+            sw.Stop();
+            ServiceFabricEventSource.Current.ActorMessage(actor,$"{sw.Elapsed} : {message}");
+        }
+    }
     [StatePersistence(StatePersistence.Persisted)]
     public class MessageClusterActor : Actor, IMessageClusterActor, IRemindable
     {
-        //    public const string CheckQueueSizesReminderName = "CheckQueueSizes";
+ 
         private static ILog Logger = LogProvider.GetCurrentClassLogger();
-        public const string CheckProvisionReminderName = "CheckProvision";
-        private const string StateKey = "mystate";
+        private const string CheckProvisionReminderName = "CheckProvision";
+       
 
         /// <summary>
         /// Cluster Configuration Store
         /// </summary>       
-        protected IMessageClusterConfigurationStore ClusterConfigStore { get; private set; }
+        protected IMessageClusterConfigurationStore PersistantStore { get; private set; }
 
         public MessageClusterActor(IMessageClusterConfigurationStore clusterProvider)
         {
-            ClusterConfigStore = clusterProvider;
+            PersistantStore = clusterProvider;
         }
 
-
-        /// <summary>
-        /// This class contains each actor's replicated state.
-        /// Each instance of this class is serialized and replicated every time an actor's state is saved.
-        /// For more information, see http://aka.ms/servicefabricactorsstateserialization
-        /// </summary>
-        [DataContract]
-        public class ActorState
-        {
-            public override string ToString()
-            {
-                return string.Format(CultureInfo.InvariantCulture, "QueueManagerActor.ActorState[Count = {0}]", RunningActors?.Count ?? 0);
-            }
-
-            [DataMember]
-            public Dictionary<string, string> RunningActors { get; set; }
-
-            [DataMember]
-            public bool IsInitialized { get; set; }
-        }
-
-
+        
         /// <summary>
         /// This method is called whenever an actor is activated.
         /// </summary>
-        protected override Task OnActivateAsync()
+        protected override async Task OnActivateAsync()
         {
-            return StateManager.TryAddStateAsync(StateKey, new ActorState { RunningActors = new Dictionary<string, string>() });
-        }
+            using (new DebugTimer(this, "OnActivateAsync"))
+            {
+                if (await PersistantStore.ClusterExistsAsync((this.Id.GetStringId())))
+                {
+                    var cluster = await PersistantStore.GetMessageClusterAsync(this.Id.GetStringId());
+                    await StateManager.TrySetJsonModelAsync("model", cluster);
+                }
 
+            }
+          //  await StateManager.TryAddStateAsync(StateKey, new ActorState { RunningActors = new Dictionary<string, string>() });
+        }
 
 
         public async Task ReceiveReminderAsync(string reminderName, byte[] context, TimeSpan dueTime, TimeSpan period)
         {
-          var clusterKey = this.Id.GetStringId();
-
-            if (reminderName.Equals(CheckProvisionReminderName))
+            using (new DebugTimer(this, "ReceiveReminderAsync"))
             {
-                var state = await StateManager.GetStateAsync<ActorState>(StateKey);
-                ServiceFabricEventSource.Current.ActorMessage(this, $"Checking ProvisionState of Service Fabric Cluster");
-                if (!state.IsInitialized)
+                var clusterKey = this.Id.GetStringId();
+
+                if (reminderName.Equals(CheckProvisionReminderName))
                 {
-
-                    var config = this.GetConfigurationInfo();
-
-                    var azureClient = new ServiceFabricClient(new AuthenticationHeaderValue("bearer", await config.GetAccessToken()));
-                    var fabricInfo = await azureClient.GetServiceFabricClusterInfoAsync(config.SubscriptionId.AsGuid(), config.ResourceGroupName, config.ClusterName);
-
-                    if (fabricInfo.Properties.ProvisioningState == "Failed")
+                    //   var isInitialized = await StateManager.TryGetStateAsync<bool>("isProvisioned");
+                    ServiceFabricEventSource.Current.ActorMessage(this, $"Checking ProvisionState of Service Fabric Cluster");
+                    if (!await this.IsInitialized())
                     {
-                        Logger.Error("Provision of cluster resource failed.");
 
-                        fabricInfo = await azureClient.PutClusterInfoAsync(fabricInfo);
+                        var config = this.GetConfigurationInfo();
 
-                    }
-                    //If in succeeded provision state, add any missing nodes.
-                    if (fabricInfo.Properties.ProvisioningState == "Succeeded")// || fabricInfo.Properties.ProvisioningState == "Failed")
-                    {
-                        var messageClusterConfiguration = await ClusterConfigStore.GetMessageClusterAsync(clusterKey);
-                        var processorNodes = messageClusterConfiguration.Resources.OfType<ClusterProcessorNode>();
-                        var updateInfo = GetUpdateInformation(fabricInfo, processorNodes);
+                        var azureClient = new ServiceFabricClient(new AuthenticationHeaderValue("bearer", await config.GetAccessToken()));
+                        var fabricInfo = await azureClient.GetServiceFabricClusterInfoAsync(config.SubscriptionId.AsGuid(), config.ResourceGroupName, config.ClusterName);
 
-                        var removeVMSSs = updateInfo.ShouldBeRemoved.Select(node => ActorProxy.Create<IVmssManagerActor>(new ActorId(clusterKey + "/" + node)).RemoveIfNotRemovedAsync()).ToArray();
-
-                        //if no new nodes are to be added start queue monitoring.
-                        if (updateInfo.ShouldBeRemoved.Any() || updateInfo.ShouldBeAdded.Any())
+                        if (fabricInfo.Properties.ProvisioningState == "Failed")
                         {
-                            fabricInfo = await azureClient.PutClusterInfoAsync(updateInfo.Cluster);
+                            Logger.Error("Provision of cluster resource failed.");
 
-                            if (fabricInfo.Properties.ProvisioningState == "Succeeded")
+                            fabricInfo = await azureClient.PutClusterInfoAsync(fabricInfo);
+
+                        }
+                        //If in succeeded provision state, add any missing nodes.
+                        if (fabricInfo.Properties.ProvisioningState == "Succeeded")// || fabricInfo.Properties.ProvisioningState == "Failed")
+                        {
+                            var messageClusterConfiguration = await StateManager.GetJsonModelAsync<MessageClusterResource>("model");
+
+                            var processorNodes = messageClusterConfiguration.Resources.OfType<ClusterProcessorNode>();
+                            var updateInfo = GetUpdateInformation(fabricInfo, processorNodes);
+
+                            var removeVMSSs = updateInfo.ShouldBeRemoved.Select(node => ActorProxy.Create<IVmssManagerActor>(new ActorId(clusterKey + "/" + node)).RemoveIfNotRemovedAsync()).ToArray();
+
+                            //if no new nodes are to be added start queue monitoring.
+                            if (updateInfo.ShouldBeRemoved.Any() || updateInfo.ShouldBeAdded.Any())
+                            {
+                                fabricInfo = await azureClient.PutClusterInfoAsync(updateInfo.Cluster);
+
+                                if (fabricInfo.Properties.ProvisioningState == "Succeeded")
+                                {
+                                    await ServiceFabricClusterProvisioned(messageClusterConfiguration.Resources);
+                                }
+
+                            }
+                            else
                             {
                                 await ServiceFabricClusterProvisioned(messageClusterConfiguration.Resources);
                             }
 
-                        }
-                        else
-                        {
-                            await ServiceFabricClusterProvisioned(messageClusterConfiguration.Resources);
+
                         }
 
 
                     }
+                    else
+                    {
 
-
-                }
-                else
-                {
-
+                    }
                 }
             }
 
@@ -150,11 +154,12 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
         private async Task ServiceFabricClusterProvisioned(IEnumerable<MessageClusterResourceBase> resources)
         {
+
             var queueNodes = resources.OfType<ClusterQueueInfo>();
             var allCreated = true;
             foreach (var queue in queueNodes)
             {
-               
+
 
                 var isVMSSCreated = await ActorProxy.Create<IVmssManagerActor>(new ActorId(this.Id.GetStringId() + "/" + queue.Properties.ListenerDescription.ProcessorNode)).CreateIfNotExistsAsync();
                 if (isVMSSCreated)
@@ -183,52 +188,112 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
             if (allCreated)
             {
-                await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));
-                var state = await StateManager.GetStateAsync<ActorState>(StateKey);
-                state.IsInitialized = true;
-                await StateManager.SetStateAsync(StateKey, state);
+                await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));             
+                await StateManager.SetStateAsync("isInitialized", true);
+            }
+
+        }
+        public async Task<JsonModel<MessageClusterResource>> GetModelAsync()
+        {
+            using (new DebugTimer(this, "GetModelAsync"))
+            {
+                var state = await StateManager.TryGetStateAsync<JsonModel<MessageClusterResource>>("model");
+                if (state.HasValue)
+                {
+                    return state.Value;
+                }
+
+                var cluster = await StateManager.GetJsonModelAsync<MessageClusterResource>(this.Id.GetStringId());
+
+                return await StateManager.SetJsonModelAsync("model", cluster);
+            }
+        }
+        public async Task<JsonModel<MessageClusterResource>> UpdateModelAsync(JsonModel<MessageClusterResource> model)
+        {
+            using (new DebugTimer(this, "UpdateModelAsync"))
+            {
+                var cluster = model.Model;
+
+
+                var provisioningStatus = await this.GetProvisioningStatus();
+
+                if (provisioningStatus == ClusterActorProvisioningStatus.Unprovisioned)
+                {
+                    provisioningStatus = await StartMonitoringAsync();
+                }
+                else if (!await this.IsInitialized())
+                {
+                    provisioningStatus = ClusterActorProvisioningStatus.Initializing;
+                }
+                else
+                {
+                    var config = this.GetConfigurationInfo();
+                    var azureClient = new ServiceFabricClient(new AuthenticationHeaderValue("bearer", await config.GetAccessToken()));
+                    var fabricInfo = await azureClient.GetServiceFabricClusterInfoAsync(config.SubscriptionId.AsGuid(), config.ResourceGroupName, config.ClusterName);
+
+                    var processorNodes = cluster.Resources.OfType<ClusterProcessorNode>();
+                    var updateInfo = GetUpdateInformation(fabricInfo, processorNodes);
+
+                    //if no new nodes are to be added start queue monitoring.
+                    if (updateInfo.ShouldBeRemoved.Any() || updateInfo.ShouldBeAdded.Any())
+                    {
+                        provisioningStatus = await this.SetProvisioningStatus("Updating");
+                        await StartProvisionReminderAsync();
+
+                    }
+
+                }
+
+                cluster.ProvisioningState = provisioningStatus;
+
+                await PersistantStore.PutMessageClusterAsync(Id.GetStringId(), cluster);
+                var modelState = await StateManager.SetJsonModelAsync("model", cluster);
+
+                return modelState;
             }
 
         }
 
-
         public async Task<string> StartMonitoringAsync()
         {
-            ServiceFabricEventSource.Current.ActorMessage(this, "StartMonitoringAsync");
-            ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
-
-            //$"{subscriptionid}/{resourceGroupName}/{clusterName}"
-            var clusterKey = this.Id.GetStringId();
-            var running = State.RunningActors.ContainsKey(clusterKey);
-
-
-            if (!running)
+            using (new DebugTimer(this, "StartMonitoringAsync"))
             {
-                await StartProvisionReminderAsync(clusterKey);
-                State.RunningActors.Add(clusterKey, "started");
-                await StateManager.SetStateAsync(StateKey, State);
-                return "Started";
+                ServiceFabricEventSource.Current.ActorMessage(this, "StartMonitoringAsync");
 
+                if (!await this.IsInitialized())
+                {
+                    await StartProvisionReminderAsync();
+                    return ClusterActorProvisioningStatus.Initializing;
+                }
+
+                var provisioningStatus = await this.GetProvisioningStatus();
+
+                if (provisioningStatus != ClusterActorProvisioningStatus.Provisioning)
+                {
+                    await StartProvisionReminderAsync();
+                    return await this.SetProvisioningStatus(ClusterActorProvisioningStatus.Updating);
+
+                }
+
+
+                return provisioningStatus;
             }
-
-
-            return "Running";
         }
 
         public async Task<string> StopMonitoringAsync()
         {
-            ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
+          //  ActorState State = await StateManager.GetStateAsync<ActorState>(StateKey);
 
 
             var clusterKey = this.Id.GetStringId();
-            var running = State.RunningActors.ContainsKey(clusterKey);
+            var provisioningStatus = await this.GetProvisioningStatus();
 
-            if (running)
+            if (provisioningStatus != ClusterActorProvisioningStatus.Unprovisioned)
             {
 
-                State.RunningActors.Remove(clusterKey);
+           //     State.RunningActors.Remove(clusterKey);
 
-                var messageClusterConfiguration = await ClusterConfigStore.GetMessageClusterAsync(clusterKey);
+                var messageClusterConfiguration = await StateManager.GetJsonModelAsync<MessageClusterResource>("model");
                 var queueNodes = messageClusterConfiguration.Resources.OfType<ClusterQueueInfo>();
 
                 foreach (var queue in queueNodes)
@@ -241,22 +306,22 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                 //  await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));
                 //     await UnregisterReminderAsync(GetReminder(CheckQueueSizesReminderName));
 
-                await StateManager.SetStateAsync(StateKey, State);
+           //     await StateManager.SetStateAsync(StateKey, State);
 
                 return "stopping";
             }
-            return "stopped";
+            return ClusterActorProvisioningStatus.Unprovisioned;
         }
 
 
 
 
-        private Task StartProvisionReminderAsync(string clusterKey)
+        private Task StartProvisionReminderAsync()
         {
             return RegisterReminderAsync(
                                  CheckProvisionReminderName,
-                                 Encoding.UTF8.GetBytes(clusterKey),
-                                 TimeSpan.FromMinutes(0),
+                                 new byte[0],
+                                 TimeSpan.FromSeconds(5),
                                  TimeSpan.FromMinutes(1));
         }
 
@@ -277,7 +342,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             }.CopyPortsFrom(prim)
             ).Where(f => !update.Properties.NodeTypes.Any(n => n.Name == f.Name)));
 
-          //  update.Properties.NodeTypes.RemoveAll(n => shouldBeRemoved.Contains(n.Name));
+            //  update.Properties.NodeTypes.RemoveAll(n => shouldBeRemoved.Contains(n.Name));
 
             return new ServiceFabricClusterUpdateInformation { Cluster = update, ShouldBeAdded = shouldBeAdded, ShouldBeRemoved = shouldBeRemoved };
         }

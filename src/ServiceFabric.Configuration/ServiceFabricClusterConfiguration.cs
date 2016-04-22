@@ -79,7 +79,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
         public string AzureADServicePrincipalName { get; set; }
         public string TenantId { get;  set; }
         public string AzureADServicePrincipalKey { get;  set; }
-
+        public string StorageName { get; set; }
 
         private static FileCache _cache = new FileCache();
         public async Task<string> GetAccessToken()
@@ -91,5 +91,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
 
             return token.AccessToken;
         }
+
+        
     }
 }

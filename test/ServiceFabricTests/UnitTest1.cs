@@ -16,6 +16,7 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Stores;
 
 namespace ServiceFabricTests
 {

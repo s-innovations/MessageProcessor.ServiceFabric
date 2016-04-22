@@ -216,7 +216,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
     public static class UnityFabricExtensions
     {
         private static ILog Logger = LogProvider.GetCurrentClassLogger();
-        public static IUnityContainer WithFabricContainer(this IUnityContainer container)
+        public static IUnityContainer AsFabricContainer(this IUnityContainer container)
         {
             return container.WithFabricContainer(c => FabricRuntime.Create());
         }
@@ -264,12 +264,36 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
             //{
             //    container.RegisterType<TFactory>(new ContainerControlledLifetimeManager());
             //}
-            ServiceRuntime.RegisterServiceAsync(serviceTypeName, (context) => container.CreateChildContainer().RegisterInstance(context,new ContainerControlledLifetimeManager()).Resolve<TStatelessService>());
+            ServiceRuntime.RegisterServiceAsync(serviceTypeName, (context) => MakeServiceContainer(container, context).Resolve<TStatelessService>());
             //container.Resolve<FabricRuntime>().RegisterStatelessServiceFactory(serviceTypeName, container.Resolve<TFactory>());
 
 
             return container;
         }
+      
+        private static IUnityContainer MakeServiceContainer(IUnityContainer container, StatelessServiceContext context) 
+        {
+            var child = container.CreateChildContainer();
+            child.RegisterInstance<ServiceContext>(context, new ContainerControlledLifetimeManager());
+            child.RegisterInstance(context , new ContainerControlledLifetimeManager());
+
+            return child;
+        }
+
+
+        public static IUnityContainer WithStatefullService<TStatelessService>(this IUnityContainer container, string serviceTypeName) where TStatelessService : StatefulService
+        {
+            //if (!container.IsRegistered<TFactory>())
+            //{
+            //    container.RegisterType<TFactory>(new ContainerControlledLifetimeManager());
+            //}
+            ServiceRuntime.RegisterServiceAsync(serviceTypeName, (context) => container.CreateChildContainer().RegisterInstance(context, new ContainerControlledLifetimeManager()).Resolve<TStatelessService>());
+            //container.Resolve<FabricRuntime>().RegisterStatelessServiceFactory(serviceTypeName, container.Resolve<TFactory>());
+
+
+            return container;
+        }
+
         public static IUnityContainer WithStatefulFactory<TFactory>(this IUnityContainer container, string serviceTypeName) where TFactory : IStatefulServiceFactory
         {
             if (!container.IsRegistered<TFactory>())

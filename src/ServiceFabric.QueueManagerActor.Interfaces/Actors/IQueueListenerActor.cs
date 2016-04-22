@@ -7,9 +7,9 @@ using Microsoft.ServiceFabric.Actors;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
 {
-    public interface IQueueListenerActor : IActor
-    {
+    //public interface IQueueListenerActor : IActor
+    //{
 
-        Task EnsureListeningAsync();
-    }
+    //    Task EnsureListeningAsync();
+    //}
 }

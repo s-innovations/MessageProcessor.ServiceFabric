@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+﻿<?xml version="1.0" encoding="utf-8"?><ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <Parameters>
       <Parameter Name="QueueListenerActorService_PartitionCount" DefaultValue="2"/>
       <Parameter Name="ManagementApiService_InstanceCount" DefaultValue="-1"/>
@@ -28,6 +28,8 @@
                   <Parameter Name="ResourceGroupName" Value="TestServiceFabric12"/>
                   <Parameter Name="ClusterName" Value="pksservicefabric12"/>
                   <Parameter Name="TenantId" Value="802626c6-0f5c-4293-a8f5-198ecd481fe3"/>
+                  <Parameter Name="StorageName" Value="3wodhzoece5io1"/>
+                  <Parameter Name="BasicAuth" Value="pks:123456"/>
                   <Parameter Name="AzureADServicePrincipal" Value="MIIB4wYJKoZIhvcNAQcDoIIB1DCCAdACAQAxggFMMIIBSAIBADAwMBwxGjAYBgNVBAMTEVNlcnZpY2VGYWJyaWNDZXJ0AhAbUlzRHgKrqEZPDwbKUzt4MA0GCSqGSIb3DQEBAQUABIIBABdip47xwyeEs0KFcf5gKlLckzJyEXlitRbUMPpBO00W15Ur3NzvcEbezhSzUaPybBRQPNHIw1xLJ/zspmsLEFeRuHSp3uauRQJKY4jLISwJjocjx5ev9a205Xh8Ib80WI6gB+VyCUjGDHpPM/mlS+eGElNiKvXB47yuzKrwYK50T/M7JAfSu17UWcx+cWXDsy66Edt2IILoAVK5xydfIHHxSIVT9sySE7Ugr30qv2CeaJyiAJQ/EhyzXxTC7xmra6EM95aCoxKZ/j8wzvNPV1te3NS2GH+WfyltdAWhW17R88q4nfq959tB4/6Aj+4DQTSGECBMH37P8VO1dXQOFc4wewYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAiNWiA5RMPMTYBYn4FtKKrGCPYe/tRthPAieoMgq+UZc03qQ8Tsyd88CF/7u6zGyc1U/rrJquoTugKMKjG9TpwQ/+J9Fi84qqNUmuW2Ty+6Dven5Owt61aLdo1uPRX3r+tMMg=="/>
                </Section>
             </Settings>
@@ -38,7 +40,7 @@
       <Service Name="VmssManagerActorService" GeneratedIdRef="b6e4a0a7-6781-4547-a895-188ab31319a7|None">
          <StatefulService ServiceTypeName="VmssManagerActorServiceType" TargetReplicaSetSize="[VmssManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[VmssManagerActorService_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[VmssManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
-           <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
+            <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
       </Service>
       <Service Name="MessageClusterActorService" GeneratedIdRef="7c682881-c41e-4f85-a74a-c3a505c413da|Persisted">
@@ -64,6 +66,6 @@
             <UniformInt64Partition PartitionCount="[DispatcherManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
             <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
-      </Service>      
+      </Service>
    </DefaultServices>
 </ApplicationManifest>

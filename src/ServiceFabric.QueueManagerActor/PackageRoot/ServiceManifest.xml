@@ -2,21 +2,7 @@
 <ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="FabricActorServicePkg" Version="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <ServiceTypes>
       <StatelessServiceType ServiceTypeName="ManagementApiServiceType" />
-      <StatelessServiceType ServiceTypeName="QueueListenerServiceType" />
-      <StatefulServiceType ServiceTypeName="QueueListenerActorServiceType">
-         <Extensions>
-            <Extension Name="__GeneratedServiceType__" GeneratedId="e4590d6b-a5b8-45a8-b048-c7d51abf8425|None">
-               <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
-                  <DefaultService Name="QueueListenerActorService" />
-                  <ServiceEndpoint Name="QueueListenerActorServiceEndpoint" />
-                  <ReplicatorEndpoint Name="QueueListenerActorServiceReplicatorEndpoint" />
-                  <ReplicatorConfigSection Name="QueueListenerActorServiceReplicatorConfig" />
-                  <ReplicatorSecurityConfigSection Name="QueueListenerActorServiceReplicatorSecurityConfig" />
-                  <StoreConfigSection Name="QueueListenerActorServiceLocalStoreConfig" />
-               </GeneratedNames>
-            </Extension>
-         </Extensions>
-      </StatefulServiceType>
+      <StatelessServiceType ServiceTypeName="StatelessCachedClusterCacheServiceType" />
       <StatefulServiceType ServiceTypeName="MessageClusterActorServiceType" HasPersistedState="true">
          <Extensions>
             <Extension Name="__GeneratedServiceType__" GeneratedId="7c682881-c41e-4f85-a74a-c3a505c413da|Persisted">
@@ -84,7 +70,6 @@
    <ConfigPackage Name="Config" Version="1.0.3" />
    <Resources>
       <Endpoints>
-         <Endpoint Name="QueueListenerActorServiceEndpoint" />
          <Endpoint Name="ServiceEndpoint" Protocol="http" Type="Input" Port="80" />
          <Endpoint Name="MessageClusterActorServiceEndpoint" />
          <Endpoint Name="MessageClusterActorServiceReplicatorEndpoint" />
@@ -92,7 +77,6 @@
          <Endpoint Name="VmssManagerActorServiceReplicatorEndpoint" />
          <Endpoint Name="QueueManagerActorServiceEndpoint" />
          <Endpoint Name="QueueManagerActorServiceReplicatorEndpoint" />
-         <Endpoint Name="QueueListenerActorServiceReplicatorEndpoint" />
          <Endpoint Name="DispatcherManagerActorServiceEndpoint" />
          <Endpoint Name="DispatcherManagerActorServiceReplicatorEndpoint" />
       </Endpoints>

@@ -26,10 +26,15 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
             Logger.Debug("Getting Cluster Information");
 
             var configurationPackage = parameters.CodePackageActivationContext.GetConfigurationPackageObject("Config");
+            return configurationPackage.GetClusterConfiguraiton();
+        }
+
+        public static ServiceFabricClusterConfiguration GetClusterConfiguraiton(this ConfigurationPackage configurationPackage)
+        {
             var section = configurationPackage.Settings.Sections["AppSettings"].Parameters;
             var azureADServicePrincipal = section["AzureADServicePrincipal"].Value;
 
-            if(string.IsNullOrEmpty(azureADServicePrincipal))
+            if (string.IsNullOrEmpty(azureADServicePrincipal))
             {
 
                 Logger.Error("The Azure AD Service Principal Credentials was not set");
@@ -57,7 +62,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
                 SubscriptionId = section["SubscriptionId"].Value,
                 AzureADServicePrincipalName = AADCredentials[0],
                 AzureADServicePrincipalKey = AADCredentials[1],
-                TenantId = section["TenantId"].Value
+                TenantId = section["TenantId"].Value,
+                StorageName = section["StorageName"]?.Value
             };
         }
     }

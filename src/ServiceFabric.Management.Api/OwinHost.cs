@@ -16,7 +16,9 @@ using System.Net.Http.Formatting;
 using Newtonsoft.Json.Serialization;
 using SInnovations.WebApi.Formatters;
 using SInnovations.WebApi.Owin;
-
+using Thinktecture.IdentityModel.Owin;
+using System.Security.Claims;
+using Microsoft.Practices.Unity;
 namespace ServiceFabric.Management.Api
 {
 
@@ -25,10 +27,20 @@ namespace ServiceFabric.Management.Api
     {
         public void Configuration(IAppBuilder appBuilder)
         {
+            var sfConfig = appBuilder.GetUnityContainer().Resolve<ServiceContext>().CodePackageActivationContext.GetConfigurationPackageObject("Config");
+            var target = sfConfig.Settings.Sections["AppSettings"].Parameters["BasicAuth"].Value;
 
+            appBuilder.UseBasicAuthentication(new BasicAuthenticationOptions("messagecluster", (username,password)=> {
+                if (string.Equals(target, $"{username}:{password}"))
+                {
+                    return Task.FromResult<IEnumerable<Claim>>(new[] { new Claim("sub", "username") });
+                }
+                return null;
+            }));
 
             HttpConfiguration config = new HttpConfiguration();
             config.SuppressDefaultHostAuthentication();
+            config.Filters.Add(new HostAuthenticationFilter("Basic"));
             config.MapHttpAttributeRoutes();
             config.Filters.Add(new ValidateModelAttribute());
 
@@ -40,5 +52,8 @@ namespace ServiceFabric.Management.Api
             appBuilder.UseWebApi(config);
             
         }
+
+        
     }
+
 }

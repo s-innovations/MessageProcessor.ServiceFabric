@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
+using Microsoft.ServiceFabric.Actors.Client;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
 {
@@ -15,5 +17,11 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
     {  
         Task<string> StartMonitoringAsync();
         Task<string> StopMonitoringAsync();
+        Task<JsonModel<MessageClusterResource>> UpdateModelAsync(JsonModel<MessageClusterResource> model);
+        Task<JsonModel<MessageClusterResource>> GetModelAsync();
+    }
+    public interface IMessageClusterActorProxy : IMessageClusterActor, IActorProxy
+    {
+
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Fabric;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,8 @@ namespace SInnovations.WebApi.Bindings
                     var store = ctx.ResolveDependency<IMessageClusterConfigurationStore>();
                     if (!store.ClusterExistsAsync(clusterKey).GetAwaiter().GetResult())
                     {
+                        actionContext.Response = actionContext.Request.CreateErrorResponse(
+                             HttpStatusCode.NotFound,new HttpError("Message Cluster not found for "+clusterKey));
                         return false;
                       
                     }

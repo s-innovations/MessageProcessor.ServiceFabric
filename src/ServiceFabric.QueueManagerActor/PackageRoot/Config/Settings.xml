@@ -8,6 +8,7 @@
       <Parameter Name="StorageName" Value="" MustOverride="true" />
       <Parameter Name="TenantId" Value="" MustOverride="true" />
       <Parameter Name="AzureADServicePrincipal" Value="" MustOverride="true" />
+      <Parameter Name="BasicAuth" Value="" MustOverride="true" />
    </Section>
    <Section Name="MessageClusterActorServiceReplicatorConfig">
       <Parameter Name="ReplicatorEndpoint" Value="MessageClusterActorServiceReplicatorEndpoint" />
@@ -28,13 +29,6 @@
       <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
    </Section>
    <Section Name="QueueManagerActorServiceReplicatorSecurityConfig">
-      <Parameter Name="CredentialType" Value="None" />
-   </Section>
-   <Section Name="QueueListenerActorServiceReplicatorConfig">
-      <Parameter Name="ReplicatorEndpoint" Value="QueueListenerActorServiceReplicatorEndpoint" />
-      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
-   </Section>
-   <Section Name="QueueListenerActorServiceReplicatorSecurityConfig">
       <Parameter Name="CredentialType" Value="None" />
    </Section>
    <Section Name="DispatcherManagerActorServiceReplicatorConfig">

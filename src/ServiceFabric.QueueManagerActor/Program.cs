@@ -23,6 +23,11 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Tracing;
 using System.Collections.Generic;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Stores;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
+using Microsoft.WindowsAzure.Storage;
+using Newtonsoft.Json.Linq;
+using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 {
@@ -62,47 +67,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
             return Task.FromResult(0);
         }
     }
-    public class InMemoryClusterStore : IMessageClusterConfigurationStore
-    {
-        private Dictionary<string, MessageClusterResource> _clusters = new Dictionary<string, MessageClusterResource>();
-
-        public Task<bool> ClusterExistsAsync(string clusterKey)
-        {
-            return Task.FromResult(_clusters.ContainsKey(clusterKey));
-        }
-
-        public async Task<MessageClusterResource> GetMessageClusterAsync(string clusterKey)
-        {
-            var parts = clusterKey.Split('/');
-
-            var stream = typeof(ServiceFabricConstants).Assembly.GetManifestResourceStream("SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.sampleConfiguration.json");
-            var cluster = JsonConvert.DeserializeObject<MessageClusterResource>(await new StreamReader(stream).ReadToEndAsync(), new JsonSerializerSettings {});
-           
-            if(cluster.Name != parts.Last())
-            {
-                if (_clusters.ContainsKey(clusterKey))
-                {
-                    return _clusters[clusterKey];
-                }
-                return null;
-            }
-
-            return cluster;
-        }
-
-        public async Task<MessageClusterResourceBase> GetMessageClusterResourceAsync(string clusterKey)
-        {
-            var cluster = await GetMessageClusterAsync(clusterKey.Substring(0,clusterKey.LastIndexOf('/')));
-            var name = clusterKey.Substring(clusterKey.LastIndexOf('/')+1);
-            return cluster.Resources.FirstOrDefault(n => n.Name == name);
-        }
-
-        public Task<MessageClusterResource> PutMessageClusterAsync(string clusterKey, MessageClusterResource model)
-        {
-            _clusters[clusterKey] = model;
-            return Task.FromResult(_clusters[clusterKey]);
-        }
-    }
+    
+    
     //http://help.appveyor.com/discussions/questions/1625-service-fabric
 
     internal static class Program
@@ -137,22 +103,25 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 
             try
             {
-                using (var container = new UnityContainer())
+                using (var container = new UnityContainer().AsFabricContainer())
                 {
 
                     if (!string.IsNullOrEmpty(appInsight))
                     {
                         container.RegisterInstance(CreateTelemetryClientFromInstrumentationkey(appInsight));
                     }
-
+                    container.RegisterInstance(FabricRuntime.GetActivationContext().GetConfigurationPackageObject("config").GetClusterConfiguraiton());
+                    container.RegisterType<CloudStorageAccount>("ApplicationStorage", new ContainerControlledLifetimeManager(), new InjectionFactory(ApplicationCloudStorageAccountFactory));
                     container.RegisterType<IMessageProcessorClientFactory, DummyFactory>(new HierarchicalLifetimeManager());
-                    container.RegisterType<IMessageClusterConfigurationStore, InMemoryClusterStore>(new HierarchicalLifetimeManager());
+                    // container.RegisterType<IMessageClusterConfigurationStore, InMemoryClusterStore>(new HierarchicalLifetimeManager());
+                    container.RegisterType<IMessageClusterConfigurationStore, BlobStorageClusterStore>(new HierarchicalLifetimeManager(), new InjectionFactory(BlobContainerFactory));
+                //    container.RegisterType<IMessageClusterConfigurationStore, StatelessCachedClusterStore>
 
-                    container.WithFabricContainer();
                     container.WithActor<MessageClusterActor>();
-                    container.WithActor<QueueListenerActor>();
+                   // container.WithActor<QueueListenerActor>();
                     container.WithStatelessService<ManagementApiService>(ManagementApiService.ServiceType);
-                    container.WithStatelessService<QueueListenerService>(QueueListenerService.ServiceType);
+                  //  container.WithStatelessService<StatelessCachedClusterCacheService>("StatelessCachedClusterCacheServiceType");
+             //       container.WithStatelessService<QueueListenerService>(QueueListenerService.ServiceType);
 
                     container.WithActor<VmssManagerActor>(new ActorServiceSettings()
                     {
@@ -178,5 +147,29 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
                 throw;
             }
         }
+
+        private static CloudStorageAccount ApplicationCloudStorageAccountFactory(IUnityContainer arg)
+        {
+            var configuration = arg.Resolve<ServiceFabricClusterConfiguration>();
+
+            var client = new ArmClient(configuration.GetAccessToken().GetAwaiter().GetResult());
+            var keys = client.ListKeysAsync<JObject>($"/subscriptions/{configuration.SubscriptionId}/resourceGroups/{configuration.ResourceGroupName}/providers/Microsoft.Storage/storageAccounts/{configuration.StorageName}", "2016-01-01").GetAwaiter().GetResult();
+
+            var account = new CloudStorageAccount(new StorageCredentials(configuration.StorageName, keys.SelectToken("keys[0].value").ToString()),true);
+            account.CreateCloudBlobClient().GetContainerReference("clusters").CreateIfNotExists();
+            return account;
+        }
+
+        private static IMessageClusterConfigurationStore BlobContainerFactory(IUnityContainer arg)
+        {
+
+            var account = arg.Resolve<CloudStorageAccount>("ApplicationStorage");
+            var container = account.CreateCloudBlobClient().GetContainerReference("clusters");
+
+            return new BlobStorageClusterStore(container);
+
+
+        }
     }
+   
 }
