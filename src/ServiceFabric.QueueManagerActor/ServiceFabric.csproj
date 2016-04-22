@@ -219,6 +219,10 @@
       <Project>{9a9de2e9-7f98-4062-b320-6fc9c45e7cb5}</Project>
       <Name>ServiceFabric.Management.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ServiceFabric.Model\ServiceFabric.Models.csproj">
+      <Project>{BE0A7CF2-1A3C-4263-B61D-3D53D949C0B9}</Project>
+      <Name>ServiceFabric.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceFabric.QueueManagerActor.Interfaces\ServiceFabric.Abstractions.csproj">
       <Project>{30E0EAC5-0ED9-4E2F-8845-1E6360245082}</Project>
       <Name>ServiceFabric.Abstractions</Name>

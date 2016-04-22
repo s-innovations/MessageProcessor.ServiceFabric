@@ -38,7 +38,7 @@
       <Service Name="VmssManagerActorService" GeneratedIdRef="b6e4a0a7-6781-4547-a895-188ab31319a7|None">
          <StatefulService ServiceTypeName="VmssManagerActorServiceType" TargetReplicaSetSize="[VmssManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[VmssManagerActorService_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[VmssManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
-           <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
+            <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
       </Service>
       <Service Name="MessageClusterActorService" GeneratedIdRef="7c682881-c41e-4f85-a74a-c3a505c413da|Persisted">
@@ -64,6 +64,7 @@
             <UniformInt64Partition PartitionCount="[DispatcherManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
             <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
-      </Service>      
+      </Service>
+      
    </DefaultServices>
 </ApplicationManifest>

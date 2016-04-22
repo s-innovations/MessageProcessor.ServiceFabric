@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?><ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <Parameters>
-      <Parameter Name="QueueListenerActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="QueueListenerActorService_PartitionCount" DefaultValue="2"/>
       <Parameter Name="ManagementApiService_InstanceCount" DefaultValue="-1"/>
-      <Parameter Name="ManagementApiService_PlacementConstraints" DefaultValue="NodeTypeName == nt1vm"/>
-      <Parameter Name="VmssManagerActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="PlacementConstraints" DefaultValue="true"/>
+      <Parameter Name="VmssManagerActorService_PartitionCount" DefaultValue="2"/>
       <Parameter Name="VmssManagerActorService_MinReplicaSetSize" DefaultValue="2"/>
       <Parameter Name="VmssManagerActorService_TargetReplicaSetSize" DefaultValue="3"/>
-      <Parameter Name="MessageClusterActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="MessageClusterActorService_PartitionCount" DefaultValue="2"/>
       <Parameter Name="MessageClusterActorService_MinReplicaSetSize" DefaultValue="2"/>
       <Parameter Name="MessageClusterActorService_TargetReplicaSetSize" DefaultValue="3"/>
-      <Parameter Name="QueueManagerActorService_PartitionCount" DefaultValue="10"/>
+      <Parameter Name="QueueManagerActorService_PartitionCount" DefaultValue="2"/>
       <Parameter Name="QueueManagerActorService_MinReplicaSetSize" DefaultValue="2"/>
       <Parameter Name="QueueManagerActorService_TargetReplicaSetSize" DefaultValue="3"/>
       <Parameter Name="QueueListenerActorService_MinReplicaSetSize" DefaultValue="1"/>
       <Parameter Name="QueueListenerActorService_TargetReplicaSetSize" DefaultValue="1"/>
-      <Parameter Name="DispatcherManagerActorService_PartitionCount" DefaultValue="10"/>
-      <Parameter Name="DispatcherManagerActorService_MinReplicaSetSize" DefaultValue="1"/>
-      <Parameter Name="DispatcherManagerActorService_TargetReplicaSetSize" DefaultValue="1"/>
+      <Parameter Name="DispatcherManagerActorService_PartitionCount" DefaultValue="2"/>
+      <Parameter Name="DispatcherManagerActorService_MinReplicaSetSize" DefaultValue="2"/>
+      <Parameter Name="DispatcherManagerActorService_TargetReplicaSetSize" DefaultValue="3"/>
    </Parameters>
    <ServiceManifestImport>
       <ServiceManifestRef ServiceManifestName="FabricActorServicePkg" ServiceManifestVersion="1.0.3"/>
@@ -25,10 +25,10 @@
             <Settings>
                <Section Name="AppSettings">
                   <Parameter Name="SubscriptionId" Value="8393a037-5d39-462d-a583-09915b4493df"/>
-                  <Parameter Name="ResourceGroupName" Value="TestServiceFabric11"/>
-                  <Parameter Name="ClusterName" Value="pksservicefabric11"/>
+                  <Parameter Name="ResourceGroupName" Value="TestServiceFabric12"/>
+                  <Parameter Name="ClusterName" Value="pksservicefabric12"/>
                   <Parameter Name="TenantId" Value="802626c6-0f5c-4293-a8f5-198ecd481fe3"/>
-                  <Parameter Name="AzureADServicePrincipal" Value="MIIB4wYJKoZIhvcNAQcDoIIB1DCCAdACAQAxggFMMIIBSAIBADAwMBwxGjAYBgNVBAMTEVNlcnZpY2VGYWJyaWNDZXJ0AhAuPMF+uit/mku2rhvoltGuMA0GCSqGSIb3DQEBAQUABIIBALaB65nuqVmSEv75UcD0XDqMXrHAvNgtyF6CWc+rzUCg4yuqEXtC1JdYAKaK9zgsKLxJDPee/Uc36Sz7G2JGPE2HL85he+yf/AVoGZ5tutxkc/LdBi6v77N34BRObCABd1p8jbFSGTQ2h4bnA59CzhhH3U8S5vDqgfEJiKy+IDexnrOIdgjOuCLL7cbEMM0PQv8TUVn1Lv1Vf/L+gi9zktwtn4LBiJCwKdNrdOMt3v1G37lOg4cToabEHa2baYGtbmWEMj3FCMWR2KOQ5HjaKQ8gDYFWfCRUCYExf//ECNp5S3gDDN9+/hY+JDHGuHEYVwUNU4KLT7MWBzW3YTxQNUEwewYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAipvHVQbt2kIYBYgxqbJECKgavPFW1+X2UzP0KeDaLIYHJWPYmCS+kF2XF1Dt8a3ZgEExYBYT8IlLirfG2uPNNU27Vm9RMOmSZxIqs+D8dPHkXuX4BWZnXGZEHEz2aPuhbVtQ=="/>
+                  <Parameter Name="AzureADServicePrincipal" Value="MIIB4wYJKoZIhvcNAQcDoIIB1DCCAdACAQAxggFMMIIBSAIBADAwMBwxGjAYBgNVBAMTEVNlcnZpY2VGYWJyaWNDZXJ0AhAbUlzRHgKrqEZPDwbKUzt4MA0GCSqGSIb3DQEBAQUABIIBABdip47xwyeEs0KFcf5gKlLckzJyEXlitRbUMPpBO00W15Ur3NzvcEbezhSzUaPybBRQPNHIw1xLJ/zspmsLEFeRuHSp3uauRQJKY4jLISwJjocjx5ev9a205Xh8Ib80WI6gB+VyCUjGDHpPM/mlS+eGElNiKvXB47yuzKrwYK50T/M7JAfSu17UWcx+cWXDsy66Edt2IILoAVK5xydfIHHxSIVT9sySE7Ugr30qv2CeaJyiAJQ/EhyzXxTC7xmra6EM95aCoxKZ/j8wzvNPV1te3NS2GH+WfyltdAWhW17R88q4nfq959tB4/6Aj+4DQTSGECBMH37P8VO1dXQOFc4wewYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAiNWiA5RMPMTYBYn4FtKKrGCPYe/tRthPAieoMgq+UZc03qQ8Tsyd88CF/7u6zGyc1U/rrJquoTugKMKjG9TpwQ/+J9Fi84qqNUmuW2Ty+6Dven5Owt61aLdo1uPRX3r+tMMg=="/>
                </Section>
             </Settings>
          </ConfigOverride>
@@ -38,28 +38,32 @@
       <Service Name="VmssManagerActorService" GeneratedIdRef="b6e4a0a7-6781-4547-a895-188ab31319a7|None">
          <StatefulService ServiceTypeName="VmssManagerActorServiceType" TargetReplicaSetSize="[VmssManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[VmssManagerActorService_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[VmssManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
+           <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
       </Service>
       <Service Name="MessageClusterActorService" GeneratedIdRef="7c682881-c41e-4f85-a74a-c3a505c413da|Persisted">
          <StatefulService ServiceTypeName="MessageClusterActorServiceType" TargetReplicaSetSize="[MessageClusterActorService_TargetReplicaSetSize]" MinReplicaSetSize="[MessageClusterActorService_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[MessageClusterActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
+            <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
       </Service>
       <Service Name="ManagementApiService">
          <StatelessService ServiceTypeName="ManagementApiServiceType" InstanceCount="[ManagementApiService_InstanceCount]">
             <SingletonPartition/>
+            <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatelessService>
       </Service>
       <Service Name="QueueManagerActorService" GeneratedIdRef="1e2fb51f-2780-48ee-a254-d1e5d78e780e|None">
          <StatefulService ServiceTypeName="QueueManagerActorServiceType" TargetReplicaSetSize="[QueueManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[QueueManagerActorService_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[QueueManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
+            <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
       </Service>
       <Service Name="DispatcherManagerActorService" GeneratedIdRef="e71102f2-0023-4765-8a3d-bcfa1a564ec3|None">
          <StatefulService ServiceTypeName="DispatcherManagerActorServiceType" TargetReplicaSetSize="[DispatcherManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[DispatcherManagerActorService_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[DispatcherManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807"/>
+            <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
          </StatefulService>
-      </Service>
-      
+      </Service>      
    </DefaultServices>
 </ApplicationManifest>

@@ -145,6 +145,10 @@
       <Project>{9a9de2e9-7f98-4062-b320-6fc9c45e7cb5}</Project>
       <Name>ServiceFabric.Management.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\ServiceFabric.Model\ServiceFabric.Models.csproj">
+      <Project>{BE0A7CF2-1A3C-4263-B61D-3D53D949C0B9}</Project>
+      <Name>ServiceFabric.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\ServiceFabric.QueueManagerActor.Interfaces\ServiceFabric.Abstractions.csproj">
       <Project>{30e0eac5-0ed9-4e2f-8845-1e6360245082}</Project>
       <Name>ServiceFabric.Abstractions</Name>

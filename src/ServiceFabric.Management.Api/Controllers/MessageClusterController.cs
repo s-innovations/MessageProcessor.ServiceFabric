@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.ServiceFabric.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management.Api.Attributes;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.WebApi.Bindings;
 
 namespace ServiceFabric.Management.Api.Controllers
@@ -31,12 +31,22 @@ namespace ServiceFabric.Management.Api.Controllers
         //GET {subscriptionId}/{resourceGroup}/providers/SInnovations.MessageProcessor/MessageCluster/{clusterName}"
         [ClusterRoute]
         [HttpGet]
-        public async Task<IHttpActionResult> GetClusterInfo([FromClusterRoute]IMessageClusterActor cluster)
+        public async Task<IHttpActionResult> GetClusterInfo([FromClusterRoute(true)]IMessageClusterActor cluster)
         {
             var configuratio = await ClusterConfigStore.GetMessageClusterAsync(cluster.GetActorId().GetStringId());
 
             return Ok(configuratio);
         }
+
+        [ClusterRoute]
+        [HttpPut]
+        public async Task<IHttpActionResult> AddOrUpdateClusterInfo([FromClusterRoute]IMessageClusterActor cluster, MessageClusterResource model)
+        {
+            var configuratio = await ClusterConfigStore.GetMessageClusterAsync(cluster.GetActorId().GetStringId());
+
+            return Ok(configuratio);
+        }
+
 
         //POST {subscriptionId}/{resourceGroup}/providers/SInnovations.MessageProcessor/MessageCluster/{clusterName}/start"
         [ClusterRoute("start")]

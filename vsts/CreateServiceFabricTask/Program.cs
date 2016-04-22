@@ -46,6 +46,7 @@ namespace CreateServiceFabricTask
                     o => o.DeploymentName ?? "fabric",
                     o => o.ResourceGroupLocation ?? "West Europe")
                 .Concat(new[] {
+                  "--DefaultCapacity", "5",
                   "--clusterLocation","West Europe",
                   "--clusterName", "pksservicefabric12",
                   "--adminPassword","JgT5FFJK",
@@ -53,7 +54,7 @@ namespace CreateServiceFabricTask
                   "--sourceVaultValue", "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.KeyVault/vaults/kv-3wodhzoece5io3wodhzo",
                   "--certificateUrlValue","https://kv-3wodhzoece5io3wodhzo.vault.azure.net/secrets/ServiceFabricCert/8b95f09984424a4097c0010a1e096b86",
                   "--vmNodeTypeSize","Standard_A0"
-            }).ToArray();
+            }).ToArray();  
           //   args = new[] { "--build" };
 #endif
             try

@@ -10,11 +10,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SInnovations.Azure.MessageProcessor.ServiceFabric;
-using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Actors;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
+using SInnovations.Azure.MessageProcessor.ServiceFabric.Models;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
 
 namespace ServiceFabricTests
@@ -64,7 +64,7 @@ namespace ServiceFabricTests
             {
                 var type = ActorProxyTypeFactory.CreateType<MessageClusterActor>();
                 container.RegisterType<IActorDeactivationInterception, OnActorDeactivateInterceptor>(new HierarchicalLifetimeManager());
-                container.RegisterType<IMessageClusterConfigurationStore, test>(new HierarchicalLifetimeManager());
+                container.RegisterType<IMessageClusterConfigurationStore, InMemoryClusterStore>(new HierarchicalLifetimeManager());
                 var a = container.Resolve<IActorDeactivationInterception>();
                 var b = container.Resolve<IMessageClusterConfigurationStore>();
                 container.RegisterType(typeof(MessageClusterActor), type, new HierarchicalLifetimeManager());

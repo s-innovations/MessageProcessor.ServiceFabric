@@ -150,6 +150,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\ServiceFabric.Model\ServiceFabric.Models.csproj">
+      <Project>{be0a7cf2-1a3c-4263-b61d-3d53d949c0b9}</Project>
+      <Name>ServiceFabric.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceFabric.QueueManagerActor.Interfaces\ServiceFabric.Abstractions.csproj">
       <Project>{30e0eac5-0ed9-4e2f-8845-1e6360245082}</Project>
       <Name>ServiceFabric.Abstractions</Name>

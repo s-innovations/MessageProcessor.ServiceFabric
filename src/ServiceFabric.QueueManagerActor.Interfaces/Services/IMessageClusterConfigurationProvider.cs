@@ -10,6 +10,8 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Service
     public interface IMessageClusterConfigurationStore
     {
         Task<MessageClusterResource> GetMessageClusterAsync(string clusterKey);
+        Task<MessageClusterResource> PutMessageClusterAsync(string clusterKey, MessageClusterResource model);
         Task<MessageClusterResourceBase> GetMessageClusterResourceAsync(string clusterKey);
+        Task<bool> ClusterExistsAsync(string clusterKey);
     }
 }

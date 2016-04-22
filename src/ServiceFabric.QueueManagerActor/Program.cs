@@ -22,6 +22,7 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Services;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Tracing;
+using System.Collections.Generic;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 {
@@ -61,8 +62,15 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
             return Task.FromResult(0);
         }
     }
-    public class test : IMessageClusterConfigurationStore
+    public class InMemoryClusterStore : IMessageClusterConfigurationStore
     {
+        private Dictionary<string, MessageClusterResource> _clusters = new Dictionary<string, MessageClusterResource>();
+
+        public Task<bool> ClusterExistsAsync(string clusterKey)
+        {
+            return Task.FromResult(_clusters.ContainsKey(clusterKey));
+        }
+
         public async Task<MessageClusterResource> GetMessageClusterAsync(string clusterKey)
         {
             var parts = clusterKey.Split('/');
@@ -72,6 +80,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
            
             if(cluster.Name != parts.Last())
             {
+                if (_clusters.ContainsKey(clusterKey))
+                {
+                    return _clusters[clusterKey];
+                }
                 return null;
             }
 
@@ -80,15 +92,16 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 
         public async Task<MessageClusterResourceBase> GetMessageClusterResourceAsync(string clusterKey)
         {
-            var parts = clusterKey.Split('/');
-
-            var stream = typeof(ServiceFabricConstants).Assembly.GetManifestResourceStream("SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.sampleConfiguration.json");
-            var cluster = JsonConvert.DeserializeObject<MessageClusterResource>(await new StreamReader(stream).ReadToEndAsync(), new JsonSerializerSettings {});
-
-            var name = parts.Last();
+            var cluster = await GetMessageClusterAsync(clusterKey.Substring(0,clusterKey.LastIndexOf('/')));
+            var name = clusterKey.Substring(clusterKey.LastIndexOf('/')+1);
             return cluster.Resources.FirstOrDefault(n => n.Name == name);
         }
 
+        public Task<MessageClusterResource> PutMessageClusterAsync(string clusterKey, MessageClusterResource model)
+        {
+            _clusters[clusterKey] = model;
+            return Task.FromResult(_clusters[clusterKey]);
+        }
     }
     //http://help.appveyor.com/discussions/questions/1625-service-fabric
 
@@ -133,7 +146,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
                     }
 
                     container.RegisterType<IMessageProcessorClientFactory, DummyFactory>(new HierarchicalLifetimeManager());
-                    container.RegisterType<IMessageClusterConfigurationStore, test>(new HierarchicalLifetimeManager());
+                    container.RegisterType<IMessageClusterConfigurationStore, InMemoryClusterStore>(new HierarchicalLifetimeManager());
 
                     container.WithFabricContainer();
                     container.WithActor<MessageClusterActor>();
