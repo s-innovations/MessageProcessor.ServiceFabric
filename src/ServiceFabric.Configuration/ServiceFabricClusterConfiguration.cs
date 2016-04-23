@@ -76,18 +76,19 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
         public string ResourceGroupName { get; set; }
         public string SubscriptionId { get; set; }
         public string ClusterName { get; set; }
-        public string AzureADServicePrincipalName { get; set; }
+      //  public string AzureADServicePrincipalName { get; set; }
         public string TenantId { get;  set; }
-        public string AzureADServicePrincipalKey { get;  set; }
+     //   public string AzureADServicePrincipalKey { get;  set; }
         public string StorageName { get; set; }
+        public ClientCredential AzureADServiceCredentials { get;  set; }
 
         private static FileCache _cache = new FileCache();
         public async Task<string> GetAccessToken()
         {
   
             var ctx = new AuthenticationContext($"https://login.microsoftonline.com/{TenantId}",_cache);
-            var cred = new ClientCredential(AzureADServicePrincipalName, AzureADServicePrincipalKey);
-            var token = await ctx.AcquireTokenAsync("https://management.azure.com/", cred);
+         
+            var token = await ctx.AcquireTokenAsync("https://management.azure.com/", AzureADServiceCredentials);
 
             return token.AccessToken;
         }

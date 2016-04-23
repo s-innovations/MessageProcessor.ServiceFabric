@@ -7,7 +7,7 @@
       <Parameter Name="ClusterName" Value="" MustOverride="true" />
       <Parameter Name="StorageName" Value="" MustOverride="true" />
       <Parameter Name="TenantId" Value="" MustOverride="true" />
-      <Parameter Name="AzureADServicePrincipal" Value="" MustOverride="true" />
+      <Parameter Name="AzureADServicePrincipal" Value="" MustOverride="true" IsEncrypted="true" />
       <Parameter Name="BasicAuth" Value="" MustOverride="true" />
    </Section>
    <Section Name="MessageClusterActorServiceReplicatorConfig">

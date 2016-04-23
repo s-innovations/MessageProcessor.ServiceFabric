@@ -27,7 +27,7 @@
       <Parameter Name="AzureADServicePrincipal" DefaultValue="" />
    </Parameters>
    <ServiceManifestImport>
-      <ServiceManifestRef ServiceManifestName="FabricActorServicePkg" ServiceManifestVersion="1.0.3" />
+      <ServiceManifestRef ServiceManifestName="ServiceFabricPkg" ServiceManifestVersion="1.0.3" />
       <ConfigOverrides>
          <ConfigOverride Name="Config">
             <Settings>
@@ -38,14 +38,11 @@
                   <Parameter Name="TenantId" Value="[TenantId]" />
                   <Parameter Name="StorageName" Value="[StorageName]" />
                   <Parameter Name="BasicAuth" Value="[BasicAuth]" />
-                  <Parameter Name="AzureADServicePrincipal" Value="[AzureADServicePrincipal]" />
+                  <Parameter Name="AzureADServicePrincipal" Value="[AzureADServicePrincipal]" IsEncrypted="true" />
                </Section>
             </Settings>
          </ConfigOverride>
       </ConfigOverrides>
-   </ServiceManifestImport>
-   <ServiceManifestImport>
-      <ServiceManifestRef ServiceManifestName="ServiceFabricPkg" ServiceManifestVersion="1.0.3" />
    </ServiceManifestImport>
    <DefaultServices>
       <Service Name="VmssManagerActorService" GeneratedIdRef="b6e4a0a7-6781-4547-a895-188ab31319a7|None">
