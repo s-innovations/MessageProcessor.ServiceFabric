@@ -1,4 +1,4 @@
-# S-Innovations.Azure.MessageProcessor.ServiceFabric
+# MessageProcessor.ServiceFabric
 
 This repository contains the S-Innovations MessageProcessor Service Fabric Application, which allows orcastration of Azure ServiceBus queues and dynamically scalable and reliable processor nodes using Azure VM ScaleSets. 
 
@@ -17,14 +17,14 @@ The variables can then be used in sub resources, allowing to save some typing.
     "properties": {
     },
     "variables": {
-    "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece",
-    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece/authorizationRules/RootManageSharedAccessKey",
-    "queueDescription": {
-        "enableBatchedOperations": true,
-        "enableDeadLetteringOnMessageExpiration": true,
-        "enableExpress": true,
-        "enablePartitioning": true
-    }
+        "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece",
+        "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece/authorizationRules/RootManageSharedAccessKey",
+        "queueDescription": {
+            "enableBatchedOperations": true,
+            "enableDeadLetteringOnMessageExpiration": true,
+            "enableExpress": true,
+            "enablePartitioning": true
+        }
     },
     "resources": []
 }
