@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="1.0.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="0.9.1" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <Parameters>
       <Parameter Name="QueueListenerActorService_PartitionCount" DefaultValue="2" />
       <Parameter Name="ManagementApiService_InstanceCount" DefaultValue="-1" />
@@ -27,7 +27,7 @@
       <Parameter Name="AzureADServicePrincipal" DefaultValue="" />
    </Parameters>
    <ServiceManifestImport>
-      <ServiceManifestRef ServiceManifestName="ServiceFabricPkg" ServiceManifestVersion="1.0.3" />
+      <ServiceManifestRef ServiceManifestName="ServiceFabricPkg" ServiceManifestVersion="0.9.1" />
       <ConfigOverrides>
          <ConfigOverride Name="Config">
             <Settings>
