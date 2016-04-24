@@ -5,6 +5,8 @@ This repository contains the S-Innovations MessageProcessor Service Fabric Appli
 ## Concept
 The concept is simple. It’s a developer service made to build message based cloud architecture applications on top. It allows creation of complex message queue structures with simple JSON configuration similar to how the Azure Resource Manager works. Let’s give an example.
 
+TODO: Introduce small examples here to get a better understanding of what this can be used for.
+
 ### MessageCluster
 A message cluster is the root resource which can have sub resources defined later in this document. The Cluster resource have the concept of variables (this is due to the service do not actually run on top of the Azure Resource Manager, so there is not a deployment concept as one know it.
 The variables can then be used in sub resources, allowing to save some typing.
@@ -82,7 +84,7 @@ Each processor nodes represent a VM Scale Set and when creating the message clus
         "scaleDownCooldown": "PT10M",
         "scaleUpCooldown": "PT1M"
     }
-},
+}
 ```
 
 The message cluster service fabric application also has all the logic to do automatically scale/provisioning of the under laying VM Scale Sets. In fact, when a new message cluster is added, it will create all the resources on azure with capacity set to 0.
@@ -168,9 +170,144 @@ $ApplicationParameter =  @{
 }
 #for production cluster use also "PlacementConstraints" = "NodeTypeName==nt1vm"
 
-Publish-NewServiceFabricApplication -ApplicationPackagePath C:\sfapps\MessageClusterApp-0.9.1\ -ApplicationName $ApplicationName -ApplicationParameter $Parameters -Action RegisterAndCreate  -OverwriteBehavior Always -ErrorAction Stop
+Publish-NewServiceFabricApplication -ApplicationPackagePath C:\sfapps\MessageClusterApp-0.9.1\ -ApplicationName $ApplicationName -ApplicationParameter $ApplicationParameter -Action RegisterAndCreate  -OverwriteBehavior Always -ErrorAction Stop
+```
+Using the service fabric explorer, for my case [](https://pksservicefabric12.westeurope.cloudapp.azure.com:19080/Explorer/Index.html#/), it can be verified that the applcation was deployed successfull. 
+
+When the application is deployed one can then add the message cluster configuration. Here is a small sample based on the resource types described above.
+```
+{
+  "apiVersion": "2016-01-01",
+  "type": "S-Innovations.MessageProcessor/MessageCluster",
+  "name": "mycoolcluster",
+  "location": "West Europe",
+  "properties": {},
+  "variables": {
+    "servicebusNamespaceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece",
+    "authRuleResourceId": "/subscriptions/8393a037-5d39-462d-a583-09915b4493df/resourceGroups/TestServiceFabric12/providers/Microsoft.ServiceBus/namespaces/sb-3wodhzoece/authorizationRules/RootManageSharedAccessKey",
+    "queueDescription": {
+      "enableBatchedOperations": true,
+      "enableDeadLetteringOnMessageExpiration": true,
+      "enableExpress": true,
+      "enablePartitioning": true
+    }
+  },
+  "resources": [
+    {
+      "type": "S-Innovations.MessageProcessor/queue",
+      "name": "queue-a4",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a4"
+        }
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/queue",
+      "name": "queue-a0",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "MyDemoAppType1",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "TestProcessorType",
+          "processorNode": "processor-a0",
+          "usePrimaryNode": true
+        }
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a0",
+      "properties": {
+        "name": "Standard_A0",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a4",
+      "properties": {
+        "name": "Standard_A4",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/dispatcher",
+      "name": "algs",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "topicScaleCount": 2,
+        "correlationFilters": {
+          "messagetype1": "queue-a0",
+          "messagetype5": "queue-a4"
+        }
+      }
+    }
+  ]
+}
+```
+which can be added to the application using the following powershell script
+```
+$queueClusters = "http://pksservicefabric12.westeurope.cloudapp.azure.com/webapp/a25b86e3-d6d2-43fc-b6ac-20cedd94a999/test/providers/SInnovations.MessageProcessor/MessageCluster/mycoolcluster"
+$body = [IO.File]::ReadAllText("C:\sfapps\msgcluster.json")
+$pair = "pks:kodetilsf"
+$encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($pair))
+$basicAuthValue = "Basic $encodedCreds"
+Invoke-WebRequest -Debug -Verbose -Uri $queueClusters -Method PUT -Header @{ "Authorization" = $basicAuthValue; "Content-Type" = "application/json" } -Body $body
 ```
 
+The guid and part of the url `a25b86e3-d6d2-43fc-b6ac-20cedd94a999/test` is just random picked right now and is used together with the msg cluster name `mycoolcluster` as the key. This was done such later seperation can be done where more tenants could use the same service fabric cluster. For now you may pick anything for these two params.
+
+After putting the resource into the system, it will reconfigure the service fabic cluster to have node types matching the processor nodes, followed by provisioning capacity=0 VM scalesets that can be automatically scaled up when messages are added to the queues. It takes a bit of time for azure resource manager to reconfigure the service fabric cluster. Best way to see this is going to the azure portal and looking at the status of the essential dropdown of the service fabric cluster.
+
+![Essential Tab](imgs/cluster_essentials.png "Essentiel Tab")
+
+and when its in status = ready the nodetypes will be updated, which can be seen under nodetypes.
+![NodeTypes](imgs/nodetypes.png "NodeTypes")
+
+As the last step it will create all the vm scale sets.
+
+![NodeTypes](imgs/resources.png "NodeTypes")
 
 ## How to help
 First, deploying and trying it out and providing some feedback - positive or negative will help me decide if I should put more time into the project. 
@@ -181,8 +318,9 @@ The key focus behind the project is to simplify and make it easy to use, so any 
 
 ## Roadmap
 1. Documentation of creating a listerner app 2016Q2
-2. Experiment with creating a listener app on linux machines running tasks in containers. 2016Q3
+2. Clean up application code + add event/logging for essential parts.2016Q3
+3. Experiment with creating a listener app on linux machines running tasks in containers. 2016Q4
 
 ## Disclaimer
-I have a full time job also, so tickets and questiosn will mainly be answered out of normal office hours. But I hope you will get in touch.
+I have a full time job also, so issues and questiosn will mainly be answered out of normal office hours. But I hope you will get in touch.
 

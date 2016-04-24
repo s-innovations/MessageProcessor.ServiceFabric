@@ -93,11 +93,20 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
         {
             var settings = FabricRuntime.GetActivationContext().GetConfigurationPackageObject("config").Settings;
             var appInsight = settings.Sections["AppSettings"]?.Parameters.FirstOrDefault(p => p.Name == "AppInsights")?.Value;              //  Log.Logger = new LoggerConfiguration()
+            TelemetryConfiguration.Active.InstrumentationKey = appInsight;
+            TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = false;
+
+            //var telemetry = CreateTelemetryClientFromInstrumentationkey(appInsight);
+            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["SubscriptionId"].Value);
+            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["ResourceGroupName"].Value);
+            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["ClusterName"].Value);
+            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["StorageName"].Value);
+            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["AzureADServicePrincipal"].Value);
             //Log.Logger = new LoggerConfiguration()
             //.MinimumLevel.Verbose()
             //.WriteTo.ApplicationInsights(appInsight)
             //.CreateLogger();
-            Microsoft.ServiceFabric.Telemetry.ApplicationInsights.Listener.Enable(System.Diagnostics.Tracing.EventLevel.Verbose);
+          //  Microsoft.ServiceFabric.Telemetry.ApplicationInsights.Listener.Enable(System.Diagnostics.Tracing.EventLevel.Verbose);
 
             LogProvider.SetCurrentLogProvider(ServiceFabricEventSource.Current);
 
@@ -113,16 +122,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
                     container.RegisterInstance(FabricRuntime.GetActivationContext().GetConfigurationPackageObject("config").GetClusterConfiguraiton());
                     container.RegisterType<CloudStorageAccount>("ApplicationStorage", new ContainerControlledLifetimeManager(), new InjectionFactory(ApplicationCloudStorageAccountFactory));
                     container.RegisterType<IMessageProcessorClientFactory, DummyFactory>(new HierarchicalLifetimeManager());
-                    // container.RegisterType<IMessageClusterConfigurationStore, InMemoryClusterStore>(new HierarchicalLifetimeManager());
                     container.RegisterType<IMessageClusterConfigurationStore, BlobStorageClusterStore>(new HierarchicalLifetimeManager(), new InjectionFactory(BlobContainerFactory));
-                //    container.RegisterType<IMessageClusterConfigurationStore, StatelessCachedClusterStore>
-
                     container.WithActor<MessageClusterActor>();
-                   // container.WithActor<QueueListenerActor>();
                     container.WithStatelessService<ManagementApiService>(ManagementApiService.ServiceType);
-                  //  container.WithStatelessService<StatelessCachedClusterCacheService>("StatelessCachedClusterCacheServiceType");
-             //       container.WithStatelessService<QueueListenerService>(QueueListenerService.ServiceType);
-
+                
                     container.WithActor<VmssManagerActor>(new ActorServiceSettings()
                     {
                         ActorGarbageCollectionSettings = new ActorGarbageCollectionSettings(120, 60)
