@@ -42,7 +42,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.VSTeamServices.TasksBuilder, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.1.0.0-pre-2016042401\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.1.0.0-pre-2016042402\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

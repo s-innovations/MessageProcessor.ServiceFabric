@@ -34,6 +34,7 @@ namespace ExtractServiceFabricApplicationVersionTask
         {
 #if DEBUG
             args = new[] { "--build" };
+            args = new[] { "--ApplicationManifest", @"C:\dev\sinnovations\MessageProcessor.ServiceFabric\src\MessageProcessor.ServiceFabricHost\pkg\Release\ApplicationManifest.xml", "--VariableName", "AppVersion", "--UpdateBuild" };
 #endif
 
             var options = ConsoleHelper.ParseAndHandleArguments<ProgramOptions>("Extracting ServiceFabric Version", args);
