@@ -1,12 +1,12 @@
 # MessageProcessor.ServiceFabric
 
-This repository contains the S-Innovations MessageProcessor Service Fabric Application, which allows orcastration of Azure ServiceBus queues and dynamically scalable and reliable processor nodes using Azure VM ScaleSets. 
+This repository contains the S-Innovations MessageProcessor Service Fabric Application, which allows orchestration of Azure ServiceBus queues and dynamically scalable and reliable processor nodes using Azure VM ScaleSets. 
 
 ## Concept
-The concept is simple. Its a developer service made to build message based cloud architecture applications ontop. It allows creation of complex message queue structures with simple JSON configuration similar to how the Azure Resource Manager works. Lets give an example.
+The concept is simple. It’s a developer service made to build message based cloud architecture applications on top. It allows creation of complex message queue structures with simple JSON configuration similar to how the Azure Resource Manager works. Let’s give an example.
 
 ### MessageCluster
-A message cluster is the root resource which can have sub resources defined later in this document. The Cluster resource have the concept of variables (this is due to the service do not actually run ontop of the Azure Resource Manager, so there is not a deployment concept as one know it.
+A message cluster is the root resource which can have sub resources defined later in this document. The Cluster resource have the concept of variables (this is due to the service do not actually run on top of the Azure Resource Manager, so there is not a deployment concept as one know it.
 The variables can then be used in sub resources, allowing to save some typing.
 ```
 {
@@ -57,12 +57,12 @@ The template looks like this
 and this will ensure that a servicebus queue is created when setting up the message cluster. Since the message cluster is all about pushing and polling messages of a queue, this resource also contains the information about the listener..
 #### Listener
 A listener should be represented by a different ServiceFabric application that is provisioned to the same Fabric Instance, from where the stateless services is defined that should be deployed. The stateless service is responsible of polling off messages and when there is no more messages on the queue, the services will be deprovisioned.
-All the required information about which service to use for polling off messages is defined in the listenerDescription element. 
+All the required information about which service to use for polling off messages is defined in the listener description element. 
 
 ### Processor Nodes
-The reader may also notice the processorNode element on the queue element, which represent the physical hardware to where the service should run. If the `usePrimaryNode` on the queue listener description is set to true, the service is also allowed to run on the primary nodes.
+The reader may also notice the processor node element on the queue element, which represent the physical hardware to where the service should run. If the `usePrimaryNode` on the queue listener description is set to true, the service is also allowed to run on the primary nodes.
 
-Each processor nodes represent a VM Scale Set and when creating the message cluster each processor node will be created as a nodetype on the Service Fabric Cluster, which allow placement of the listener services.
+Each processor nodes represent a VM Scale Set and when creating the message cluster each processor node will be created as a node type on the Service Fabric Cluster, which allow placement of the listener services.
 
 ```
 {
@@ -85,10 +85,10 @@ Each processor nodes represent a VM Scale Set and when creating the message clus
 },
 ```
 
-The message cluster service fabric application also have all the logic to do automatically scale/provisioning of the underlaying VM Scale Sets. Infact when a new message cluster is added, it will create all the resources on azure with capacity set to 0.
+The message cluster service fabric application also has all the logic to do automatically scale/provisioning of the under laying VM Scale Sets. In fact, when a new message cluster is added, it will create all the resources on azure with capacity set to 0.
 
 ### Dispatcher
-The dispatcher resource can be used to setup one or multiply topic endpoints that delegate messages by forwarding them to a target queue. This allows more putthough and unified endpoint to push messages to and based on the messages properties end up in the correct queue.
+The dispatcher resource can be used to setup one or multiply topic endpoints that delegate messages by forwarding them to a target queue. This allows more put though and unified endpoint to push messages to and based on the messages properties end up in the correct queue.
 ```
 {
     "type": "S-Innovations.MessageProcessor/dispatcher",
@@ -119,7 +119,7 @@ Currently only forwarding based on correlation filters, which ensures high perfo
 
 ## Getting Started
 
-Personally I have all my stuff in VSTS and will also provide a few guides on this later, and for now we will stick with the powershell way here. It is possible to deploy the application to a local dev cluster, but keep in mind that to actually add a message cluster to the application it also require a cluster running on azure as it needs to add custome node types using the azure resource manager and also create additional VM Scale Sets. So first you must setup a service fabric cluster on azure. I suggest to use the azure portal market place, searching for service fabric. 
+Personally I have all my stuff in VSTS and will also provide a few guides on this later, and for now we will stick with the PowerShell way here. It is possible to deploy the application to a local dev cluster, but keep in mind that to actually add a message cluster to the application it also requires a cluster running on azure as it needs to add custom node types using the azure resource manager and also create additional VM Scale Sets. So first you must setup a service fabric cluster on azure. I suggest to use the azure portal market place, searching for service fabric. 
 
 ### Parameters
 First you need to create a application parameters xml file (Can be omitted if using poweshell). Here are two examples for [local](https://github.com/s-innovations/MessageProcessor.ServiceFabric/blob/master/src/MessageProcessor.ServiceFabricHost/ApplicationParameters/Local.xml) and [cloud](https://github.com/s-innovations/MessageProcessor.ServiceFabric/blob/master/src/MessageProcessor.ServiceFabricHost/ApplicationParameters/Cloud.xml).
@@ -170,3 +170,19 @@ $ApplicationParameter =  @{
 
 Publish-NewServiceFabricApplication -ApplicationPackagePath C:\sfapps\MessageClusterApp-0.9.1\ -ApplicationName $ApplicationName -ApplicationParameter $Parameters -Action RegisterAndCreate  -OverwriteBehavior Always -ErrorAction Stop
 ```
+
+
+## How to help
+First, deploying and trying it out and providing some feedback - positive or negative will help me decide if I should put more time into the project. 
+
+The key focus behind the project is to simplify and make it easy to use, so any feedback on this topic is valuable at this point. What is blocking you from trying it out or using it?
+1. Help with deployment of Service Fabric Cluster?
+2. Better Getting Started Documentation?
+
+## Roadmap
+1. Documentation of creating a listerner app 2016Q2
+2. Experiment with creating a listener app on linux machines running tasks in containers. 2016Q3
+
+## Disclaimer
+I have a full time job also, so tickets and questiosn will mainly be answered out of normal office hours. But I hope you will get in touch.
+
