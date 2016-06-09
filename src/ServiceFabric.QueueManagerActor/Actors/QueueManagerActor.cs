@@ -18,6 +18,7 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Common.Logging;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
+using Newtonsoft.Json;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 {
@@ -220,6 +221,11 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                                 try
                                 {
+                                    var listenerConfiguration = new MessageProcessorOptions
+                                    {
+                                         ConnectionString = State.Keys.PrimaryConnectionString,
+                                         QueuePath = sbQueue.Path,                                         
+                                    };
                                     var placementConttraints = $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}";
                                     if (queue.Properties.ListenerDescription.UsePrimaryNode)
                                     {
@@ -239,7 +245,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                         InstanceCount = -1, //One for each node,
                                         PlacementConstraints = $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}",
                                         ApplicationName = applicationName,
-                                        InitializationData = Encoding.UTF8.GetBytes(State.Keys.PrimaryConnectionString),
+                                        InitializationData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(listenerConfiguration)),
                                     });
                                 }
                                 catch (Exception ex)
