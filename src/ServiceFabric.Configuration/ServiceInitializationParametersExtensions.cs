@@ -40,8 +40,9 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
             {
                 valuePtr = Marshal.SecureStringToGlobalAllocUnicode(value);
                 var secureStringPassword = new SecureString();
+                var nonsecureStringPassword = new StringBuilder();
                 var chars = new char[1];
-                var clientId = new List<char>();
+                var clientId = new StringBuilder();
                 var clientIdDone = false;
                 for (int i = 0; i < value.Length; i++)
                 {
@@ -53,7 +54,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
                     {
                         if (c != ':')
                         {
-                            clientId.Add(c);
+                            clientId.Append(c);
                         }
                         else
                         {
@@ -61,12 +62,15 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
                         }
                     }
                     else if (c != '\0')
+                    {
                         secureStringPassword.AppendChar(c);
+                        nonsecureStringPassword.Append(c);
+                    }
 
                     // handle unicodeChar
                 }
-
-                return new ClientCredential(new string(clientId.ToArray()), secureStringPassword);
+               
+                return new ClientCredential(clientId.ToString(), nonsecureStringPassword.ToString());
 
             }
             finally
@@ -78,42 +82,14 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
         public static ServiceFabricClusterConfiguration GetClusterConfiguraiton(this ConfigurationPackage configurationPackage)
         {
             var section = configurationPackage.Settings.Sections["AppSettings"].Parameters;
-        //    var azureADServicePrincipal = section["AzureADServicePrincipal"].Value;
             var a = section["AzureADServicePrincipal"].DecryptValue();
-            //var b = SecureStringToString(a);
-            //var c = Encoding.Unicode.GetBytes(b);
-            //var d = Encoding.UTF8.GetString(c);
             var adClientCredential = HandleSecureString(a);
-
-
-            //if (string.IsNullOrEmpty(azureADServicePrincipal))
-            //{
-
-            //    Logger.Error("The Azure AD Service Principal Credentials was not set");
-            //    throw new KeyNotFoundException("AzureADServicePrincipal");
-            //}
-
-            //var envelope = new EnvelopedCms();
-            //envelope.Decode(Convert.FromBase64String(azureADServicePrincipal));
-            //try
-            //{
-            //    envelope.Decrypt();
-            //}
-            //catch (Exception ex)
-            //{
-            //    Logger.ErrorException("Failed to decrypt service principal key", ex);
-            //    throw new Exception("Failed to decrypt service principal key");
-            //}
-
-            //var AADCredentials = Encoding.Unicode.GetString(envelope.ContentInfo.Content).Split(':');
 
             return new ServiceFabricClusterConfiguration
             {
                 ClusterName = section["ClusterName"].Value,
                 ResourceGroupName = section["ResourceGroupName"].Value,
                 SubscriptionId = section["SubscriptionId"].Value,
-             //   AzureADServicePrincipalName = AADCredentials[0],
-            //    AzureADServicePrincipalKey = AADCredentials[1],
                 AzureADServiceCredentials = adClientCredential,
                 TenantId = section["TenantId"].Value,
                 StorageName = section["StorageName"]?.Value

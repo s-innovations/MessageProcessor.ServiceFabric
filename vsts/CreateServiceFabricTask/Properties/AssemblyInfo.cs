@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyInformationalVersion("1.0.1")]
+[assembly: AssemblyInformationalVersion("1.0.2")]
 [assembly: AssemblyTitle("ARM : Create Service Fabric Cluster")]
 [assembly: AssemblyDescription("Creates or Updates A Service Fabric Cluster")]
-[assembly: AssemblyCompany("S-Innovations v/Poul Kjeldager Sørensen")]
+[assembly: AssemblyCompany("S-Innovations v/Poul K. Sørensen")]
 [assembly: AssemblyProduct("CreateServiceFabricTask")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyConfiguration("Deploy")]

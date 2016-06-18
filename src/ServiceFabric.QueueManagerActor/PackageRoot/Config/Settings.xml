@@ -1,41 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
-   <Section Name="AppSettings">
-      <Parameter Name="AppInsights" Value="2daf753a-c8bd-4573-8f27-5a96270d4b44" />
-      <Parameter Name="SubscriptionId" Value="" MustOverride="true" />
-      <Parameter Name="ResourceGroupName" Value="" MustOverride="true" />
-      <Parameter Name="ClusterName" Value="" MustOverride="true" />
-      <Parameter Name="StorageName" Value="" MustOverride="true" />
-      <Parameter Name="TenantId" Value="" MustOverride="true" />
-      <Parameter Name="AzureADServicePrincipal" Value="" MustOverride="true" IsEncrypted="true" />
-      <Parameter Name="BasicAuth" Value="" MustOverride="true" />
-   </Section>
-   <Section Name="MessageClusterActorServiceReplicatorConfig">
-      <Parameter Name="ReplicatorEndpoint" Value="MessageClusterActorServiceReplicatorEndpoint" />
-      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
-   </Section>
-   <Section Name="MessageClusterActorServiceReplicatorSecurityConfig">
-      <Parameter Name="CredentialType" Value="None" />
-   </Section>
-   <Section Name="VmssManagerActorServiceReplicatorConfig">
-      <Parameter Name="ReplicatorEndpoint" Value="VmssManagerActorServiceReplicatorEndpoint" />
-      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
-   </Section>
-   <Section Name="VmssManagerActorServiceReplicatorSecurityConfig">
-      <Parameter Name="CredentialType" Value="None" />
-   </Section>
-   <Section Name="QueueManagerActorServiceReplicatorConfig">
-      <Parameter Name="ReplicatorEndpoint" Value="QueueManagerActorServiceReplicatorEndpoint" />
-      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
-   </Section>
-   <Section Name="QueueManagerActorServiceReplicatorSecurityConfig">
-      <Parameter Name="CredentialType" Value="None" />
-   </Section>
-   <Section Name="DispatcherManagerActorServiceReplicatorConfig">
-      <Parameter Name="ReplicatorEndpoint" Value="DispatcherManagerActorServiceReplicatorEndpoint" />
-      <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
-   </Section>
-   <Section Name="DispatcherManagerActorServiceReplicatorSecurityConfig">
-      <Parameter Name="CredentialType" Value="None" />
-   </Section>
+  <Section Name="AppSettings">
+    <Parameter Name="AppInsights" Value="2daf753a-c8bd-4573-8f27-5a96270d4b44" />
+    <Parameter Name="SubscriptionId" Value="" MustOverride="true" />
+    <Parameter Name="ResourceGroupName" Value="" MustOverride="true" />
+    <Parameter Name="ClusterName" Value="" MustOverride="true" />
+    <Parameter Name="StorageName" Value="" MustOverride="true" />
+    <Parameter Name="TenantId" Value="" MustOverride="true" />
+    <Parameter Name="AzureADServicePrincipal" Value="" MustOverride="true" IsEncrypted="true" />
+    <Parameter Name="BasicAuth" Value="" MustOverride="true" />
+  </Section>
+  <Section Name="MessageClusterActorServiceReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="MessageClusterActorServiceReplicatorEndpoint" />
+    <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+  </Section>
+  <Section Name="MessageClusterActorServiceReplicatorSecurityConfig">
+    <Parameter Name="CredentialType" Value="None" />
+  </Section>
+  <Section Name="VmssManagerActorServiceReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="VmssManagerActorServiceReplicatorEndpoint" />
+    <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+  </Section>
+  <Section Name="VmssManagerActorServiceReplicatorSecurityConfig">
+    <Parameter Name="CredentialType" Value="None" />
+  </Section>
+  <Section Name="QueueManagerActorServiceReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="QueueManagerActorServiceReplicatorEndpoint" />
+    <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+  </Section>
+  <Section Name="QueueManagerActorServiceReplicatorSecurityConfig">
+    <Parameter Name="CredentialType" Value="None" />
+  </Section>
+  <Section Name="DispatcherManagerActorServiceReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="DispatcherManagerActorServiceReplicatorEndpoint" />
+    <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+  </Section>
+  <Section Name="DispatcherManagerActorServiceReplicatorSecurityConfig">
+    <Parameter Name="CredentialType" Value="None" />
+  </Section>
 </Settings>

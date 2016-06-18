@@ -38,10 +38,11 @@ namespace PatchClusterNoteTypes
         private static async Task RunAsync(CancellationToken token)
         {
             var ac = new AuthenticationContext("https://login.windows.net/common");
-            var AuthenticationInfo = ac.AcquireToken(
+            var AuthenticationInfo = await ac.AcquireTokenAsync(
                                      resource: "https://management.azure.com/",
                                      clientId: "1950a258-227b-4e31-a9cf-717495945fc2",
-                                     redirectUri: new Uri("urn:ietf:wg:oauth:2.0:oob"), promptBehavior: PromptBehavior.RefreshSession);
+                                     redirectUri: new Uri("urn:ietf:wg:oauth:2.0:oob"), 
+                                     parameters: new PlatformParameters(PromptBehavior.RefreshSession));
 
             Console.WriteLine(AuthenticationInfo.AccessToken);
             Console.WriteLine(AuthenticationInfo.UserInfo.DisplayableId);
