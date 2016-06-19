@@ -98,6 +98,8 @@ namespace DeployServiceFabricApplicationTask
                 "--ServiceTypeName","TestProcessorType",
                 "--ServiceName", "blabla1"
             };
+
+            args = new[] { "--build" };
 #endif
             var client = CreateTelemetryClientFromInstrumentationkey("d386c62e-7df6-42c2-9e56-d5e01f347782");
             client.TrackEvent("Service Fabric");
