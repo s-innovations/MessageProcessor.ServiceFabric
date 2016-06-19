@@ -142,39 +142,43 @@ namespace DeployServiceFabricApplicationTask
 
                 var applicationType = ProvisionApplicationType(options, fabricClient);
 
-                var applicationName = new Uri(options.ApplicatioName.StartsWith("fabric:/") ? options.ApplicatioName : $"fabric:/{options.ApplicatioName}");
-                var application = new ApplicationDescription
+                if (!string.IsNullOrEmpty(options.ApplicatioName))
                 {
-                    ApplicationName = applicationName,
-                    ApplicationTypeName = applicationType.ApplicationTypeName,
-                    ApplicationTypeVersion = applicationType.ApplicationTypeVersion
-                };
-
-                var applications = await fabricClient.QueryManager.GetApplicationListAsync(application.ApplicationName);
-                if (!applications.Any(a=>a.ApplicationTypeName == application.ApplicationTypeName && a.ApplicationTypeVersion == application.ApplicationTypeVersion))
-                {
-                    await fabricClient.ApplicationManager.CreateApplicationAsync(application);
-                }
-
-
-
-
-
-                //   var applicationsTypes1 = fabricClient.QueryManager.GetApplicationTypeListAsync(options.ApplicationTypeName).Result;
-
-                //    var applications = fabricClient.QueryManager.GetApplicationListAsync().Result;
-
-
-                var serviceTypes = await fabricClient.QueryManager.GetServiceTypeListAsync(application.ApplicationTypeName, application.ApplicationTypeVersion, options.ServiceTypeName);
-                if (serviceTypes.Any())
-                {
-                   
-                    var serviceName = new Uri($"{application.ApplicationName.AbsoluteUri}/{options.ServiceName}");
-                    var services = await fabricClient.QueryManager.GetServiceListAsync(application.ApplicationName, serviceName);
-                    if (!services.Any())
+                    var applicationName = new Uri(options.ApplicatioName.StartsWith("fabric:/") ? options.ApplicatioName : $"fabric:/{options.ApplicatioName}");
+                    var application = new ApplicationDescription
                     {
-                        await fabricClient.ServiceManager.CreateServiceFromTemplateAsync(application.ApplicationName, serviceName, serviceTypes.First().ServiceTypeDescription.ServiceTypeName, new byte[0]);
+                        ApplicationName = applicationName,
+                        ApplicationTypeName = applicationType.ApplicationTypeName,
+                        ApplicationTypeVersion = applicationType.ApplicationTypeVersion
+                    };
+
+                    var applications = await fabricClient.QueryManager.GetApplicationListAsync(application.ApplicationName);
+                    if (!applications.Any(a => a.ApplicationTypeName == application.ApplicationTypeName && a.ApplicationTypeVersion == application.ApplicationTypeVersion))
+                    {
+                        await fabricClient.ApplicationManager.CreateApplicationAsync(application);
                     }
+
+
+
+
+
+                    //   var applicationsTypes1 = fabricClient.QueryManager.GetApplicationTypeListAsync(options.ApplicationTypeName).Result;
+
+                    //    var applications = fabricClient.QueryManager.GetApplicationListAsync().Result;
+
+
+                    var serviceTypes = await fabricClient.QueryManager.GetServiceTypeListAsync(application.ApplicationTypeName, application.ApplicationTypeVersion, options.ServiceTypeName);
+                    if (serviceTypes.Any())
+                    {
+
+                        var serviceName = new Uri($"{application.ApplicationName.AbsoluteUri}/{options.ServiceName}");
+                        var services = await fabricClient.QueryManager.GetServiceListAsync(application.ApplicationName, serviceName);
+                        if (!services.Any())
+                        {
+                            await fabricClient.ServiceManager.CreateServiceFromTemplateAsync(application.ApplicationName, serviceName, serviceTypes.First().ServiceTypeDescription.ServiceTypeName, new byte[0]);
+                        }
+                    }
+
                 }
                 
                 //    fabricClient.ApplicationManager.ProvisionApplicationAsync

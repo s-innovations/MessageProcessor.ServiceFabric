@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyInformationalVersion("1.0.1")]
+[assembly: AssemblyInformationalVersion("1.0.2")]
 [assembly: AssemblyTitle("SF : Create or Update Application")]
 [assembly: AssemblyDescription("Deploy service fabric application and services to azure service fabric clusters")]
 [assembly: AssemblyConfiguration("Deploy")]
