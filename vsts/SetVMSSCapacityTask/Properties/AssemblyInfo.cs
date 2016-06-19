@@ -5,13 +5,15 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyInformationalVersion("1.0.4")]
-[assembly: AssemblyTitle("ARM : Create Service Fabric Cluster")]
-[assembly: AssemblyDescription("Creates or Updates A Service Fabric Cluster")]
-[assembly: AssemblyCompany("S-Innovations v/Poul K. Sørensen")]
-[assembly: AssemblyProduct("CreateServiceFabricTask")]
+
+[assembly: AssemblyInformationalVersion("1.0.0")]
+[assembly: AssemblyTitle("VMSS : Update Capacity")]
+[assembly: AssemblyDescription("Update the Capacity on a VMSS")]
+[assembly: AssemblyConfiguration("Utility")]
+[assembly: AssemblyCompany("S-Innovations.Net v/Poul K. Sørensen")]
+[assembly: AssemblyProduct("SetVMSSCapacityTask")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
-[assembly: AssemblyConfiguration("Deploy")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -20,7 +22,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("fc804757-a0d6-4a2c-a803-95ec614f60dc")]
+[assembly: Guid("d16f8aa7-ab1a-4a13-b778-77e425e74fe1")]
 
 // Version information for an assembly consists of the following four values:
 //

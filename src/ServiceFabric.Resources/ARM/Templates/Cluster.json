@@ -736,6 +736,10 @@
       "value": "[reference(parameters('clusterName'))]",
       "type": "object"
     },
+    "primaryVmssResourceId": {
+      "type": "string",
+      "value": " [resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('vmNodeType0Name'))]"
+    },
     "managementEndpoint": {
       "value": "[concat('https://',reference(concat(variables('lbIPName'),'-','primary')).dnsSettings.fqdn,':',parameters('fabricHttpGatewayPort'))]",
       "type": "string"
