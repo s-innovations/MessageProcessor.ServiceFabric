@@ -2,6 +2,10 @@
 
 This repository contains the S-Innovations MessageProcessor Service Fabric Application, which allows orchestration of Azure ServiceBus queues and dynamically scalable and reliable processor nodes using Azure VM ScaleSets. 
 
+* ![](https://sinnovations.visualstudio.com/_apis/public/build/definitions/809e415c-4783-4434-8d16-bd10e8ac55ed/12/badge) ![](https://sinnovations.visualstudio.com/_apis/public/build/definitions/809e415c-4783-4434-8d16-bd10e8ac55ed/11/badge) Git/VSTS Sync
+* ![](https://sinnovations.visualstudio.com/_apis/public/build/definitions/809e415c-4783-4434-8d16-bd10e8ac55ed/10/badge) Tasks and Apps
+
+
 ## Concept
 The concept is simple. It’s a developer service made to build message based cloud architecture applications on top. It allows creation of complex message queue structures with simple JSON configuration similar to how the Azure Resource Manager works. Let’s give an example.
 
