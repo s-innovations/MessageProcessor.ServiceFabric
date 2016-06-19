@@ -85,6 +85,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
             var a = section["AzureADServicePrincipal"].DecryptValue();
             var adClientCredential = HandleSecureString(a);
 
+            var storageName = section["StorageName"]?.Value;
+            if (storageName.StartsWith("/subscriptions"))
+                storageName = storageName.Split('/').Last();
+
             return new ServiceFabricClusterConfiguration
             {
                 ClusterName = section["ClusterName"].Value,
@@ -92,7 +96,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
                 SubscriptionId = section["SubscriptionId"].Value,
                 AzureADServiceCredentials = adClientCredential,
                 TenantId = section["TenantId"].Value,
-                StorageName = section["StorageName"]?.Value
+                StorageName = storageName
             };
         }
     }

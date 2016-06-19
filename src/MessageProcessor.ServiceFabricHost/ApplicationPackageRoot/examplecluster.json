@@ -1,0 +1,111 @@
+﻿{
+  "apiVersion": "2016-01-01",
+  "type": "S-Innovations.MessageProcessor/MessageCluster",
+  "name": "test-msg-cluster",
+  "location": "West Europe",
+  "properties": {
+
+  },
+  "variables": {
+    "servicebusNamespaceId": "",
+    "authRuleResourceId": "",
+    "queueDescription": {
+      "enableBatchedOperations": true,
+      "enableDeadLetteringOnMessageExpiration": true,
+      "enableExpress": true,
+      "enablePartitioning": true
+    },
+    "topicDescription": {
+      "enableBatchedOperations": true,
+      "enableDeadLetteringOnMessageExpiration": true,
+      "enableExpress": true,
+      "enablePartitioning": true
+    }
+  },
+  "resources": [
+    {
+      "type": "S-Innovations.MessageProcessor/topic",
+      "name": "signalr",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "topicScaleCount": 2,
+        "topicDescription": "[variables('topicDescription')]"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/dispatcher",
+      "name": "dispatch",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "topicScaleCount": 2,
+        "correlationFilters": {
+          "default": "default",
+          "data-a0": "data-a0"
+        }
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/processorNode",
+      "name": "processor-a0",
+      "properties": {
+        "name": "Standard_A0",
+        "tier": "Standard",
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2012-R2-Datacenter",
+        "vmImageVersion": "latest",
+        "location": "West Europe",
+        "minCapacity": 0,
+        "maxCapacity": 10,
+        "messagesPerInstance": 10,
+        "scaleDownCooldown": "PT10M",
+        "scaleUpCooldown": "PT1M"
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/queue",
+      "name": "data-a0",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "Ascend.Ammo.MessageProcessorAppType",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "MessageProcessorServiceType",
+          "processorNode": "processor-a0",
+          "usePrimaryNode": true
+        }
+      }
+    },
+    {
+      "type": "S-Innovations.MessageProcessor/queue",
+      "name": "default",
+      "properties": {
+        "servicebus": {
+          "servicebusNamespaceId": "[variables('servicebusNamespaceId')]",
+          "authRuleResourceId": "[variables('authRuleResourceId')]"
+        },
+        "queueDescription": "[variables('queueDescription')]",
+        "listenerDescription": {
+          "partitionCount": 1,
+          "idleTimeout": "PT5M45S",
+          "applicationTypeName": "Ascend.Ammo.MessageProcessorAppType",
+          "applicationTypeVersion": "1.0.0",
+          "serviceTypeName": "MessageProcessorServiceType",
+          "processorNode": "processor-a0"
+        }
+      }
+    }
+  ]
+}

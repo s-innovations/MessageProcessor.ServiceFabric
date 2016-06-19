@@ -747,6 +747,10 @@
     "gatewayEndpoint": {
       "value": "[concat(reference(concat(variables('lbIPName'),'-','primary')).dnsSettings.fqdn,':',parameters('fabricTcpGatewayPort'))]",
       "type": "string"
+    },
+    "vmStorageAccountName": {
+      "type": "string",
+      "value": "[variables('vmStorageAccountName')]"
     }
   }
 }

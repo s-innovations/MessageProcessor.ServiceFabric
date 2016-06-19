@@ -27,6 +27,7 @@
     <ProjectReference Include="..\ServiceFabric.QueueManagerActor\ServiceFabric.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ApplicationPackageRoot\examplecluster.json" />
     <Content Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
