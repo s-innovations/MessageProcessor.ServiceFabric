@@ -38,4 +38,11 @@
   <Section Name="DispatcherManagerActorServiceReplicatorSecurityConfig">
     <Parameter Name="CredentialType" Value="None" />
   </Section>
+  <Section Name="TopicManagerActorServiceReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="TopicManagerActorServiceReplicatorEndpoint" />
+    <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+  </Section>
+  <Section Name="TopicManagerActorServiceReplicatorSecurityConfig">
+    <Parameter Name="CredentialType" Value="None" />
+  </Section>
 </Settings>

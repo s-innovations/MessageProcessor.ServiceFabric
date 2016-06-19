@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="0.9.2" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="MessageProcessor.ServiceFabricHostType" ApplicationTypeVersion="0.9.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="QueueListenerActorService_PartitionCount" DefaultValue="2" />
     <Parameter Name="ManagementApiService_InstanceCount" DefaultValue="-1" />
@@ -25,9 +25,12 @@
     <Parameter Name="StorageName" DefaultValue="" />
     <Parameter Name="BasicAuth" DefaultValue="" />
     <Parameter Name="AzureADServicePrincipal" DefaultValue="" />
+    <Parameter Name="TopicManagerActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="TopicManagerActorService_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="TopicManagerActorService_TargetReplicaSetSize" DefaultValue="1" />
   </Parameters>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="ServiceFabricPkg" ServiceManifestVersion="0.9.2" />
+    <ServiceManifestRef ServiceManifestName="ServiceFabricPkg" ServiceManifestVersion="0.9.3" />
     <ConfigOverrides>
       <ConfigOverride Name="Config">
         <Settings>
@@ -73,6 +76,11 @@
       <StatefulService ServiceTypeName="DispatcherManagerActorServiceType" TargetReplicaSetSize="[DispatcherManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[DispatcherManagerActorService_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[DispatcherManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
         <PlacementConstraints>[PlacementConstraints]</PlacementConstraints>
+      </StatefulService>
+    </Service>
+    <Service Name="TopicManagerActorService" GeneratedIdRef="43929d5e-70e4-492a-925c-4d7a8f95da10|None">
+      <StatefulService ServiceTypeName="TopicManagerActorServiceType" TargetReplicaSetSize="[TopicManagerActorService_TargetReplicaSetSize]" MinReplicaSetSize="[TopicManagerActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[TopicManagerActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
   </DefaultServices>

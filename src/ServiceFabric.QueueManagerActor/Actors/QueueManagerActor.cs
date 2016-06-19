@@ -23,7 +23,129 @@ using Newtonsoft.Json;
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 {
 
+    public class TopicManagerActor : Actor, ITopicManagerActor, IRemindable
+    {
+        private static ILog Logger = LogProvider.GetCurrentClassLogger();
+        private const string MonitoringReminderName = "monitoringCheck";
 
+
+        /// <summary>
+        /// Cluster Configuration Store
+        /// </summary>       
+        protected IMessageClusterConfigurationStore ClusterConfigStore { get; private set; }
+
+        public TopicManagerActor(IMessageClusterConfigurationStore clusterProvider)
+        {
+            ClusterConfigStore = clusterProvider;
+        }
+
+        public Task<bool> IsInitializedAsync()
+        {
+            return StateManager.GetStateAsync<bool>("IsInitialized");
+        }
+
+        protected override Task OnActivateAsync()
+        {
+            return base.OnActivateAsync();
+        }
+
+        public async Task StartMonitoringAsync()
+        {
+            
+
+            if (!await StateManager.GetStateAsync<bool>("IsMonitoring"))
+            {
+               
+                await StartProvisionReminder();
+                await StateManager.SetStateAsync("IsMonitoring", true);
+            }
+        }
+
+        private Task StartProvisionReminder()
+        {
+            return RegisterReminderAsync(
+                                      MonitoringReminderName,
+                                       new Byte[0],
+                                       TimeSpan.FromMinutes(0),
+                                       TimeSpan.FromMinutes(5));
+
+        }
+
+        public async Task StopMonitoringAsync()
+        {
+            if (await StateManager.GetStateAsync<bool>("IsMonitoring"))
+            {
+                await UnregisterReminderAsync(GetReminder(MonitoringReminderName));
+                await StateManager.SetStateAsync("IsMonitoring", false);
+               
+            }
+        }
+
+        public async Task ReceiveReminderAsync(string reminderName, byte[] context, TimeSpan dueTime, TimeSpan period)
+        {
+
+            if (reminderName.Equals(MonitoringReminderName))
+            {
+                try
+                {
+                    var nodeKey = this.Id.GetStringId();//Subscription/ResourceGroup/clustername/nodename; 
+                    var topic = await ClusterConfigStore.GetMessageClusterResourceAsync(nodeKey) as TopicInfo;
+
+                    if(!await IsInitializedAsync())
+                    {
+
+                        var client = new ArmClient(await this.GetConfigurationInfo().GetAccessToken());
+
+                        var keysState = await StateManager.TryGetStateAsync<ServicebusAuthorizationKeys>("keys");
+                        ServicebusAuthorizationKeys keys;
+
+                        if(!keysState.HasValue|| !keysState.Value.IsAccessible)
+                        {
+                            var authRuleResourceId = topic.Properties.ServiceBus.AuthRuleResourceId;
+
+                            keys = await client.ListKeysAsync<ServicebusAuthorizationKeys>(authRuleResourceId, "2015-08-01");
+                            await StateManager.SetStateAsync("keys", keys);
+                            
+
+                        }else
+                        {
+                            keys = keysState.Value;
+                        }
+
+                        if (!keys.IsAccessible)
+                        {
+                            Logger.Error("Servicebus keys  are not accessible");
+                            return;
+                        }
+
+
+                         var ns = NamespaceManager.CreateFromConnectionString(keys.PrimaryConnectionString);
+                        
+                            for (int i = 0, ii = topic.Properties.TopicScaleCount; i < ii; ++i)
+                            {
+                                var topicPath = topic.Name + i.ToString("D3");
+                                if (!await ns.TopicExistsAsync(topicPath))
+                                {
+                                    await ns.CreateTopicAsync(topicPath);
+                                }
+                            }
+
+                        await StateManager.SetStateAsync("IsInitialized", true);
+                        await UnregisterReminderAsync(GetReminder(reminderName));
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.ErrorException("Reminder Error:", ex);
+                    throw;
+                }
+
+
+            }
+
+        }
+    }
 
     public class QueueManagerActor : Actor, IQueueManagerActor, IRemindable
     {

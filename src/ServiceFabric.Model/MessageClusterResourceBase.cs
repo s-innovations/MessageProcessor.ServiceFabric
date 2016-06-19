@@ -14,6 +14,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Models
         public const string MessageClusterType = "S-Innovations.MessageProcessor/MessageCluster";
         public const string DispatcherType = "S-Innovations.MessageProcessor/dispatcher";
         public const string ProcessorNodeType = "S-Innovations.MessageProcessor/processorNode";
+        public const string TopicType = "S-Innovations.MessageProcessor/topic";
 
         public string Name { get; set; }
         

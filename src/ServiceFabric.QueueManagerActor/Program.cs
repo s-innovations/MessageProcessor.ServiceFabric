@@ -77,7 +77,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
         {
             var telemetryClient = new TelemetryClient();
 
-            if (string.IsNullOrWhiteSpace(instrumentationKey) == false)
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 telemetryClient.InstrumentationKey = instrumentationKey;
             }
@@ -95,19 +95,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
             var appInsight = settings.Sections["AppSettings"]?.Parameters.FirstOrDefault(p => p.Name == "AppInsights")?.Value;              //  Log.Logger = new LoggerConfiguration()
             TelemetryConfiguration.Active.InstrumentationKey = appInsight;
             TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = false;
-
-            //var telemetry = CreateTelemetryClientFromInstrumentationkey(appInsight);
-            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["SubscriptionId"].Value);
-            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["ResourceGroupName"].Value);
-            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["ClusterName"].Value);
-            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["StorageName"].Value);
-            //telemetry.TrackTrace(settings.Sections["AppSettings"].Parameters["AzureADServicePrincipal"].Value);
-            //Log.Logger = new LoggerConfiguration()
-            //.MinimumLevel.Verbose()
-            //.WriteTo.ApplicationInsights(appInsight)
-            //.CreateLogger();
-          //  Microsoft.ServiceFabric.Telemetry.ApplicationInsights.Listener.Enable(System.Diagnostics.Tracing.EventLevel.Verbose);
-
+            
             LogProvider.SetCurrentLogProvider(ServiceFabricEventSource.Current);
 
             try
@@ -135,6 +123,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
                         ActorGarbageCollectionSettings = new ActorGarbageCollectionSettings(120, 60)
                     });
                     container.WithActor<DispatcherManagerActor>(new ActorServiceSettings()
+                    {
+                        ActorGarbageCollectionSettings = new ActorGarbageCollectionSettings(120, 60)
+                    });
+                    container.WithActor<TopicManagerActor>(new ActorServiceSettings()
                     {
                         ActorGarbageCollectionSettings = new ActorGarbageCollectionSettings(120, 60)
                     });

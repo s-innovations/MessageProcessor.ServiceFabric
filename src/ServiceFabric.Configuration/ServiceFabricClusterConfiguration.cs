@@ -88,7 +88,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
   
             var ctx = new AuthenticationContext($"https://login.microsoftonline.com/{TenantId}",_cache);
          
-            var token = await ctx.AcquireTokenAsync("https://management.azure.com/", AzureADServiceCredentials);
+            var token = await ctx.AcquireTokenAsync("https://management.azure.com/",AzureADServiceCredentials);
 
             return token.AccessToken;
         }

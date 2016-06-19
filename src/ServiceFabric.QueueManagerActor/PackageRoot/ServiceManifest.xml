@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="ServiceFabricPkg" Version="0.9.2" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="ServiceFabricPkg" Version="0.9.3" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <ServiceTypes>
     <StatelessServiceType ServiceTypeName="ManagementApiServiceType" />
     <StatelessServiceType ServiceTypeName="StatelessCachedClusterCacheServiceType" />
@@ -59,15 +59,29 @@
         </Extension>
       </Extensions>
     </StatefulServiceType>
+    <StatefulServiceType ServiceTypeName="TopicManagerActorServiceType">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="43929d5e-70e4-492a-925c-4d7a8f95da10|None">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="TopicManagerActorService" />
+            <ServiceEndpoint Name="TopicManagerActorServiceEndpoint" />
+            <ReplicatorEndpoint Name="TopicManagerActorServiceReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="TopicManagerActorServiceReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="TopicManagerActorServiceReplicatorSecurityConfig" />
+            <StoreConfigSection Name="TopicManagerActorServiceLocalStoreConfig" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
   </ServiceTypes>
-  <CodePackage Name="Code" Version="0.9.2">
+  <CodePackage Name="Code" Version="0.9.3">
     <EntryPoint>
       <ExeHost>
         <Program>S-Innovations.Azure.MessageProcessor.ServiceFabric.exe</Program>
       </ExeHost>
     </EntryPoint>
   </CodePackage>
-  <ConfigPackage Name="Config" Version="0.9.2" />
+  <ConfigPackage Name="Config" Version="0.9.3" />
   <Resources>
     <Endpoints>
       <Endpoint Name="ServiceEndpoint" Protocol="http" Type="Input" Port="80" />
@@ -79,6 +93,8 @@
       <Endpoint Name="QueueManagerActorServiceReplicatorEndpoint" />
       <Endpoint Name="DispatcherManagerActorServiceEndpoint" />
       <Endpoint Name="DispatcherManagerActorServiceReplicatorEndpoint" />
+      <Endpoint Name="TopicManagerActorServiceEndpoint" />
+      <Endpoint Name="TopicManagerActorServiceReplicatorEndpoint" />
     </Endpoints>
   </Resources>
 </ServiceManifest>

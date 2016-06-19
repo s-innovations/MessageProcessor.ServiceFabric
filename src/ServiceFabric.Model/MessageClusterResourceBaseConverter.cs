@@ -93,6 +93,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Models
                     obj = new ClusterQueueInfo();
                     serializer.Populate(item.CreateReader(), obj);
                     break;
+                case MessageClusterResourceBase.TopicType:
+                    obj = new TopicInfo();
+                    serializer.Populate(item.CreateReader(), obj);
+                    break;
 
                 case MessageClusterResourceBase.DispatcherType:
                     obj = new ClusterDispatcherInfo();

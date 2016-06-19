@@ -69,7 +69,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
 
                     // handle unicodeChar
                 }
-               
+           //     return new UserPasswordCredential(clientId.ToString(), secureStringPassword);
                 return new ClientCredential(clientId.ToString(), nonsecureStringPassword.ToString());
 
             }

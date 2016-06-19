@@ -186,6 +186,22 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
             }
 
+            foreach(var topic in resources.OfType<TopicInfo>())
+            {
+                var topicActor = ActorProxy.Create<ITopicManagerActor>(new ActorId(this.Id.GetStringId() + "/" + topic.Name));
+
+                await topicActor.StartMonitoringAsync();
+
+                if (! await topicActor.IsInitializedAsync())
+                {
+                    allCreated = false;
+                }
+
+            }
+
+
+
+
             if (allCreated)
             {
                 await UnregisterReminderAsync(GetReminder(CheckProvisionReminderName));             

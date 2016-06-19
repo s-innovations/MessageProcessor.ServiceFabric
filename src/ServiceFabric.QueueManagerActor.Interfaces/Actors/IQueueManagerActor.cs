@@ -14,4 +14,9 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Abstractions.Actors
         Task<bool> IsInitializedAsync();
         Task StopMonitoringAsync();
     }
+    public interface ITopicManagerActor : IActor
+    {
+        Task<bool> IsInitializedAsync();
+        Task StartMonitoringAsync();
+    }
 }

@@ -739,6 +739,10 @@
     "managementEndpoint": {
       "value": "[concat('https://',reference(concat(variables('lbIPName'),'-','primary')).dnsSettings.fqdn,':',parameters('fabricHttpGatewayPort'))]",
       "type": "string"
+    },
+    "gatewayEndpoint": {
+      "value": "[concat(reference(concat(variables('lbIPName'),'-','primary')).dnsSettings.fqdn,':',parameters('fabricTcpGatewayPort'))]",
+      "type": "string"
     }
   }
 }

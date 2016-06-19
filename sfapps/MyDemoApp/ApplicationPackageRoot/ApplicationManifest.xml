@@ -7,5 +7,10 @@
     <ServiceManifestRef ServiceManifestName="TestProcessorPkg" ServiceManifestVersion="1.0.0" />
     <ConfigOverrides />
   </ServiceManifestImport>
+  <ServiceTemplates>
+    <StatelessService ServiceTypeName="TestProcessorType" InstanceCount="[TestProcessor_InstanceCount]">
+      <SingletonPartition />
+    </StatelessService>
+  </ServiceTemplates>
   <DefaultServices />
 </ApplicationManifest>
