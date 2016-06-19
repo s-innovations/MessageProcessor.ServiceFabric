@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyInformationalVersion("1.0.1")]
-[assembly: AssemblyTitle("ServiceFabric : Provision and Install Service Fabric applications")]
+[assembly: AssemblyTitle("SF : Create or Update Application")]
 [assembly: AssemblyDescription("Deploy service fabric application and services to azure service fabric clusters")]
 [assembly: AssemblyConfiguration("Deploy")]
 [assembly: AssemblyCompany("S-Innovations.Net v/Poul K. Sørensen")]
