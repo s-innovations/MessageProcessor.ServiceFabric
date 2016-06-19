@@ -11,12 +11,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
+using SInnovations.VSTeamServices.TasksBuilder.Attributes;
 using SInnovations.VSTeamServices.TasksBuilder.AzureResourceManager.ResourceTypes;
 using SInnovations.VSTeamServices.TasksBuilder.ConsoleUtils;
 using SInnovations.VSTeamServices.TasksBuilder.ResourceTypes;
 
 namespace DeployMessageClusterApplicationTask
 {
+
+    [EntryPoint("Deploying Message Cluster Application")]
     public class ProgramOptions
     {
         [Required]
@@ -60,8 +63,10 @@ namespace DeployMessageClusterApplicationTask
         [Option("GatewayEndpoint", HelpText = "Gateway Endpoint for the cluster")]
         public string Gateway { get; set; }
 
-        [Option("ApplicatioName", HelpText = "Deploy the application type as fabric/:name ", DefaultValue = "fabric:/MessageClusterApp")]
+        [Option("ApplicatioName", HelpText = "Deploy the application type as fabric/:name ", DefaultValue = "fabric:/MessageCluster")]
         public string ApplicatioName { get; set; }
+
+
         public string ImagePath { get; internal set; }
         public string ApplicationTypeName { get; internal set; } = "MessageProcessor.ServiceFabricHostType";
     }
@@ -71,7 +76,9 @@ namespace DeployMessageClusterApplicationTask
         private static readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
         static void Main(string[] args)
         {
-
+#if DEBUG
+            args = new[] { "--build" };
+#endif 
             try
             {
                 RunAsync(args, cancellationTokenSource.Token).Wait();
