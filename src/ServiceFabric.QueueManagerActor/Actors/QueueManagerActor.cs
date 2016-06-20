@@ -296,7 +296,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                         await vmssManager.ReportQueueMessageCountAsync(Id.GetStringId(), sbQueue.MessageCountDetails.ActiveMessageCount, primNodes);
 
-                        if (sbQueue.MessageCountDetails.ActiveMessageCount > 0)
+                        if (sbQueue.MessageCountDetails.ActiveMessageCount > 0 || queue.Properties.ListenerDescription.AlwaysOn)
                         {
                            
                             //Handle Listener Application Deployment
@@ -310,7 +310,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                             {
 
                                 var appTypes = await fabricClient.QueryManager.GetApplicationTypeListAsync(listenerDescription.ApplicationTypeName);
-                                if (!appTypes.Any(a => a.ApplicationTypeName == listenerDescription.ApplicationTypeName && a.ApplicationTypeVersion == listenerDescription.ApplicationTypeVersion))
+                                if (!appTypes.Any(a => a.ApplicationTypeVersion == listenerDescription.ApplicationTypeVersion))
                                 {
                                     Logger.Error("The listener application was not registed with service fabric");
                                     return;
