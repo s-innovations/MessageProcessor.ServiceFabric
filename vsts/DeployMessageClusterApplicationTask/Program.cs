@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Fabric;
 using System.Fabric.Description;
 using System.Fabric.Query;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -162,6 +163,8 @@ namespace DeployMessageClusterApplicationTask
         {
             var imagePath = options.ImagePath ?? options.ApplicationTypeName;
             var appType = fabricClient.QueryManager.GetApplicationTypeListAsync(options.ApplicationTypeName).Result;
+
+         
 
             if (!appType.Any())
             {

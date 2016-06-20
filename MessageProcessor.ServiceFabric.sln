@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployMessageClusterApplica
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetVMSSCapacityTask", "vsts\SetVMSSCapacityTask\SetVMSSCapacityTask.csproj", "{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployMessageClusterResourceTask", "vsts\DeployMessageClusterResourceTask\DeployMessageClusterResourceTask.csproj", "{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +181,13 @@ Global
 		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Release|Any CPU.ActiveCfg = Release|x64
 		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Release|x64.ActiveCfg = Release|x64
 		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Release|x64.Build.0 = Release|x64
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Debug|x64.Build.0 = Debug|Any CPU
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -192,5 +201,6 @@ Global
 		{8EE74972-C534-46AA-A5D4-B143F2F74506} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
 		{E3FE27A4-DE03-4E36-A249-99BEC384DEFC} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
 		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
+		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
 	EndGlobalSection
 EndGlobal
