@@ -41,12 +41,13 @@ namespace CreateServiceFabricTask
            
             args = args.LoadFrom<ServiceFabricOptions>(@"c:\dev\credsSinno.txt")
                 .LoadFrom<ResourceGroupOptions>(null,
-                    o => o.ResourceGroup ?? "TestServiceFabric12",
+                    o => o.ResourceGroup ?? "TestServiceFabric20",
                     o => o.CreateResourceGroup || true,
                     o => o.DeploymentName ?? "fabric",
-                    o => o.ResourceGroupLocation ?? "West Europe")
+                    o => o.ResourceGroupLocation ?? "Azeroth")
                 .Concat(new[] {
                   "--DefaultCapacity", "5",
+                  "--varcapacity", "0",
                   "--clusterLocation","West Europe",
                   "--clusterName", "pksservicefabric12",
                   "--adminPassword","JgT5FFJK",

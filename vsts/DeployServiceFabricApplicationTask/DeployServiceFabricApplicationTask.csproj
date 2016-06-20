@@ -130,15 +130,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.VSTeamServices.TasksBuilder, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.1.0.0-pre-2016061704\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.1.0.0-pre-2016061901\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager.1.0.0-pre-2016061704\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager.1.0.0-pre-2016061901\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.AzureResourceManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.VSTeamServices.TasksBuilder.KeyVault, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.KeyVault.1.0.0-pre-2016061704\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.KeyVault.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.VSTeamServices.TasksBuilder.KeyVault.1.0.0-pre-2016061901\lib\net46\S-Innovations.VSTeamServices.TasksBuilder.KeyVault.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

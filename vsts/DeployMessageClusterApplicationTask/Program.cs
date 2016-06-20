@@ -78,6 +78,21 @@ namespace DeployMessageClusterApplicationTask
         {
 #if DEBUG
             args = new[] { "--build" };
+
+            args = args.LoadFrom<ProgramOptions>(@"c:\dev\creds.txt")
+              .Concat(new[] {
+                   "--ResourceGroupName" ,"ci-sf-tests",
+                  "--ClusterName", "citestcluster",
+                  "--BasicAuth", "pks:kodeal",
+                  "--AzureADServicePrincipal", "********",
+                  "--PlacementConstraints", "NodeTypeName==nt1vm",
+                  "--StorageName", "w6tzgqkautoc1",
+                  "--PackagePath", @"C:\dev\sinnovations\MessageProcessor.ServiceFabric\src\MessageProcessor.ServiceFabricHost\pkg\Debug",
+                  "--Thumbprint", "61C26E136639BE85D873235EF24F398E23C9794A",
+                  "--GatewayEndpoint", "citestcluster.westeurope.cloudapp.azure.com:19000",
+                   "--ApplicatioName", "fabric:/MessageCluster"
+              }).ToArray();
+            //
 #endif 
             try
             {
