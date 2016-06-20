@@ -12,7 +12,7 @@ using SInnovations.VSTeamServices.TasksBuilder.ConsoleUtils;
 
 namespace CreateServiceFabricTask
 {
-
+    
     [EntryPoint("Deploying Service Fabric")]
     public class ServiceFabricOptions : ArmTemplateOptions<ServiceFabricOptions>
     {
@@ -56,7 +56,7 @@ namespace CreateServiceFabricTask
                   "--certificateUrlValue","https://kv-3wodhzoece5io3wodhzo.vault.azure.net/secrets/ServiceFabricCert/8b95f09984424a4097c0010a1e096b86",
                   "--vmNodeTypeSize","Standard_A0"
             }).ToArray();  
-          //   args = new[] { "--build" };
+            args = new[] { "--build" };
 #endif
             try
             {
