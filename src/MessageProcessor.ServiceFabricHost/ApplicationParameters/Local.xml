@@ -8,12 +8,12 @@
     <Parameter Name="QueueManagerActorService_PartitionCount" Value="1" />
     <Parameter Name="DispatcherManagerActorService_PartitionCount" Value="1" />
     <Parameter Name="SubscriptionId" Value="8393a037-5d39-462d-a583-09915b4493df" />
-    <Parameter Name="ResourceGroupName" Value="TestServiceFabric12" />
-    <Parameter Name="ClusterName" Value="pksservicefabric12" />
+    <Parameter Name="ResourceGroupName" Value="ci-sf-tests6" />
+    <Parameter Name="ClusterName" Value="citestcluster6" />
     <Parameter Name="TenantId" Value="802626c6-0f5c-4293-a8f5-198ecd481fe3" />
-    <Parameter Name="StorageName" Value="3wodhzoece5io1" />
+    <Parameter Name="StorageName" Value="n6yvolgqezbru1" />
     <Parameter Name="BasicAuth" Value="pks:123456" />
-    <Parameter Name="AzureADServicePrincipal" Value="MIICNQYJKoZIhvcNAQcDoIICJjCCAiICAQAxggFMMIIBSAIBADAwMBwxGjAYBgNVBAMTEVNlcnZpY2VGYWJyaWNDZXJ0AhAbUlzRHgKrqEZPDwbKUzt4MA0GCSqGSIb3DQEBAQUABIIBACYG53iZrYKmBShWhh2+QrGbIzMuxAwVp9pqJMsRNZnxD3Ds9Hq/Xp350jsBz0KNM+8KwI2wcUtDcRUqs8ZVA3j8oFnQkhEJpnv5Vc9ueuJ+/zPrbdI+Cyrwp4iWpGiOlFU222f4qYRQppy83YeLBejG+ftwUNXPXst3Q7ubcYCwPHsusOpKfhwqF5jle+jdxZ1o0RFNaXut4SZnjP24xbaGc1763ScrbHPO8zVe3pReA358+fLgf+ej+dOeeJAomYiEzwMOhZH5NMB8geZTOr3tKybzKl0lHO0vXKQmXCkeO5hWKPGPPBh8TWWiPcRK4vG80GICRhoMkeR4wrahwhMwgcwGCSqGSIb3DQEHATAUBggqhkiG9w0DBwQITFHhHgT/B3qAgah0xIsWULhVnO0JGwzu8/Oe2VYMwUtKnHQbeJTJyK8xQNVkKaO7lvskVz37OLINSUTPl0wbrGY2Bx4g+/UuI1agxgFCU3ydeLQPUGZpsAS4HFyS3bNpyfS6vEGPdWbjrVOcXMpbRxgb+d+1/GTK/gse1+cC4wzN1fZDUqdhDKg6DiTHqU5QdupgXp1h37qmFj5VIO0v+qc+I9QkQ1yyT0ZIx9DsmuqN4Z0=" />
+    <Parameter Name="AzureADServicePrincipal" Value="MIICLgYJKoZIhvcNAQcDoIICHzCCAhsCAQAxggFFMIIBQQIBADApMBUxEzARBgNVBAMTCmNpdGVzdGNlcnQCEG7nJgAd1pGtROAqXTINhgowDQYJKoZIhvcNAQEBBQAEggEARESvyeELwgWe08JSmoBKOIdFC3Tgw9wPpG6/BLFVtDI0kYgAZr74ftz/QSj7cyt9mTeJGt1WO8MHR/Q3QV/dkxyW/7NPU7dIrM8xliHwtCHQO5gZVnjARbpwPdYEi8NayqB3iRd+h8Sa4B3GudwX5xzZr5d2GmJ6FDL2F5UHYTF6zm7HUps28UybGgzgmRymE+9qoChnEA/DATPGq4w019pcIdkgZP8kodacqCVe9Bl4Izlgl44NTgkW9YSgGH550SMkK60Z/Z9TMzHcBRKyePUyYkwNeZ1uoMMilA7Zm5jK93iqD1ThTAdOodpgG4gy7CfIReqtN+T8yRa5ZmYUTzCBzAYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAj3/gDO9Af1J4CBqOFSI4FKmu0gulZaaBp+uRwoLAAaNN0R981CItIkhuhFs4BsqK+YyjB7zZDwQnM8dI6R4V62Ys/ToiOVXYlvMP0OkfDmiHOqlWeIhTThSXc9/3uxZW/A1c32FJZ3DGD7SbUdJHcTIbTsXRl88SGY8mMPgdAwlDhMvphqXjMbf6YQZYVGJrn8xRHDk5FMRjIeOHBV2VYUHGGz+pStzjaQ+hETr3fihyZUig==" />
     <Parameter Name="TopicManagerActorService_PartitionCount" Value="1" />
   </Parameters>
 </Application>

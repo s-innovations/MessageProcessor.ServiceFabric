@@ -28,6 +28,7 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Management;
 using Microsoft.WindowsAzure.Storage;
 using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure.Storage.Auth;
+using System.Security.Cryptography.Pkcs;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 {
@@ -91,12 +92,33 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric
         /// </summary>
         private static void Main()
         {
+          
+
+
             var settings = FabricRuntime.GetActivationContext().GetConfigurationPackageObject("config").Settings;
             var appInsight = settings.Sections["AppSettings"]?.Parameters.FirstOrDefault(p => p.Name == "AppInsights")?.Value;              //  Log.Logger = new LoggerConfiguration()
             TelemetryConfiguration.Active.InstrumentationKey = appInsight;
             TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = false;
             
             LogProvider.SetCurrentLogProvider(ServiceFabricEventSource.Current);
+
+            var host = new TelemetryClient();
+            host.TrackTrace("Host Starting");
+            try
+            {
+
+                var encrypted64 = "MIICLgYJKoZIhvcNAQcDoIICHzCCAhsCAQAxggFFMIIBQQIBADApMBUxEzARBgNVBAMTCmNpdGVzdGNlcnQCEG7nJgAd1pGtROAqXTINhgowDQYJKoZIhvcNAQEBBQAEggEARESvyeELwgWe08JSmoBKOIdFC3Tgw9wPpG6/BLFVtDI0kYgAZr74ftz/QSj7cyt9mTeJGt1WO8MHR/Q3QV/dkxyW/7NPU7dIrM8xliHwtCHQO5gZVnjARbpwPdYEi8NayqB3iRd+h8Sa4B3GudwX5xzZr5d2GmJ6FDL2F5UHYTF6zm7HUps28UybGgzgmRymE+9qoChnEA/DATPGq4w019pcIdkgZP8kodacqCVe9Bl4Izlgl44NTgkW9YSgGH550SMkK60Z/Z9TMzHcBRKyePUyYkwNeZ1uoMMilA7Zm5jK93iqD1ThTAdOodpgG4gy7CfIReqtN+T8yRa5ZmYUTzCBzAYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAj3/gDO9Af1J4CBqOFSI4FKmu0gulZaaBp+uRwoLAAaNN0R981CItIkhuhFs4BsqK+YyjB7zZDwQnM8dI6R4V62Ys/ToiOVXYlvMP0OkfDmiHOqlWeIhTThSXc9/3uxZW/A1c32FJZ3DGD7SbUdJHcTIbTsXRl88SGY8mMPgdAwlDhMvphqXjMbf6YQZYVGJrn8xRHDk5FMRjIeOHBV2VYUHGGz+pStzjaQ+hETr3fihyZUig==";
+
+                var envelope = new EnvelopedCms();
+                envelope.Decode(Convert.FromBase64String(encrypted64));
+                envelope.Decrypt();
+
+            }
+            catch (Exception ex)
+            {
+                host.TrackException(ex);  
+            }
+
 
             try
             {

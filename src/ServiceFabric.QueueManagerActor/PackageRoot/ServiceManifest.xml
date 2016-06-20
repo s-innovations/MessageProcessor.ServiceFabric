@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="ServiceFabricPkg" Version="0.9.4" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="ServiceFabricPkg" Version="0.9.5" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <ServiceTypes>
     <StatelessServiceType ServiceTypeName="ManagementApiServiceType" />
     <StatelessServiceType ServiceTypeName="StatelessCachedClusterCacheServiceType" />
@@ -74,14 +74,14 @@
       </Extensions>
     </StatefulServiceType>
   </ServiceTypes>
-  <CodePackage Name="Code" Version="0.9.4">
+  <CodePackage Name="Code" Version="0.9.5">
     <EntryPoint>
       <ExeHost>
         <Program>S-Innovations.Azure.MessageProcessor.ServiceFabric.exe</Program>
       </ExeHost>
     </EntryPoint>
   </CodePackage>
-  <ConfigPackage Name="Config" Version="0.9.4" />
+  <ConfigPackage Name="Config" Version="0.9.5" />
   <Resources>
     <Endpoints>
       <Endpoint Name="ServiceEndpoint" Protocol="http" Type="Input" Port="80" />

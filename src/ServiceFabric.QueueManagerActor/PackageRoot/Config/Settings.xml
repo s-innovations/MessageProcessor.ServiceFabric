@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Section Name="AppSettings">
-    <Parameter Name="AppInsights" Value="2daf753a-c8bd-4573-8f27-5a96270d4b44" />
+    <Parameter Name="AppInsights" Value="8985afb4-4efb-40bc-b0f4-e37955327bd2" />
     <Parameter Name="SubscriptionId" Value="" MustOverride="true" />
     <Parameter Name="ResourceGroupName" Value="" MustOverride="true" />
     <Parameter Name="ClusterName" Value="" MustOverride="true" />

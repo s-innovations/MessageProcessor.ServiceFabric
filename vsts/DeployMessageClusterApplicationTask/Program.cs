@@ -11,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using CommandLine;
 using SInnovations.VSTeamServices.TasksBuilder.Attributes;
 using SInnovations.VSTeamServices.TasksBuilder.AzureResourceManager.ResourceTypes;
@@ -70,6 +71,7 @@ namespace DeployMessageClusterApplicationTask
 
         public string ImagePath { get; internal set; }
         public string ApplicationTypeName { get; internal set; } = "MessageProcessor.ServiceFabricHostType";
+
     }
     class Program
     {
@@ -164,9 +166,11 @@ namespace DeployMessageClusterApplicationTask
             var imagePath = options.ImagePath ?? options.ApplicationTypeName;
             var appType = fabricClient.QueryManager.GetApplicationTypeListAsync(options.ApplicationTypeName).Result;
 
-         
 
-            if (!appType.Any())
+            var XDoc = XDocument.Load(Path.Combine(options.PackagePath, "ApplicationManifest.xml"));
+            var version = XDoc.Root.Attribute("ApplicationTypeVersion")?.Value;
+
+            if (!appType.Any(x=>x.ApplicationTypeVersion == version))
             {
                 fabricClient.ApplicationManager.CopyApplicationPackage("fabric:ImageStore", options.PackagePath, imagePath);
 
@@ -191,13 +195,13 @@ namespace DeployMessageClusterApplicationTask
 
             }
             appType = fabricClient.QueryManager.GetApplicationTypeListAsync(options.ApplicationTypeName).Result;
-            if (!appType.Any())
+            if (!appType.Any(x => x.ApplicationTypeVersion == version))
             {
                 throw new Exception("The application type name and version is not found in the package or the cluster");
 
             }
 
-            return appType.OrderByDescending(a => a.ApplicationTypeVersion).FirstOrDefault();
+            return appType.First(x => x.ApplicationTypeVersion == version);
 
 
 

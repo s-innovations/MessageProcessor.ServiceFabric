@@ -159,7 +159,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.Azure.ResourceManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\S-Innovations.Azure.ResourceManager.2.0.0-pre-2016061704\lib\net46\S-Innovations.Azure.ResourceManager.dll</HintPath>
+      <HintPath>..\..\packages\S-Innovations.Azure.ResourceManager.2.0.0-pre-2016062001\lib\net46\S-Innovations.Azure.ResourceManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="S-Innovations.WebApi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -224,9 +224,6 @@
     <Compile Include="Tracing\ServiceFabricEventSource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApplicationInsights.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="package.json" />
     <None Include="PackageRoot\ServiceManifest.xml" />
     <None Include="PackageRoot\Config\Settings.xml">

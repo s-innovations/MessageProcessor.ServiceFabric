@@ -49,13 +49,13 @@ namespace ServiceFabricTests
         [TestMethod]
         public async Task TestMethod2()
         {
-            var encrypted64 = "MIIB4wYJKoZIhvcNAQcDoIIB1DCCAdACAQAxggFMMIIBSAIBADAwMBwxGjAYBgNVBAMTEVNlcnZpY2VGYWJyaWNDZXJ0AhAuPMF+uit/mku2rhvoltGuMA0GCSqGSIb3DQEBAQUABIIBALaB65nuqVmSEv75UcD0XDqMXrHAvNgtyF6CWc+rzUCg4yuqEXtC1JdYAKaK9zgsKLxJDPee/Uc36Sz7G2JGPE2HL85he+yf/AVoGZ5tutxkc/LdBi6v77N34BRObCABd1p8jbFSGTQ2h4bnA59CzhhH3U8S5vDqgfEJiKy+IDexnrOIdgjOuCLL7cbEMM0PQv8TUVn1Lv1Vf/L+gi9zktwtn4LBiJCwKdNrdOMt3v1G37lOg4cToabEHa2baYGtbmWEMj3FCMWR2KOQ5HjaKQ8gDYFWfCRUCYExf//ECNp5S3gDDN9+/hY+JDHGuHEYVwUNU4KLT7MWBzW3YTxQNUEwewYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAipvHVQbt2kIYBYgxqbJECKgavPFW1+X2UzP0KeDaLIYHJWPYmCS+kF2XF1Dt8a3ZgEExYBYT8IlLirfG2uPNNU27Vm9RMOmSZxIqs+D8dPHkXuX4BWZnXGZEHEz2aPuhbVtQ==";
+            var encrypted64 = "MIICLgYJKoZIhvcNAQcDoIICHzCCAhsCAQAxggFFMIIBQQIBADApMBUxEzARBgNVBAMTCmNpdGVzdGNlcnQCEG7nJgAd1pGtROAqXTINhgowDQYJKoZIhvcNAQEBBQAEggEARESvyeELwgWe08JSmoBKOIdFC3Tgw9wPpG6/BLFVtDI0kYgAZr74ftz/QSj7cyt9mTeJGt1WO8MHR/Q3QV/dkxyW/7NPU7dIrM8xliHwtCHQO5gZVnjARbpwPdYEi8NayqB3iRd+h8Sa4B3GudwX5xzZr5d2GmJ6FDL2F5UHYTF6zm7HUps28UybGgzgmRymE+9qoChnEA/DATPGq4w019pcIdkgZP8kodacqCVe9Bl4Izlgl44NTgkW9YSgGH550SMkK60Z/Z9TMzHcBRKyePUyYkwNeZ1uoMMilA7Zm5jK93iqD1ThTAdOodpgG4gy7CfIReqtN+T8yRa5ZmYUTzCBzAYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAj3/gDO9Af1J4CBqOFSI4FKmu0gulZaaBp+uRwoLAAaNN0R981CItIkhuhFs4BsqK+YyjB7zZDwQnM8dI6R4V62Ys/ToiOVXYlvMP0OkfDmiHOqlWeIhTThSXc9/3uxZW/A1c32FJZ3DGD7SbUdJHcTIbTsXRl88SGY8mMPgdAwlDhMvphqXjMbf6YQZYVGJrn8xRHDk5FMRjIeOHBV2VYUHGGz+pStzjaQ+hETr3fihyZUig==";
 
             var envelope = new EnvelopedCms();
             envelope.Decode(Convert.FromBase64String(encrypted64));
             envelope.Decrypt();
 
-            Console.WriteLine(Encoding.UTF8.GetString(envelope.ContentInfo.Content));
+            Console.WriteLine(Encoding.Unicode.GetString(envelope.ContentInfo.Content));
         }
 
         [TestMethod]
