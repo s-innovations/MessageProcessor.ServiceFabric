@@ -80,7 +80,7 @@
     "virtualNetworkName": "VNet",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "nicName": "[concat('NIC-',variables('nodePostFix'))]",
-    "subnetName": "Subnet-1",
+    "subnetName": "Subnet-0",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
     "lbName": "LB",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',concat(variables('lbName'),'-',variables('nodePostFix')))]",
@@ -90,7 +90,7 @@
     "vmNodeTypeName": "[toLower(concat(variables('vmName'),parameters('nodeTypeName')))]",
     "vmImagePublisher": "MicrosoftWindowsServer",
     "vmImageOffer": "WindowsServer",
-    "vmImageSku": "2012-R2-Datacenter",
+    "vmImageSku": "2016-Datacenter-with-Containers",
     "vmImageVersion": "latest",
     "vmStorageAccountContainerName": "vhds",
     "vmNodeTypeSize": "Standard_A1",
@@ -104,7 +104,8 @@
     "lbApiVersion": "2015-06-15",
     "vNetApiVersion": "2015-06-15",
     "storageApiVersion": "2015-06-15",
-    "publicIPApiVersion": "2015-06-15"
+    "publicIPApiVersion": "2015-06-15",
+    "clusterApiVersion": "2017-07-01-preview"
   },
   "resources": [
     {
@@ -283,7 +284,7 @@
                   },
                   "publisher": "Microsoft.Azure.ServiceFabric",
                   "settings": {
-                    "clusterEndpoint": "[reference(resourceId(variables('clusterResourceGroupName'), 'Microsoft.ServiceFabric/clusters', variables('clusterName')), '2016-01-01-beta').clusterEndpoint]",
+                    "clusterEndpoint": "[reference(resourceId(variables('clusterResourceGroupName'), 'Microsoft.ServiceFabric/clusters', variables('clusterName')), variables('clusterApiVersion')).clusterEndpoint]",
                     "nodeTypeRef": "[parameters('nodeTypeName')]",
                     "certificate": {
                       "thumbprint": "[parameters('certificateThumbprint')]",
@@ -519,7 +520,7 @@
   ],
   "outputs": {
     "clusterProperties": {
-      "value": "[reference(resourceId(variables('clusterResourceGroupName'), 'Microsoft.ServiceFabric/clusters', variables('clusterName')), '2016-03-01')]",
+      "value": "[reference(resourceId(variables('clusterResourceGroupName'), 'Microsoft.ServiceFabric/clusters', variables('clusterName')), variables('clusterApiVersion'))]",
       "type": "object"
     },
     "vmssResourceId": {

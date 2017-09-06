@@ -41,7 +41,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         /// </summary>       
         protected IMessageClusterConfigurationStore ClusterConfigStore { get; private set; }
 
-        public DispatcherManagerActor(IMessageClusterConfigurationStore clusterProvider)
+        public DispatcherManagerActor(IMessageClusterConfigurationStore clusterProvider, ActorService actorService, ActorId actorId) : base(actorService, actorId)
         {
             ClusterConfigStore = clusterProvider;
         }

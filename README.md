@@ -328,3 +328,7 @@ The key focus behind the project is to simplify and make it easy to use, so any 
 ## Disclaimer
 I have a full time job also, so issues and questiosn will mainly be answered out of normal office hours. But I hope you will get in touch.
 
+
+
+## TODO
+[ ] https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity writes aboute how to scale up and down, in and out. Can these be handled in a nice way

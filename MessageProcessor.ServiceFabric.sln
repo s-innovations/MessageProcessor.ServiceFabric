@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "ServiceFabricHost", "src\MessageProcessor.ServiceFabricHost\ServiceFabricHost.sfproj", "{40DDB9D6-4E48-4B7F-B29C-FDA4109EBD15}"
 EndProject
@@ -20,8 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceFabric.Management.Ap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VSTS", "VSTS", "{AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateServiceFabricTask", "vsts\CreateServiceFabricTask\CreateServiceFabricTask.csproj", "{FC804757-A0D6-4A2C-A803-95EC614F60DC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceFabric.Resources", "src\ServiceFabric.Resources\ServiceFabric.Resources.csproj", "{AE633CEB-4CB3-49C9-A40E-BEAA8D3BA29E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceFabricTests", "test\ServiceFabricTests\ServiceFabricTests.csproj", "{AC6A0572-231D-4712-B574-EB67F7580C44}"
@@ -33,8 +31,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "experiments", "experiments", "{D9EF9322-D664-4D43-82E3-B084F2E10E31}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchClusterNoteTypes", "experiments\PatchClusterNoteTypes\PatchClusterNoteTypes.csproj", "{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployServiceFabricApplicationTask", "vsts\DeployServiceFabricApplicationTask\DeployServiceFabricApplicationTask.csproj", "{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SFApps", "SFApps", "{1C3A55D9-BA8E-4575-9C1C-CE715C675AA2}"
 EndProject
@@ -52,8 +48,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractServiceFabricApplicationVersionTask", "vsts\ExtractServiceFabricApplicationVersionTask\ExtractServiceFabricApplicationVersionTask.csproj", "{8EE74972-C534-46AA-A5D4-B143F2F74506}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployMessageClusterApplicationTask", "vsts\DeployMessageClusterApplicationTask\DeployMessageClusterApplicationTask.csproj", "{E3FE27A4-DE03-4E36-A249-99BEC384DEFC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetVMSSCapacityTask", "vsts\SetVMSSCapacityTask\SetVMSSCapacityTask.csproj", "{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployMessageClusterResourceTask", "vsts\DeployMessageClusterResourceTask\DeployMessageClusterResourceTask.csproj", "{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}"
 EndProject
@@ -98,13 +92,6 @@ Global
 		{9A9DE2E9-7F98-4062-B320-6FC9C45E7CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A9DE2E9-7F98-4062-B320-6FC9C45E7CB5}.Release|x64.ActiveCfg = Release|x64
 		{9A9DE2E9-7F98-4062-B320-6FC9C45E7CB5}.Release|x64.Build.0 = Release|x64
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC}.Debug|x64.ActiveCfg = Debug|x64
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC}.Debug|x64.Build.0 = Debug|x64
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC}.Release|x64.ActiveCfg = Release|x64
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC}.Release|x64.Build.0 = Release|x64
 		{AE633CEB-4CB3-49C9-A40E-BEAA8D3BA29E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE633CEB-4CB3-49C9-A40E-BEAA8D3BA29E}.Debug|x64.ActiveCfg = Debug|x64
 		{AE633CEB-4CB3-49C9-A40E-BEAA8D3BA29E}.Debug|x64.Build.0 = Debug|x64
@@ -133,13 +120,6 @@ Global
 		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Debug|x64.Build.0 = Debug|x64
 		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113}.Release|x64.ActiveCfg = Release|x64
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}.Debug|x64.ActiveCfg = Debug|x64
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}.Debug|x64.Build.0 = Debug|x64
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}.Release|Any CPU.ActiveCfg = Release|x64
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}.Release|x64.ActiveCfg = Release|x64
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC}.Release|x64.Build.0 = Release|x64
 		{E1B1DCE2-B20E-4BAC-8FC9-CFEF9DADAD72}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{E1B1DCE2-B20E-4BAC-8FC9-CFEF9DADAD72}.Debug|x64.ActiveCfg = Debug|x64
 		{E1B1DCE2-B20E-4BAC-8FC9-CFEF9DADAD72}.Debug|x64.Build.0 = Debug|x64
@@ -172,13 +152,6 @@ Global
 		{E3FE27A4-DE03-4E36-A249-99BEC384DEFC}.Release|Any CPU.ActiveCfg = Release|x64
 		{E3FE27A4-DE03-4E36-A249-99BEC384DEFC}.Release|x64.ActiveCfg = Release|x64
 		{E3FE27A4-DE03-4E36-A249-99BEC384DEFC}.Release|x64.Build.0 = Release|x64
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Debug|x64.ActiveCfg = Debug|x64
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Debug|x64.Build.0 = Debug|x64
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Release|Any CPU.ActiveCfg = Release|x64
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Release|x64.ActiveCfg = Release|x64
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1}.Release|x64.Build.0 = Release|x64
 		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB}.Debug|x64.ActiveCfg = Debug|x64
@@ -191,14 +164,14 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{FC804757-A0D6-4A2C-A803-95EC614F60DC} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
 		{6BAC9426-4AEA-489D-A4C9-A305CEA1D113} = {D9EF9322-D664-4D43-82E3-B084F2E10E31}
-		{CC18BCCA-99F4-45D5-BBD3-8B68FB7BC8FC} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
 		{E1B1DCE2-B20E-4BAC-8FC9-CFEF9DADAD72} = {1C3A55D9-BA8E-4575-9C1C-CE715C675AA2}
 		{5085A608-A863-4B69-AE9D-DCD6D3956F16} = {1C3A55D9-BA8E-4575-9C1C-CE715C675AA2}
 		{8EE74972-C534-46AA-A5D4-B143F2F74506} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
 		{E3FE27A4-DE03-4E36-A249-99BEC384DEFC} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
-		{D16F8AA7-AB1A-4A13-B778-77E425E74FE1} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
 		{BBFA82C5-5C16-4BE7-96F5-A3A87E2415FB} = {AE5569FD-0B5E-4AC0-BA6F-6D2A3F014381}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E06AFA57-35A9-4842-9EAF-9BA78A337C9F}
 	EndGlobalSection
 EndGlobal

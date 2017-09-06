@@ -49,7 +49,7 @@ namespace ServiceFabricTests
         [TestMethod]
         public async Task TestMethod2()
         {
-            var encrypted64 = "MIICLgYJKoZIhvcNAQcDoIICHzCCAhsCAQAxggFFMIIBQQIBADApMBUxEzARBgNVBAMTCmNpdGVzdGNlcnQCEG7nJgAd1pGtROAqXTINhgowDQYJKoZIhvcNAQEBBQAEggEARESvyeELwgWe08JSmoBKOIdFC3Tgw9wPpG6/BLFVtDI0kYgAZr74ftz/QSj7cyt9mTeJGt1WO8MHR/Q3QV/dkxyW/7NPU7dIrM8xliHwtCHQO5gZVnjARbpwPdYEi8NayqB3iRd+h8Sa4B3GudwX5xzZr5d2GmJ6FDL2F5UHYTF6zm7HUps28UybGgzgmRymE+9qoChnEA/DATPGq4w019pcIdkgZP8kodacqCVe9Bl4Izlgl44NTgkW9YSgGH550SMkK60Z/Z9TMzHcBRKyePUyYkwNeZ1uoMMilA7Zm5jK93iqD1ThTAdOodpgG4gy7CfIReqtN+T8yRa5ZmYUTzCBzAYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAj3/gDO9Af1J4CBqOFSI4FKmu0gulZaaBp+uRwoLAAaNN0R981CItIkhuhFs4BsqK+YyjB7zZDwQnM8dI6R4V62Ys/ToiOVXYlvMP0OkfDmiHOqlWeIhTThSXc9/3uxZW/A1c32FJZ3DGD7SbUdJHcTIbTsXRl88SGY8mMPgdAwlDhMvphqXjMbf6YQZYVGJrn8xRHDk5FMRjIeOHBV2VYUHGGz+pStzjaQ+hETr3fihyZUig==";
+            var encrypted64 = "MIICPQYJKoZIhvcNAQcDoIICLjCCAioCAQAxggFUMIIBUAIBADA4MCQxIjAgBgNVBAMTGUluZnJhc3RydWN0dXJlQ2VydGlmaWNhdGUCEHfQ9F46gkusRYefvXJ+eA8wDQYJKoZIhvcNAQEBBQAEggEAeGSbkOGopXM9qMB0equADz9oT4juNilfAgqYOLPPIjDbMpdqOQtN7KnlkNCjq82la0vPBQGWCyBeIrTc/J5hW9d+YRVtXLFG6ezlUXxDvpUZGowg9hhGaIOJ2yA46fyBm2tQSwSPmgJjddybWwkAzcLkElf6YCPUZeypAxPQmoWjBQiRG8yXRIDH62k2ClbFw5KSarPSGbk9qbDR6WfmdFCiCnpbBxIz0JzCAWYUE3NalfC80HfqlXIZfB7H6D4i78ZFEeD8VUvxDoVtw8VrmXRKcXDkTc2TRzbEFTYHARbbVPxV2Nd/xj13QI6oAOIxdC6fqnkm+ddpjPXW+XOMsTCBzAYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAirmDtRcIIg6oCBqK/HjjpbxcLcP2FIVe7cRig+gHJd1XRP4jpDntq0sTWvui8rMyCKFbpBM3cWr7VeBrPpqMwgivgilIyLSVsEXdKkF1ei7t0m3mzSamv/URztSJJCVFB66e1TNNSRREylAJbzvVuSWnGsoA/8BJHAGjshWgl5+pIBJ4S2yEXmZBU3cExSDyXQKcRTpcc9INro333jotCk5tHROnoGHyP7zoY4/JiaN/hx5g==";
 
             var envelope = new EnvelopedCms();
             envelope.Decode(Convert.FromBase64String(encrypted64));
@@ -58,28 +58,7 @@ namespace ServiceFabricTests
             Console.WriteLine(Encoding.Unicode.GetString(envelope.ContentInfo.Content));
         }
 
-        [TestMethod]
-        public async Task TestMethod3()
-        {
-            using (var container = new UnityContainer())
-            {
-                var type = ActorProxyTypeFactory.CreateType<MessageClusterActor>();
-                container.RegisterType<IActorDeactivationInterception, OnActorDeactivateInterceptor>(new HierarchicalLifetimeManager());
-                container.RegisterType<IMessageClusterConfigurationStore, InMemoryClusterStore>(new HierarchicalLifetimeManager());
-                var a = container.Resolve<IActorDeactivationInterception>();
-                var b = container.Resolve<IMessageClusterConfigurationStore>();
-                container.RegisterType(typeof(MessageClusterActor), type, new HierarchicalLifetimeManager());
-                //   container.WithActor<MessageClusterActor>();
-                //   container.WithActor<QueueListenerActor>();
-                var actor = Activator.CreateInstance(type, new Object[] { a, b });
-                var myActor = container.Resolve(type);
-                //  var myActor1 = container.Resolve<QueueListenerActor>();
-            }
-            //var myActorType = Proxy.CreateType<MessageClusterActor>();
-            //var myActor = Proxy.Create<MessageClusterActor>(new disposer(new UnityContainer()),null);
-
-            //await myActor.Test();
-        }
+       
         [TestMethod]
         public async Task TestMethod4()
         {

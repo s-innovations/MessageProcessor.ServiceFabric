@@ -9,6 +9,7 @@
     <Parameter Name="TenantId" Value="" MustOverride="true" />
     <Parameter Name="AzureADServicePrincipal" Value="" MustOverride="true" IsEncrypted="true" />
     <Parameter Name="BasicAuth" Value="" MustOverride="true" />
+    <Parameter Name="PrimaryScaleSetName" Value="nt1vm" />
   </Section>
   <Section Name="MessageClusterActorServiceReplicatorConfig">
     <Parameter Name="ReplicatorEndpoint" Value="MessageClusterActorServiceReplicatorEndpoint" />

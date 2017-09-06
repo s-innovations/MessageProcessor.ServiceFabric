@@ -92,6 +92,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
             return new ServiceFabricClusterConfiguration
             {
                 ClusterName = section["ClusterName"].Value,
+                PrimaryScaleSetName = section["PrimaryScaleSetName"].Value,//nt1vm
                 ResourceGroupName = section["ResourceGroupName"].Value,
                 SubscriptionId = section["SubscriptionId"].Value,
                 AzureADServiceCredentials = adClientCredential,

@@ -17,6 +17,7 @@ using SInnovations.Azure.MessageProcessor.ServiceFabric.Resources.ARM;
 using SInnovations.Azure.MessageProcessor.ServiceFabric.Tracing;
 using SInnovations.Azure.ResourceManager;
 using SInnovations.Azure.ResourceManager.TemplateActions;
+using Microsoft.ServiceFabric.Actors;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 {
@@ -92,7 +93,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         /// </summary>       
         protected IMessageClusterConfigurationStore ClusterConfigStore { get; private set; }
 
-        public VmssManagerActor(IMessageClusterConfigurationStore clusterProvider)
+        public VmssManagerActor(IMessageClusterConfigurationStore clusterProvider, ActorService actorService, ActorId actorId) : base(actorService, actorId)
         {
             ClusterConfigStore = clusterProvider;
         }
@@ -272,7 +273,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
 
                         var vmss = await armClinet.GetAsync<VMSS>($"/subscriptions/{config.SubscriptionId}/resourceGroups/{config.ResourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/vm{nodeName.ToLower()}", "2016-03-30");
                         var fabric = await armClinet.GetAsync<JObject>($"/subscriptions/{config.SubscriptionId}/resourceGroups/{config.ResourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{config.ClusterName}", "2016-03-01");
-                        var primvmss = await armClinet.GetAsync<JObject>($"/subscriptions/{config.SubscriptionId}/resourceGroups/{config.ResourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/nt1vm", "2016-03-30");
+                        var primvmss = await armClinet.GetAsync<JObject>($"/subscriptions/{config.SubscriptionId}/resourceGroups/{config.ResourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{config.PrimaryScaleSetName}", "2016-03-30");
 
                         var parameters = new JObject(
                             ResourceManagerHelper.CreateValue("clusterName",
@@ -293,10 +294,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                                      SubscriptionId = config.SubscriptionId,
                                                  },
                                                    config.ResourceGroupName,
-                                                 $"vmss-{nodeName}-{DateTimeOffset.UtcNow.ToString("s").Replace(":", "-")}",
+                                                 $"vmss-{nodeName}",//-{DateTimeOffset.UtcNow.ToString("s").Replace(":", "-")}",
                                                  new VmssArmTemplate(processorNode.Properties, vmss?.Sku?.capacity ?? 0),
                                                  parameters,
-                                                 false
+                                                 false,appendTimestamp:true
                                                  );
                         if (deployment.Properties.ProvisioningState == "Succeeded")
                         {

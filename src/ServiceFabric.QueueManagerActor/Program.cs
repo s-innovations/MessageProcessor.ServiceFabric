@@ -29,6 +29,7 @@ using Microsoft.WindowsAzure.Storage;
 using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure.Storage.Auth;
 using System.Security.Cryptography.Pkcs;
+using SInnovations.ServiceFabric.Unity;
 
 namespace SInnovations.Azure.MessageProcessor.ServiceFabric
 {

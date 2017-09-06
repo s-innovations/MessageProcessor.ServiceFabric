@@ -63,7 +63,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         /// </summary>       
         protected IMessageClusterConfigurationStore PersistantStore { get; private set; }
 
-        public MessageClusterActor(IMessageClusterConfigurationStore clusterProvider)
+        public MessageClusterActor(IMessageClusterConfigurationStore clusterProvider, ActorService actorService, ActorId actorId) : base(actorService, actorId)
         {
             PersistantStore = clusterProvider;
         }

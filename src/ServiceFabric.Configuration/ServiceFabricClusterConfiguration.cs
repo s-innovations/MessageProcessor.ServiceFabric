@@ -76,6 +76,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Configuration
         public string ResourceGroupName { get; set; }
         public string SubscriptionId { get; set; }
         public string ClusterName { get; set; }
+        public string PrimaryScaleSetName { get; set; }
       //  public string AzureADServicePrincipalName { get; set; }
         public string TenantId { get;  set; }
      //   public string AzureADServicePrincipalKey { get;  set; }

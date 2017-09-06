@@ -34,7 +34,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         /// </summary>       
         protected IMessageClusterConfigurationStore ClusterConfigStore { get; private set; }
 
-        public TopicManagerActor(IMessageClusterConfigurationStore clusterProvider)
+        public TopicManagerActor(IMessageClusterConfigurationStore clusterProvider, ActorService actorService, ActorId actorId) : base(actorService, actorId)
         {
             ClusterConfigStore = clusterProvider;
         }
@@ -44,9 +44,11 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
             return StateManager.GetStateAsync<bool>("IsInitialized");
         }
 
-        protected override Task OnActivateAsync()
+        protected async override Task OnActivateAsync()
         {
-            return base.OnActivateAsync();
+            await StateManager.SetStateAsync("IsMonitoring", false);
+            await StateManager.SetStateAsync("IsInitialized", false);
+            await base.OnActivateAsync();
         }
 
         public async Task StartMonitoringAsync()
@@ -178,7 +180,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
         /// </summary>       
         protected IMessageClusterConfigurationStore ClusterConfigStore { get; private set; }
 
-        public QueueManagerActor(IMessageClusterConfigurationStore clusterProvider)
+        public QueueManagerActor(IMessageClusterConfigurationStore clusterProvider, ActorService actorService, ActorId actorId) : base(actorService, actorId)
         {
             ClusterConfigStore = clusterProvider;
         }
@@ -279,6 +281,9 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                     {
                         var ns = NamespaceManager.CreateFromConnectionString(State.Keys.PrimaryConnectionString);
 
+
+                        var config = this.GetConfigurationInfo();
+
                         var sbQueue = await ns.GetQueueAsync(queue.Name);
                         Logger.Info($"Checking Queue information for {sbQueue.Path}, {sbQueue.MessageCount}, {sbQueue.MessageCountDetails.ActiveMessageCount}, {sbQueue.MessageCountDetails.DeadLetterMessageCount}, {sbQueue.MessageCountDetails.ScheduledMessageCount}, {sbQueue.MessageCountDetails.TransferDeadLetterMessageCount}, {sbQueue.MessageCountDetails.TransferMessageCount}");
                         var parts = nodeKey.Split('/');
@@ -291,7 +296,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                         if (queue.Properties.ListenerDescription.UsePrimaryNode)
                         {
                           var nodes=  await fabricClient.QueryManager.GetNodeListAsync();
-                            primNodes = nodes.Aggregate(0, (c, p) => c + (p.NodeType == "nt1vm" ? 1 : 0));
+                            primNodes = nodes.Aggregate(0, (c, p) => c + (p.NodeType == config.PrimaryScaleSetName ? 1 : 0));
                         }
 
                         await vmssManager.ReportQueueMessageCountAsync(Id.GetStringId(), sbQueue.MessageCountDetails.ActiveMessageCount, primNodes);
@@ -388,7 +393,11 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                 var registered = await fabricClient.QueryManager.GetServiceListAsync(applicationName, serviceName);
                                 if (registered.Any())
                                 {
-                                    await fabricClient.ServiceManager.DeleteServiceAsync(serviceName);
+                                    await fabricClient.ServiceManager.DeleteServiceAsync(new DeleteServiceDescription(serviceName)
+                                    {
+                                       
+                                    });
+                                    
                                 }
 
                             }
