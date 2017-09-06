@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/MessageProcessor.ServiceFabricHost" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="MessageClusterActorService_PartitionCount" Value="1" />
+    <Parameter Name="ManagementApiService_InstanceCount" Value="1" />
+    <Parameter Name="PlacementConstraints" Value="true" />
+    <Parameter Name="VmssManagerActorService_PartitionCount" Value="1" />
+    <Parameter Name="QueueManagerActorService_PartitionCount" Value="1" />
+    <Parameter Name="DispatcherManagerActorService_PartitionCount" Value="1" />
+    <Parameter Name="SubscriptionId" Value="8393a037-5d39-462d-a583-09915b4493df" />
+    <Parameter Name="ResourceGroupName" Value="ci-sf-tests6" />
+    <Parameter Name="ClusterName" Value="citestcluster6" />
+    <Parameter Name="TenantId" Value="802626c6-0f5c-4293-a8f5-198ecd481fe3" />
+    <Parameter Name="StorageName" Value="n6yvolgqezbru1" />
+    <Parameter Name="BasicAuth" Value="pks:123456" />
+    <Parameter Name="AzureADServicePrincipal" Value="MIICLgYJKoZIhvcNAQcDoIICHzCCAhsCAQAxggFFMIIBQQIBADApMBUxEzARBgNVBAMTCmNpdGVzdGNlcnQCEG7nJgAd1pGtROAqXTINhgowDQYJKoZIhvcNAQEBBQAEggEARESvyeELwgWe08JSmoBKOIdFC3Tgw9wPpG6/BLFVtDI0kYgAZr74ftz/QSj7cyt9mTeJGt1WO8MHR/Q3QV/dkxyW/7NPU7dIrM8xliHwtCHQO5gZVnjARbpwPdYEi8NayqB3iRd+h8Sa4B3GudwX5xzZr5d2GmJ6FDL2F5UHYTF6zm7HUps28UybGgzgmRymE+9qoChnEA/DATPGq4w019pcIdkgZP8kodacqCVe9Bl4Izlgl44NTgkW9YSgGH550SMkK60Z/Z9TMzHcBRKyePUyYkwNeZ1uoMMilA7Zm5jK93iqD1ThTAdOodpgG4gy7CfIReqtN+T8yRa5ZmYUTzCBzAYJKoZIhvcNAQcBMBQGCCqGSIb3DQMHBAj3/gDO9Af1J4CBqOFSI4FKmu0gulZaaBp+uRwoLAAaNN0R981CItIkhuhFs4BsqK+YyjB7zZDwQnM8dI6R4V62Ys/ToiOVXYlvMP0OkfDmiHOqlWeIhTThSXc9/3uxZW/A1c32FJZ3DGD7SbUdJHcTIbTsXRl88SGY8mMPgdAwlDhMvphqXjMbf6YQZYVGJrn8xRHDk5FMRjIeOHBV2VYUHGGz+pStzjaQ+hETr3fihyZUig==" />
+    <Parameter Name="TopicManagerActorService_PartitionCount" Value="1" />
+    <Parameter Name="VmssManagerActorService_TargetReplicaSetSize" Value="1" />
+    <Parameter Name="VmssManagerActorService_MinReplicaSetSize" Value="1" />
+    <Parameter Name="MessageClusterActorService_TargetReplicaSetSize" Value="1" />
+    <Parameter Name="MessageClusterActorService_MinReplicaSetSize" Value="1" />
+    <Parameter Name="QueueManagerActorService_TargetReplicaSetSize" Value="1" />
+    <Parameter Name="QueueManagerActorService_MinReplicaSetSize" Value="1" />
+    <Parameter Name="DispatcherManagerActorService_TargetReplicaSetSize" Value="1" />
+    <Parameter Name="DispatcherManagerActorService_MinReplicaSetSize" Value="1" />
+    <Parameter Name="TopicManagerActorService_TargetReplicaSetSize" Value="1" />
+    <Parameter Name="TopicManagerActorService_MinReplicaSetSize" Value="1" />
+  </Parameters>
+</Application>

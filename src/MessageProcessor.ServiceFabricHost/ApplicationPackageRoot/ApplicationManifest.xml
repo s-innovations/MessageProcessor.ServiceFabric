@@ -24,6 +24,7 @@
     <Parameter Name="TenantId" DefaultValue="" />
     <Parameter Name="StorageName" DefaultValue="" />
     <Parameter Name="BasicAuth" DefaultValue="" />
+    <Parameter Name="PrimaryScaleSetName" DefaultValue="nt1vm" />
     <Parameter Name="AzureADServicePrincipal" DefaultValue="" />
     <Parameter Name="TopicManagerActorService_PartitionCount" DefaultValue="2" />
     <Parameter Name="TopicManagerActorService_MinReplicaSetSize" DefaultValue="1" />
@@ -41,6 +42,7 @@
             <Parameter Name="TenantId" Value="[TenantId]" />
             <Parameter Name="StorageName" Value="[StorageName]" />
             <Parameter Name="BasicAuth" Value="[BasicAuth]" />
+            <Parameter Name="PrimaryScaleSetName" Value="[PrimaryScaleSetName]" />
             <Parameter Name="AzureADServicePrincipal" Value="[AzureADServicePrincipal]" IsEncrypted="true" />
           </Section>
         </Settings>
