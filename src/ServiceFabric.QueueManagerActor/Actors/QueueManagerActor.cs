@@ -353,10 +353,10 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                          ConnectionString = State.Keys.PrimaryConnectionString,
                                          QueuePath = sbQueue.Path,                                         
                                     };
-                                    var placementConttraints = $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}";
+                                    var placementConstraints = $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}";
                                     if (queue.Properties.ListenerDescription.UsePrimaryNode)
                                     {
-                                        placementConttraints += " || isPrimary == true";
+                                        placementConstraints += " || isPrimary == true";
                                     }
                                     
                                     await fabricClient.ServiceManager.CreateServiceAsync(new StatelessServiceDescription
@@ -370,7 +370,7 @@ namespace SInnovations.Azure.MessageProcessor.ServiceFabric.Actors
                                             HighKey = Int64.MaxValue
                                         },
                                         InstanceCount = -1, //One for each node,
-                                        PlacementConstraints = $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}",
+                                        PlacementConstraints = placementConstraints, // $"NodeTypeName == {queue.Properties.ListenerDescription.ProcessorNode}",
                                         ApplicationName = applicationName,
                                         InitializationData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(listenerConfiguration)),
                                     });
